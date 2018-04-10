@@ -149,10 +149,10 @@ Model comparison
 incremental: true
 type: lineheight
 
-Deux problèmes récurrents à éviter en modélisation: l'*overffitting* et l'*underfitting*. Comment s'en sortir ?
+Two common problems in statistical learning: overfitting and underfitting... how to avoid it ?
 
-- Utiliser des priors pour *régulariser*, pour contraindre le posterior (i.e., accorder moins de poids à la likelihood)
-- Utiliser des critères d'information (e.g., AIC, WAIC)
+- Using regularisation and regularising priors. The aim is to constrain the learning, to constrain the influence of the incoming data on the inference.
+- Using cross-validation or information criteria (e.g., AIC, WAIC)
 
 <br>
 
@@ -246,7 +246,7 @@ Information theory
 incremental: true
 type: lineheight
 
-We would like to mesure the *distance* between our model and the *full reality* (i.e., the data generating process)... we are going to make a detour via information theory.
+We would like to mesure the *distance* between our model and the *full reality* (i.e., the data generating process)... but we will first make a detour via information theory.
 
 We can define **information** as the amount of reduction in uncertainty. When we learn a new outcome (a new observation), how much does it reduce our uncertainty ?
 
@@ -254,14 +254,14 @@ We need a way a measuring uncertainty. For $n$ possible events, with each event 
 
 $$H(p) = - \text{E log}(p_{i}) = - \sum_{i=1}^{n}p_{i} \text{log}(p_{i})$$
 
-In other words, *the uncertainty contained in a probability distributions is the average log-probability of an event*.
+In other words, *the uncertainty contained in a probability distribution is the average log-probability of an event*.
 
 Uncertainty
 ========================================================
 incremental: true
 type: lineheight
 
-Let's take as an example wether forecasting. Let's say the probability of having rain or sun on an average day in Ghent are, respectively, $p_{1} = 0.7$ and $p_{2} = 0.3$.
+Let's take as an example weather forecasting. Let's say the probability of having rain or sun on an average day in Ghent is, respectively, $p_{1} = 0.7$ and $p_{2} = 0.3$.
 
 Alors, $H(p) = - (p_{1} \text{log}(p_{1}) + p_{2} \text{log}(p_{2}) ) \approx 0.61$.
 
@@ -275,7 +275,7 @@ p <- c(0.7, 0.3)
 [1] 0.6108643
 ```
 
-Now let's consider the weather in Abu Dabi. There, the probability of having rain or sun are of $p_{1} = 0.01$ and $p_{2} = 0.99$.
+Now let's consider the weather in Abu Dabi. There, the probability of having rain or sun is of $p_{1} = 0.01$ and $p_{2} = 0.99$.
 
 
 ```r
@@ -292,9 +292,9 @@ Divergence
 incremental: true
 type: lineheight
 
-On a donc un moyen de quantifier l'incertitude. Comment utiliser cette mesure pour quantifier la distance entre notre modèle et la réalité ?
+We now have a way of quantifying uncertainty. How does it help us to measure the distance between our model and the full reality ?
 
-**Divergence**: incertitude ajoutée par l'utilisation d'une distribution de probabilités pour décrire... une autre distribution de probabilités ([Kullback-Leibler divergence](https://fr.wikipedia.org/wiki/Divergence_de_Kullback-Leibler)).
+**Divergence**: uncertainty added by using a probability distribution to describe... another probability distribution ([Kullback-Leibler divergence](https://fr.wikipedia.org/wiki/Divergence_de_Kullback-Leibler)).
 
 $$D_{KL}(p,q) = \sum_{i} p_{i}\big(\text{log}(p_{i}) - \text{log}(q_{i})\big) = \sum_{i} p_{i} \text{log}\bigg(\frac{p_{i}}{q_{i}}\bigg)$$
 
@@ -305,7 +305,7 @@ type: lineheight
 
 $$D_{KL}(p,q) = \sum_{i} p_{i}\big(\text{log}(p_{i}) - \text{log}(q_{i})\big) = \sum_{i} p_{i} \text{log}\bigg(\frac{p_{i}}{q_{i}}\bigg)$$
 
-Par exemple, supposons que la *véritable* distribution de nos événements (soleil vs pluie) soit $p_{1}=0.3$ et $p_{2}=0.7$. Si nous pensons plutôt que ces événements arrivent avec une probabilité $q_{1}=0.25$ et $q_{2}=0.75$, quelle quantité d'incertitude avons-nous ajoutée ?
+As an example, let's say that the *true* probability of the events *rain* and *sun* is $p_{1} = 0.3$ and $p_{2} = 0.7$. What uncertainty do we add if we think that the probabilities are rather $q_{1} = 0.25$ and $q_{2} = 0.75$ ?
 
 
 ```r
@@ -339,7 +339,7 @@ type: lineheight
 sum(p * (log(q) ) )
 ```
 
-La **Divergence** est définie comme l'entropie additionnelle ajoutée en utilisant $q$ pour décrire $p$.
+The **Divergence** can be defined as the additional entropy added when using $q$ to describe $p$.
 
 $$
 \begin{align}
@@ -360,34 +360,47 @@ $$
 
 Toward the deviance...
 ========================================================
-incremental: true
+incremental: false
 type: lineheight
 
-OK, mais nous ne connaissons pas la distribution *target* (la réalité), à quoi cela peut donc nous servir ?
+Fine. But we do not know the full reality in real life...
 
-Astuce: si nous comparons deux modèles, $q$ et $r$, pour approximer $p$, nous allons comparer leurs divergences... Et donc $\text{E} \ \text{log}(p_{i})$ sera la même quantité pour les deux modèles !
+We do not need to know it ! When comparing two models (two distributions) $q$ and $r$, to approximate $p$, we can compare their divergences. Thus, $\text{E} \ \text{log}(p_{i})$ will be the same quantity for both divergences... !
 
-On peut donc utiliser $\text{E} \ \text{log}(q_{i})$ et $\text{E} \ \text{log}(r_{i})$ comme estimateurs de la distance entre chaque modèle et notre distribution cible. On a donc seulement besoin de la *log-probabilité moyenne des modèles*.
+<div align = "center" style="border:none;">
+<img src = "mind_blowing.jpg" width = 400 height = 400>
+</div>
 
-Comme on ne connaît pas la distribution cible, cela veut dire qu'on ne peut pas interpréter cette quantité en termes absolus mais seulement en termes relatifs. Ce qui nous intéresse c'est $\text{E} \ \text{log}(q_{i}) - \text{E} \ \text{log}(r_{i})$.
+Toward the deviance...
+========================================================
+incremental: false
+type: lineheight
+
+We can use $\text{E} \ \text{log}(q_{i})$ and $\text{E} \ \text{log}(r_{i})$ as estimations of the relative distance between each model end the target distribution (the full reality). We only need the avearge log-probability of the model.
+
+As we do not know the target distribution, we can not interpret these values in absolute terms. We are interested in the relative distances: $\text{E} \ \text{log}(q_{i}) - \text{E} \ \text{log}(r_{i})$.
+
+<div align = "center" style="border:none;">
+<img src = "KL_distance.png" width = 286 height = 547>
+</div>
 
 Deviance
 ========================================================
 incremental: true
 type: lineheight
 
-Pour approximer la valeur de $\text{E} \ \log(p_{i})$, on peut utiliser la [déviance](https://en.wikipedia.org/wiki/Deviance_%28statistics%29) d'un modèle, qui est une mesure du fit **relatif** du modèle.
+To approximate $\text{E} \ \log(p_{i})$, we use the [deviance](https://en.wikipedia.org/wiki/Deviance_%28statistics%29) of a model, whic measures "how bad" is a model to explain some data.
 
 $$D(q) = -2 \sum_{i} \log(q_{i})$$
 
-où $i$ indice chaque observation et $q_{i}$ est la *likelihood* de chaque observation.
+where $i$ indexes observations and $q_{i}$ is the *likelihood* of each observation.
 
 
 ```r
 d$mass.s <- scale(d$mass)
 mod1.8 <- lm(brain ~ mass.s, data = d)
 
--2 * logLik(mod1.8) # compute deviance
+-2 * logLik(mod1.8) # computing the deviance
 ```
 
 ```
@@ -428,11 +441,11 @@ In-sample and out-of-sample
 incremental: true
 type: lineheight
 
-La déviance a le même problème que le $R^{2}$, lorsqu'elle est calculée sur l'échantillon observé. Dans ce cas, on l'appelle déviance **in-sample**.
+The deviance has the same problem as the $R^{2}$, when it is computed on the training dataset (the observed data). In this situation, we call it **in-sample deviance**.
 
-Si on est intéressé par les capacités de prédiction de notre modèle, nous pouvons calculer la déviance du modèle sur de nouvelles données... qu'on appellera dans ce cas déviance **out-of-sample**. Cela revient à se demander si notre modèle est performant pour prédire de nouvelles données.
+If we are interested in the predictive abilities of a model, we can compute the deviance of the model on a new dataset (the test dataset)... We call this the **out-of-sample deviance**. It answers the question: how bad is the model to predict future data ?
 
-Imaginons que nous disposions d'un échantillon de taille $N$, que nous appellerons échantillon d'apprentissage (*training*). Nous pouvons calculer la déviance du modèle sur cet échantillon ($D_{train}$ ou $D_{in}$). Si nous acquérons ensuite un nouvel échantillon de taille $N$ issu du même processus de génération de données (que nous appellerons échantillon de test), nous pouvons calculer une déviance sur ce nouvel échantillon, en utilisant les paramètres estimés avec l'échantillon d'entraînement (que nous appellerons $D_{test}$ ou $D_{out}$).
+Let's say we have a sample of size $N$, that we call the *training dataset*. We can compute the deviance of a model on this sample ($D_{train}$ or $D_{in}$). If we then acquire a new sample of size $N$ issued from the same data generating process (we call it the *test dataset*), we can compute the deviance of the model on this new dataset, by using the values of the parameters we estimated with the training dataset (we call this $D_{test}$ or $D_{out}$).
 
 In sample and out of sample deviance
 ========================================================
