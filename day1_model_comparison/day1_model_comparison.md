@@ -1,4 +1,4 @@
-Model comparison
+Model comparison and information criteria
 ========================================================
 author: Ladislas Nalborczyk
 date: Univ. Grenoble Alpes, CNRS, LPNC (France) • Ghent University (Belgium)
@@ -151,7 +151,7 @@ type: lineheight
 
 Two common problems in statistical learning: overfitting and underfitting... how to avoid it ?
 
-- Using regularisation and regularising priors. The aim is to constrain the learning, to constrain the influence of the incoming data on the inference.
+- Using regularisation. The aim is to constrain the learning, to constrain the influence of the incoming data on the inference.
 - Using cross-validation or information criteria (e.g., AIC, WAIC)
 
 <br>
@@ -263,7 +263,7 @@ type: lineheight
 
 Let's take as an example weather forecasting. Let's say the probability of having rain or sun on an average day in Ghent is, respectively, $p_{1} = 0.7$ and $p_{2} = 0.3$.
 
-Alors, $H(p) = - (p_{1} \text{log}(p_{1}) + p_{2} \text{log}(p_{2}) ) \approx 0.61$.
+Then, $H(p) = - (p_{1} \text{log}(p_{1}) + p_{2} \text{log}(p_{2}) ) \approx 0.61$.
 
 
 ```r
@@ -463,18 +463,18 @@ $$
 <img src = "inout1.png" width = 1000 height = 500>
 </div>
 
-On a réalisé ce processus 10.000 fois pour cinq modèles de régression linéaire de complexité croissante. Les points bleus représentent la déviance calculée sur l'échantillon d'apprentissage et les points noirs la déviance calculée sur l'échantillon de test.
+We generated data from the above model 10.000 times, and computed the in-sample and out-of-sample deviance of 5 linear models of increasing complexity.
 
 Regularisation
 ========================================================
 incremental: false
 type: lineheight
 
-Une autre manière de lutter contre l'*overfitting* est d'utiliser des priors *sceptiques* qui vont venir ralentir l'apprentissage réalisé sur les données (i.e., accorder plus de poids au prior).
+Another way to fight overfitting is to use skeptical priors that will prevent the model to learn *too much* from the data. In other words, we can use a stronger prior in order to diminish the weight of the data.
 
 <img src="day1_model_comparison-figure/unnamed-chunk-23-1.png" title="plot of chunk unnamed-chunk-23" alt="plot of chunk unnamed-chunk-23" style="display: block; margin: auto;" />
 
-Regularisation
+Regularisation and cross-validation
 ========================================================
 incremental: true
 type: lineheight
@@ -483,11 +483,9 @@ type: lineheight
 <img src = "inout2.png" width = 1200 height = 600>
 </div>
 
-Comment décider de la précision du prior ? Est-ce que le prior est "assez" régularisateur ou pas ?
+How to decide on the widht of a prior ? How to know whether a prior is *sufficiently regularising* or not ? We can divide the dataset in two parts (training and test) in order to compare different priors. We can then choose the prior that provides the lower **out-of-sample deviance**. We call this strategy **cross-validation**.
 
-On peut diviser le jeu de données en deux parties (*training* et *test*) afin de choisir le prior qui produit la déviance *out-of-sample* la plus faible. On appelle cette stratégie la **cross-validation**.
-
-Information criteria
+Out-of-sample deviane and information criteria
 ========================================================
 incremental: false
 type: lineheight
@@ -496,27 +494,42 @@ type: lineheight
 <img src = "inout3.png" width = 1200 height = 600>
 </div>
 
-On mesure ici la différence entre la déviance *in-sample* (en bleu) et la déviance *out-of-sample* (en noir). On remarque que la déviance *out-of-sample* est presque exactement égale à la déviance *in-sample*, plus deux fois le nombre de prédicteurs du modèle...
+We notice that the out-of-sample deviance is approximately equal to the in-sample deviance, plus two times the number of parameters of the model...
 
 Akaike information criterion
 ========================================================
 incremental: true
 type: lineheight
 
-L'AIC fournit une approximation de la déviance *out of sample*:
+The AIC offers an approximation of the **out-of-sample deviance** as:
 
 $$\text{AIC} = D_{train} + 2p$$
 
-où $p$ est le nombre de paramètres libres (i.e., à estimer) dans le modèle. L'AIC donne donc une approximation des capacités de **prédiction** du modèle.
+where $p$ is the number of parameters of the model. The AIC then gives an approximation of the relative **predictive abilities** of models.
 
-NB: l'AIC fonctionne bien uniquement quand le nombre d'observations $N$ est largement supérieur au nombre de paramètres $p$. Dans le cas contraire, il existe des corrections qui permettent de pallier à ce problème (voir Burnham & Anderson, 2002; 2004).
+NB: when the number of observations $N$ is low as compared to the number of parameters $p$ of the model (e.g., when $N / p> 40$), the second-order correction of the AIC should be used (e.g., see Burnham & Anderson, [2002](https://www.springer.com/us/book/9780387953649); [2004](http://journals.sagepub.com/doi/abs/10.1177/0049124104268644)).
 
 Akaike weights and evidence ratios
 ========================================================
 incremental: true
 type: lineheight
 
-...
+The individual AIC values are not interpretable in absolute terms as they contain arbitrary constants. We usually rescale them by substracting to the AIC of each model $i$ the AIC of the model with the minimum one:
+
+$$\Delta_{AIC} = AIC_{i} - AIC_{min}$$
+
+This transformation forces the best model to have $\Delta = 0$, while the rest of the models have positive values. Then, the simple transformation $exp(-\Delta_{i}/2)$ provides the likelihood of the model given the data $\mathcal{L}(g_{i}|data)$ ([Akaike, 1981](https://www.sciencedirect.com/science/article/pii/0304407681900713)).
+
+Akaike weights and evidence ratios
+========================================================
+incremental: true
+type: lineheight
+
+It is convenient to normalise the model likelihoods such that they sum to 1 and that we can treat them as probabilities. Hence, we use:
+
+$$w_{i} = \dfrac{exp(-\Delta_{i}/2)}{\sum_{r = 1}^{R}exp(-\Delta_{r}/2)}$$
+
+The weights $w_{i}$ are useful as the *weihgt of evidence* in favor of model $g_{i}$ as being the actual best model in the set of models, in an information-theretical sense (i.e., the closest model to the truth).
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script>

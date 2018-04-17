@@ -30,39 +30,39 @@ Probability axioms
 incremental: true
 type: lineheight
 
-Une probabilité est une valeur numérique assignée à un événement ($A$), compris comme une possibilité appartenant à l'univers $\Omega$ (l'ensemble de toutes les issues possibles). Les probabilités se conforment aux axiomes suivants (pour des événements mutuellement exclusifs):
+A probability is a numerical value assigned to an event $A$, this event being a possibility of an ensemble $\Omega$ (the ensemble of all possible events). Probabilities conform to the following axioms (the third axiom is only valid for mutually exclusive events):
 
 + **Non-negativity.** $P(A_{i}) \geq 0$
-+ **Normalisation.** $P(\Omega)=1$
-+ **Additivity.** $P(A_{1}\cup A_{2}\cup \ldots)= \sum_{i=1}^{+\infty}P(A_{i})$
++ **Normalisation.** $P(\Omega) = 1$
++ **Additivity.** $P(A_{1}\cup A_{2}\cup \ldots) = \sum_{i=1}^{+\infty}P(A_{i})$
 
 <small>*Kolmogorov, A.N. (1933). "Foundations of the Theory of Probability”.*</small>
 
-Interprétation classique (ou théorique)
+Classic (or theoretical) interpretation
 ========================================================
 incremental: true
 type: lineheight
 
-$$P(pair)=\frac{nombre\ de\ cas\ favorables}{nombre\ de\ cas\ possibles}=\frac{3}{6}=\frac{1}{2}$$
+$$P(even)=\frac{number\ of\ favorable\ cases}{number\ of\ possible\ cases}=\frac{3}{6}=\frac{1}{2}$$
 
-Problème: cette définition est uniquement applicable aux situations dans lesquelles il n'y a qu'un nombre «fini» de résultats possibles équiprobables...
+Problem: this definition only applies to situations in which there is a finite ensemble of equiprobables possible events...
 
-> Quelle est la probabilité qu'il pleuve demain ?
+> What is the probability of raining tomorrow ?
 
-> $$P(pluie)=\frac{pluie}{ \{ pluie,\ non-pluie \} }=\frac{1}{2}??$$
+> $$P(rain)=\frac{rain}{ \{ rain,\ non-rain \} }=\frac{1}{2}??$$
 
-Interprétation fréquentiste (ou empirique)
+Frequentist (or empirical) interprétation
 ========================================================
 incremental: true
 type: lineheight
 
 $$P(x)=\lim_{n_{t} \to \infty}\frac{n_{x}}{n_{t}}$$
 
-Où $n_{x}$ est le nombre d'occurrences de l'événement $x$ et $n_{t}$ le nombre total d'essais. La conception **fréquentiste** postule que, à long-terme (i.e., quand le nombre d'essais s'approche de l'infini), la fréquence relative va converger *exactement* vers ce qu'on appelle probabilité.
+Where $n_{x}$ is the number of events $x$ and $n_{t}$ the total number of trials. The **frequentist** interpretation postulates that, **in the long run** (when the number of trial approaches infinity), the relative frequency will eventually converge to what we call *probability*.
 
-Conséquence: le concept de probabilité s'applique uniquement aux **collectifs**, et non pas aux événéments singuliers.
+Consequence: the concept or *probability* only applies to collectives, and not to singular events.
 
-Interprétation fréquentiste (ou empirique)
+Frequentist (or empirical) interprétation
 ========================================================
 incremental: false
 type: lineheight
@@ -77,26 +77,26 @@ sample(c(0, 1), 500, replace = TRUE) %>%
         ggplot(aes(x = x, y = y), log = "y") +
         geom_line(lwd = 1) +
         geom_hline(yintercept = 0.5, lty = 3) +
-        xlab("nombre de lancers") +
-        ylab("proportion de faces") +
+        xlab("number of trials") +
+        ylab("proportion of heads") +
         ylim(0, 1) +
         theme_bw(base_size = 20)
 ```
 
 <img src="day1_intro_bayes-figure/unnamed-chunk-1-1.png" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" style="display: block; margin: auto;" />
 
-Objections...
+Problems...
 ========================================================
 incremental: true
 type: lineheight
 
-+ Quelle classe de référence ? *Quelle est la probabilité que je vive jusqu'à 80 ans ?*
+- What is the reference class ? *What is the probability of me living until 80 years ?*
 
-- Quid des événements qui ne peuvent pas se répéter ? *Quelle est la probabilité que j'apprenne quelque chose pendant cete formation ?*
+- What about non-repetable events ? *What is the probability of me learning something new during this course ?*
 
-- A partir de combien de lancers (d'une pièce par exemple) a-t-on une bonne approximation de la probabilité ? Une classe finie d'événements de taille $n$ ne peut produire que des fréquences relatives à une certaine "résolution", $1/n$.
+- How many trials are sufficient to obtain a good approximation of the *probability* ? A finite class of events of size $n$ can only produce relative frequencies of certain resolution/preciseness $1/n$.
 
-Interprétation propensionniste
+Propensity interpretation
 ========================================================
 incremental: true
 type: lineheight
@@ -105,7 +105,7 @@ Les propriétés fréquentistes (i.e., à long terme) des objets (e.g., une piè
 
 Conséquence: ces propriétés sont les propriétés d'événements individuels... et non de séquences ! L'interpétation propensionniste nous permet donc de parler de la probabilité d'événements uniques.
 
-Interprétation logique
+Logical interpretation
 ========================================================
 incremental: true
 type: lineheight
