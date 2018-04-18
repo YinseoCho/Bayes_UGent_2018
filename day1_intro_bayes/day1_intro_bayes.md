@@ -20,10 +20,12 @@ type: lineheight
 
 What is the probability...
 
-* Of obtaining an even number when rolling a (non biased) die ?
+* Of obtaining heads when flipping a coin ?
 * That I learn something new during this talk ?
 
 Do these two questions refer to the exact same meaning of the concept of *probability* ?
+
+<img src="thinking2.gif" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" style="display: block; margin: auto;" />
 
 Probability axioms
 ========================================================
@@ -38,14 +40,14 @@ A probability is a numerical value assigned to an event $A$, this event being a 
 
 <small>*Kolmogorov, A.N. (1933). "Foundations of the Theory of Probability”.*</small>
 
-Classic (or theoretical) interpretation
+Classical (or theoretical) interpretation
 ========================================================
 incremental: true
 type: lineheight
 
 $$P(even)=\frac{number\ of\ favorable\ cases}{number\ of\ possible\ cases}=\frac{3}{6}=\frac{1}{2}$$
 
-Problem: this definition only applies to situations in which there is a finite ensemble of equiprobables possible events...
+Problem: this definition only applies to situations in which there is a finite ensemble of equiprobable events...
 
 > What is the probability of raining tomorrow ?
 
@@ -83,7 +85,7 @@ sample(c(0, 1), 500, replace = TRUE) %>%
         theme_bw(base_size = 20)
 ```
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-1-1.png" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-2-1.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" style="display: block; margin: auto;" />
 
 Problems...
 ========================================================
@@ -92,62 +94,66 @@ type: lineheight
 
 - What is the reference class ? *What is the probability of me living until 80 years ?*
 
-- What about non-repetable events ? *What is the probability of me learning something new during this course ?*
+- What about non-repeatable events ? *What is the probability of learning something new during this course ?*
 
-- How many trials are sufficient to obtain a good approximation of the *probability* ? A finite class of events of size $n$ can only produce relative frequencies of certain resolution/preciseness $1/n$.
+- How many trials are sufficient to obtain a good approximation of the *probability* ? A finite class of events of size $n$ can only produce relative frequencies of certain preciseness $1/n$.
 
 Propensity interpretation
 ========================================================
 incremental: true
 type: lineheight
 
-Les propriétés fréquentistes (i.e., à long terme) des objets (e.g., une pièce) seraient provoquées par des propriétés physiques intrinsèques aux objets. Par exemple, une pièce biaisée va engendrer une fréquence relative (et donc une probabilité) biaisée en raison de ses propriétés physiques. Pour les propensionnistes, les probabilités représentent ces caractéristiques intrinsèques, ces **propensions** à générer certaines fréquences relatives, et non les fréquences relatives en elles-mêmes.
+The frequentist properties (in the long run) of objects (e.g., a coin) might be produced by intrinsic properties of these objects. For instance, a biased coin will produce a biased relative frequency **because** of its intrinsic bias.
 
-Conséquence: ces propriétés sont les propriétés d'événements individuels... et non de séquences ! L'interpétation propensionniste nous permet donc de parler de la probabilité d'événements uniques.
+The propensity interpretation postulates that these intrinsic properties define what we call as probability. In other words, the probability of an event **is** its intrinsic properties.
+
+This interpretation will usually agree with the frequentist interpretation but it shift the locus of probability from the external world (the observable relative frequency in the long run) the the *inside* of the objects under study.
+
+Consequence: these properties are properties that are intrinsic to objects... The propensity interpretation then allows to talk about the probability of single events.
 
 Logical interpretation
 ========================================================
 incremental: true
 type: lineheight
 
-<center>Il y a 10 étudiants dans cette salle</center>
-<center>9 portent un t-shirt <font color = "green">vert</font></center>
-<center>1 porte un t-shirt <font color = "red">rouge</font></center>
-<center>Une personne est tirée au sort...</center>
+<center>There are 10 students in this room</center>
+<center>9 students wear a <font color = "green">green</font> t-shirt</center>
+<center>1 student wears a <font color = "red">red</font> t-shirt</center>
+<center>Let's say 1 person is picked at random...</center>
 
 <hr width = "75%%" size = "2" align = "center" noshade>
 
-> <center>Conclusion 1: l'étudiant tiré au sort porte un t-shirt &#10004; </center>
+> <center>Conclusion 1: this student wears a t-shirt &#10004; </center>
 
 <hr width = "75%%" size = "1" align = "center" noshade>
 
-> <center>Conclusion 2: l'étudiant tiré au sort porte un t-shirt <font color = "green">vert</font> &#10007; </center>
+> <center>Conclusion 2: this student wears a <font color = "green">green t-shirt</font> &#10007; </center>
 
 <hr width = "75%%" size = "1" align = "center" noshade>
 
-> <center>Conclusion 3: l'étudiant tiré au sort porte un t-shirt <font color = "red">rouge</font> &#10007; </center>
+> <center>Conclusion 3: this student wears a <font color = "red">red t-shirt</font> &#10007; </center>
 
-Interprétation logique
+Logical interpretation
 ========================================================
 incremental: false
 type: lineheight
 
-L'interprétation logique du concept de probabilité essaye de généraliser la logique (vrai / faux) au monde probabiliste. La probabilité représente donc le *degré de support logique* qu'une conclusion peut avoir, relativement à un ensemble de prémices (Keynes, 1921; Carnap, 1950).
+The logical interpretation of probability tries to generalise the formal logic (true / false) to the probabilist world. The probability then represents the degree of *logic support* of a conclusion, in relation to a set of premises ([Keynes, 1921](https://archive.org/details/treatiseonprobab007528mbp); [Carnap, 1950](http://fitelson.org/confirmation/carnap_logical_foundations_of_probability.pdf)).
 
-Conséquence: toute probabilité est **conditionnelle**.
+Consequence: every probability is **conditional**.
 
-Interprétation bayésienne
+Bayesian interpretation
 ========================================================
 incremental: true
 type: lineheight
 
-**La probabilité est une mesure du degré d'incertitude**. Un événement *certain* aura donc une probabilité de 1 et un événement *impossible* aura une probabilité de 0.
+The probability is a way of **quantifying uncertainty**. A certain event then has a probability of 1 and an impossible event has a probability of 0.
 
-Pour parler de probabilités, dans ce cadre, nous n'avons donc plus besoin de nous référer à la limite d'occurrence d'un événement (fréquence).
+This interpretation eliminates the need for a collective of infinite repretition of an event...
 
 > "So to assign equal probabilities to two events is not in any way an assertion that they must occur equally often in any random experiment [...], it is only a formal way of saying I don’t know." - Jaynes (1986)
 
-Interprétations probabilistes
+Probabilistic interpretations
 ========================================================
 type: lineheight
 
@@ -380,7 +386,7 @@ incremental: false
 
 On s'intéresse au lien entre deux variables aléatoires continues, $x$ et $y$.
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-7-1.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-8-1.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" style="display: block; margin: auto;" />
 
 Comparaison de modèles
 ========================================================
@@ -389,7 +395,7 @@ incremental: false
 
 L'hypothèse de modélisation la plus simple est de postuler une relation linéaire.
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-8-1.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-9-1.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" style="display: block; margin: auto;" />
 
 Comparaison de modèles
 ========================================================
@@ -398,7 +404,7 @@ incremental: false
 
 Cette description peut-être *améliorée* pour mieux prendre en compte les données qui s'écartent de la prédiction linéaire.
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-9-1.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-10-1.png" title="plot of chunk unnamed-chunk-10" alt="plot of chunk unnamed-chunk-10" style="display: block; margin: auto;" />
 
 Comparaison de modèles
 ========================================================
@@ -407,7 +413,7 @@ incremental: true
 
 Un ensemble de $N$ points peut être *exhaustivement* (sans erreur) décrit par une fonction polynomiale d'ordre $N-1$. Augmenter la complexité du modèle améliore donc la précision de notre description des données mais réduit la généralisabilité de ses prédictions (*bias-variance tradeoff*).
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-10-1.png" title="plot of chunk unnamed-chunk-10" alt="plot of chunk unnamed-chunk-10" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-11-1.png" title="plot of chunk unnamed-chunk-11" alt="plot of chunk unnamed-chunk-11" style="display: block; margin: auto;" />
 
 Nous avons besoin d'outils qui prennent en compte le rapport *qualité de la description* / *complexité*, c'est à dire la **parcimonie** des modèles (AIC, WAIC).
  
@@ -463,7 +469,7 @@ incremental: false
 
 <p align = "center"> hypothèse: &#128309 &#9898 &#9898 &#9898 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; données: &#128309 </p>
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-11-1.png" title="plot of chunk unnamed-chunk-11" alt="plot of chunk unnamed-chunk-11" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-12-1.png" title="plot of chunk unnamed-chunk-12" alt="plot of chunk unnamed-chunk-12" style="display: block; margin: auto;" />
 
 Enumérer les possibilités
 ========================================================
@@ -472,7 +478,7 @@ incremental: false
 
 <p align = "center"> hypothèse: &#128309 &#9898 &#9898 &#9898 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; données: &#128309 &#9898</p>
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-12-1.png" title="plot of chunk unnamed-chunk-12" alt="plot of chunk unnamed-chunk-12" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-13-1.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" style="display: block; margin: auto;" />
 
 Enumérer les possibilités
 ========================================================
@@ -481,7 +487,7 @@ incremental: false
 
 <p align = "center"> hypothèse: &#128309 &#9898 &#9898 &#9898 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; données: &#128309 &#9898 &#128309</p>
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-13-1.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-14-1.png" title="plot of chunk unnamed-chunk-14" alt="plot of chunk unnamed-chunk-14" style="display: block; margin: auto;" />
 
 Enumérer les possibilités
 ========================================================
@@ -490,7 +496,7 @@ incremental: false
 
 <p align = "center"> hypothèse: &#128309 &#9898 &#9898 &#9898 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; données: &#128309 &#9898 &#128309 </p>
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-14-1.png" title="plot of chunk unnamed-chunk-14" alt="plot of chunk unnamed-chunk-14" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-15-1.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" style="display: block; margin: auto;" />
 
 Enumérer les possibilités
 ========================================================
@@ -501,7 +507,7 @@ Sous cette hypothèse, $3$ chemins (sur $4^{3}=64$) conduisent au résultat obte
 
 <p align = "center"> &#9898 &#9898 &#9898 &#128309 &emsp;&emsp;&emsp;&emsp; &#9898 &#128309 &#128309 &#128309 &emsp;&emsp;&emsp;&emsp; &#9898 &#9898 &#128309 &#128309 </p>
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-15-1.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-16-1.png" title="plot of chunk unnamed-chunk-16" alt="plot of chunk unnamed-chunk-16" style="display: block; margin: auto;" />
 
 Comparer les hypothèses
 ========================================================
@@ -778,7 +784,7 @@ incremental: true
 
 Une fonction de masse (*probability mass function*, ou *PMF*) est une fonction qui attribue une probabilité à chaque valeur d'une variable aléatoire. Exemple de la distribution binomiale pour une pièce non biaisée ($\theta=0.5$).
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-17-1.png" title="plot of chunk unnamed-chunk-17" alt="plot of chunk unnamed-chunk-17" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-18-1.png" title="plot of chunk unnamed-chunk-18" alt="plot of chunk unnamed-chunk-18" style="display: block; margin: auto;" />
 
 
 ```r
@@ -796,7 +802,7 @@ incremental: true
 
 Une densité de probabilité (*probability density function*, ou *PDF*), est une fonction qui permet de représenter une loi de probabilité sous forme d'intégrales.
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-19-1.png" title="plot of chunk unnamed-chunk-19" alt="plot of chunk unnamed-chunk-19" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-20-1.png" title="plot of chunk unnamed-chunk-20" alt="plot of chunk unnamed-chunk-20" style="display: block; margin: auto;" />
 
 
 ```r
@@ -814,14 +820,14 @@ incremental: true
 
 Une intégrale correspond à la **surface** (aire géométrique) délimitée par la représentation graphique d'une fonction, *l'aire sous la courbe*. Une distribution est dite **impropre** si son intégrale n'est pas égale à un nombre fini (e.g., $+ \infty$), et **normalisée** si son intégrale est égale à 1.
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-21-1.png" title="plot of chunk unnamed-chunk-21" alt="plot of chunk unnamed-chunk-21" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-22-1.png" title="plot of chunk unnamed-chunk-22" alt="plot of chunk unnamed-chunk-22" style="display: block; margin: auto;" />
 
 Aparté, qu'est-ce qu'une intégrale ?
 ========================================================
 type: lineheight
 incremental: true
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-22-1.png" title="plot of chunk unnamed-chunk-22" alt="plot of chunk unnamed-chunk-22" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-23-1.png" title="plot of chunk unnamed-chunk-23" alt="plot of chunk unnamed-chunk-23" style="display: block; margin: auto;" />
 
 L'intégrale de $f(x)$ sur l'intervalle [90 ; 96] vaut: $\int_{90}^{96} f(x) \ \mathrm{d}x = 0.142$.
 
