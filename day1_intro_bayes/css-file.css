@@ -193,3 +193,18 @@ h1, h2, h3 {
 .reveal strong {
   color: #566D7E; /* #778899 */
 }
+
+/* ############################################
+# black background properties
+#################################### */
+
+.black .reveal .state-background {
+    background: black;}
+    
+.black .reveal p {
+    color: black;
+    position: relative;
+    top: 4%;
+    line-height: 50%;
+}
+

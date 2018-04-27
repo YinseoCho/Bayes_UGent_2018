@@ -20,12 +20,12 @@ type: lineheight
 
 What is the probability...
 
-* Of obtaining heads when flipping a coin ?
-* That I learn something new during this talk ?
+* Of getting head when flipping a coin ?
+* That I learn something new during this course ?
 
-Do these two questions refer to the exact same meaning of the concept of *probability* ?
+Do these two questions refer to the same concept of *probability* ?
 
-<img src="thinking2.gif" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" style="display: block; margin: auto;" />
+<img src="thinking.gif" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" width="600px" style="display: block; margin: auto;" />
 
 Probability axioms
 ========================================================
@@ -53,7 +53,7 @@ Problem: this definition only applies to situations in which there is a finite e
 
 > $$P(rain)=\frac{rain}{ \{ rain,\ non-rain \} }=\frac{1}{2}??$$
 
-Frequentist (or empirical) interprétation
+Frequentist (or empirical) interpretation
 ========================================================
 incremental: true
 type: lineheight
@@ -64,7 +64,7 @@ Where $n_{x}$ is the number of events $x$ and $n_{t}$ the total number of trials
 
 Consequence: the concept or *probability* only applies to collectives, and not to singular events.
 
-Frequentist (or empirical) interprétation
+Frequentist (or empirical) interpretation
 ========================================================
 incremental: false
 type: lineheight
@@ -105,9 +105,9 @@ type: lineheight
 
 The frequentist properties (in the long run) of objects (e.g., a coin) might be produced by intrinsic properties of these objects. For instance, a biased coin will produce a biased relative frequency **because** of its intrinsic bias.
 
-The propensity interpretation postulates that these intrinsic properties define what we call as probability. In other words, the probability of an event **is** its intrinsic properties.
+The propensity interpretation postulates that these intrinsic properties define what we call as probability. In other words, the probability of an event = its intrinsic properties.
 
-This interpretation will usually agree with the frequentist interpretation but it shift the locus of probability from the external world (the observable relative frequency in the long run) the the *inside* of the objects under study.
+This interpretation will usually agree with the frequentist interpretation but it shift the locus of probability from the external world (the observable relative frequency in the long run) to internal properties of objects.
 
 Consequence: these properties are properties that are intrinsic to objects... The propensity interpretation then allows to talk about the probability of single events.
 
@@ -138,7 +138,7 @@ Logical interpretation
 incremental: false
 type: lineheight
 
-The logical interpretation of probability tries to generalise the formal logic (true / false) to the probabilist world. The probability then represents the degree of *logic support* of a conclusion, in relation to a set of premises ([Keynes, 1921](https://archive.org/details/treatiseonprobab007528mbp); [Carnap, 1950](http://fitelson.org/confirmation/carnap_logical_foundations_of_probability.pdf)).
+The logical interpretation of probability aims at generalising the formal logic (true / false) to the probabilist world. The probability then represents the degree of *logical support* of a conclusion, in relation to a set of premises ([Keynes, 1921](https://archive.org/details/treatiseonprobab007528mbp); [Carnap, 1950](http://fitelson.org/confirmation/carnap_logical_foundations_of_probability.pdf)).
 
 Consequence: every probability is **conditional**.
 
@@ -151,47 +151,48 @@ The probability is a way of **quantifying uncertainty**. A certain event then ha
 
 This interpretation eliminates the need for a collective of infinite repretition of an event...
 
-> "So to assign equal probabilities to two events is not in any way an assertion that they must occur equally often in any random experiment [...], it is only a formal way of saying I don’t know." - Jaynes (1986)
+> *So to assign equal probabilities to two events is not in any way an assertion that they must occur equally often in any random experiment [...], it is only a formal way of saying I don’t know* ([Jaynes, 1986](http://bayes.wustl.edu/etj/articles/general.background.pdf)).
 
 Probabilistic interpretations
 ========================================================
+incremental: false
 type: lineheight
 
-+ Interprétation classique ou théorique (Laplace, Bernouilli, Leibniz)
-+ **Interprétation fréquentiste ou empirique** (Venn, Reichenbach, von Mises)
-+ Interprétation propensionniste (Popper, Miller)
-+ Interprétation logique (Keynes, Carnap)
-+ **Interprétation subjective ou bayésienne** (Jeffreys, de Finetti, Savage)
++ Classic interpretation (Laplace, Bernouilli, Leibniz)
++ **Frequentist interpretation** (Venn, Reichenbach, von Mises)
++ Propensity interpretation (Popper, Miller)
++ Logical interpretation (Keynes, Carnap)
++ **Bayesian interpretation** (Jeffreys, de Finetti, Savage)
 
-*[Plus de détails ici](http://plato.stanford.edu/entries/probability-interpret/)*...
+*[Click for more details...](http://plato.stanford.edu/entries/probability-interpret/)*
 
-Interprétations probabilistes - résumé
+Probabilistic interpretations - summary
 ========================================================
 incremental: true
 type: lineheight
 
-> **Probabilité epistémique (subjective)**
-- toute probabilité est conditionnelle à de l'information disponible (e.g., prémices ou données)
-- la probabilité comme moyen de quantifier l'incertitude
-- probabilité logique, probabilité bayésienne
+> **Epistemic probability**
+- every probability is conditional on some available information (e.g., premises or data)
+- probabilities as a way of quantifying uncertainty
+- logical interpretation, Bayesian interpretation
 
 <hr style="height:20pt; visibility:hidden;" />
 
-> **Probabilité physique (objective)**
-- les probabilités dépendent d'un état du monde, de caractéristiques physiques, elles sont indépendantes de l'information disponible (ou de l'incertitude)
-- probabilité classique, probabilité fréquentiste </center>
+> **Physical probability**
+- probabilities depend on a state of the world, on physical characteristics. They are independent of knowledge or uncertainty.
+- classic interpretation, frequentist interpretation</center>
 
 ========================================================
 type: black
 
 <img src="pill.jpg" height="1000px" width="1600px" />
 
-Aparté - Vous avez dit "hasard" ?
+What about randomness ?
 ========================================================
 type: lineheight
 incremental: true
 
-Une suite de nombres au hasard...
+Let's pick a series of numbers *at random*...
 
 
 ```
@@ -202,7 +203,7 @@ Une suite de nombres au hasard...
 
 
 ```r
-RNGkind()[1] # default random number generator
+RNGkind()[1] # default pseudorandom number generator in R
 ```
 
 ```
@@ -214,13 +215,13 @@ Mersenne-Twister
 type: lineheight
 incremental: false
 
-Inventé par Makoto Matsumoto et Takuji Nishimura en 1997, le [Mersenne Twister](https://en.wikipedia.org/wiki/Mersenne_Twister) est un générateur de nombres pseudo-aléatoires (PRNG). L'algorithme Mersenne-Twister est le PRNG par défaut en Python, Ruby, R, PHP, Matlab...
+Introduced by Makoto Matsumoto and Takuji Nishimura in 1997, the [Mersenne Twister](https://en.wikipedia.org/wiki/Mersenne_Twister) algorithm is a pseudo-random numbers generator (PRNG). It is the default algorithm in Python, Ruby, R, PHP, Matlab...
 
 <div align = "center">
 <img src = "mersenne.png" width = 1200 height = 600>
 </div>
 
-Hasard déterministe
+Determinism and randomness
 ========================================================
 type: lineheight
 incremental: true
@@ -237,7 +238,7 @@ as.integer(runif(5, 10, 100) )
 [1] 79 27 98 28 42
 ```
 
-Si je connais la *graine* d'origine (i.e., le "départ" de l'algorithme) et le fonctionnement précis de l'algorithme, je peux prédire les nombres qui vont être générés. Il sera alors difficile de soutenir que ces nombres auront été générés au "hasard"...
+If I know the *seed* (i.e., where the algorithm starts) and the detailed mechanisms of the algorithm, I can predict without errors the numbers that wil be generated. Then, it would be difficult to maintain that these numbers have been generated *at random*...
 
 
 ```
@@ -249,22 +250,22 @@ Si je connais la *graine* d'origine (i.e., le "départ" de l'algorithme) et le f
 [1] 79 27 98 28 42 76 98
 ```
 
-Le langage de l'incertain
+A language for uncertainty
 ========================================================
 type: lineheight
 incremental: true
 
-"Le hasard est un concept indiquant l'aspect aléatoire des choses, des événements ou encore des décisions, signalant ainsi l'impossibilité de prévoir avec certitude un fait quelconque. Ainsi, pour éclairer le sens du mot, il peut-être dit que le hasard est synonyme d'« imprévisibilité », ou « imprédictibilité »" ([Wikipédia](https://fr.wikipedia.org/wiki/Hasard)).
+*Randomness is the lack of pattern or predictability in events. A random sequence of events, symbols or steps has no order and does not follow an intelligible pattern or combination* ([Wikipédia](https://en.wikipedia.org/wiki/Randomness)).
 
 > "Ce que nous appelons hasard n’est et ne peut être que la cause ignorée d’un effet connu." -- Voltaire
 
 > "Le hasard, ce sont les lois que nous ne connaissons pas." -- Émile Borel
 
-Le hasard apparait donc comme un **état subjectif d'indétermination des causes**. Pour parler de l'incertain (pour quantifier l'incertitude), on utilise les probabilités comme langage.
-
 > "Randomness is a proxy for lack of knowledge" -- Richard McElreath
 
-Un peu de logique
+Randomness can be defined as a *subjective state of causal indetermination*. To talk about uncertain events (to quantify uncertainty), we use probabilities.
+
+A piece of formal logic
 ========================================================
 type: lineheight
 incremental: true
@@ -273,86 +274,72 @@ incremental: true
 <img src = "penguin.jpg" width = 600 height = 600>
 </div>
 
-Un peu de logique
+A piece of formal logic
 ========================================================
 type: lineheight
 incremental: true
 
-**Example 1**
+**Example n°1**
 
-- Si un suspect ment, il transpire.
-- (On observe que) ce suspect transpire.
-- Par conséquent, ce suspect ment.
+- If a suspect is lying, he will sweat. He is sweating.
+- So, he is lying.
 
-**Example 2**
+**Example n°2**
 
-- Si le suspect ment, il va présenter une réaction galvanique cutanée (parce qu'il va se mettre à transpirer).
-- (On observe que) Le suspect ne présente pas de réaction galvanique cutanée.
-- Par conséquent, le suspect ne ment pas.
+- If a suspect is sweating, he is lying. He is not sweating.
+- So, he is not lying.
 
-**Example 3**
+**Example n°3**
 
-- Tous les menteurs transpirent.
-- (On observe que) Ce suspect ne transpire pas.
-- Par conséquent, ce suspect n'est pas un menteur.
+- All liars are sweating. This suspect is not sweating.
+- So, he is not a liar.
 
-Inférences invalides
+Invalid inferences
 ========================================================
 type: lineheight
 incremental: true
 
-- *affirmation du conséquent*: $\dfrac{A \Rightarrow B, \ B}{A}$
+- *affirming the consequent*: $\dfrac{A \Rightarrow B, \ B}{A}$
 
-- Si il a plu, alors le sol est mouillé (A implique B). Le sol est mouillé (B). Donc il a plu (A).
+- If it rains, the ground is wet (A implies B). The ground is wet (B). Then, it rained (A).
 
-- *négation de l'antécédent*: $\dfrac{A \Rightarrow B, \ \neg A}{\neg B}$
+- *denying the antecedent*: $\dfrac{A \Rightarrow B, \ \neg A}{\neg B}$
 
-- Si il a plu, alors le sol est mouillé (A implique B). Il n'a pas plus (non A). Donc le sol n'est pas mouillé (non B).
+- If it rains, the ground is wet (A implies B). It did not rain (non A). Then, the ground is not wet (non A).
 
-Inférences valides
+<img src="trump.gif" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" width="600px" style="display: block; margin: auto;" />
+
+Valid inferences
 ========================================================
 type: lineheight
 incremental: true
 
 - *modus ponens*: $\dfrac{A \Rightarrow B, \ A}{B}$
 
-- Si on est lundi, alors John ira au travail (A implique B). On est lundi (A). Donc John ira au travail (B).
+- If today is Monday, then John will go to work (A implies B). Today is Monday (A). Then John will go to work (B).
 
 - *modus tollens*: $\dfrac{A \Rightarrow B, \ \neg B}{\neg A}$
 
-- Si mon chien détecte un intru, alors il aboie (A implique B). Mon chien n'a pas aboyé (non B). Donc il n'a pas détecté d'intrus (non A).
+- If my dog feels the presence of an intruder, he will bark (A implies B). My dog did not bark (not B). Then, he did not feel the presence of an intruder (not A).
 
-Logique, fréquentisme et raisonnement probabiliste
+<img src="good.gif" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" width="400px" style="display: block; margin: auto;" />
+
+Logic, frequentism and probabilistic reasoning
 ========================================================
 incremental: true
 type: lineheight
 
-Le *modus tollens* est un des raisonnements logiques les plus importants et les plus performants. Dans le cadre de l'inférence statistique, il s'applique parfaitement au cas suivant: "Si $H_{0}$ est vraie, alors $x$ ne devrait pas se produire. On observe $x$. Alors $H_{0}$ est fausse".
+The *modus tollens* is one of the strongest rule of inference in logic. It works perfectly well in science when we deal with hypotheses of the following form: *If $H_{0}$ is true, then we should not observe $x$. We observed $x$. Then, $H_{0}$ is false*.
 
-Mais nous avons le plus souvent affaire à des hypothèses "continues", probabilistes.
+BUT, most of the time, we deal with *continuous*, *probabilistic* hypotheses...
 
-L'inférence fréquentiste (fishérienne) est elle aussi probabiliste, de la forme "Si $H_{0}$ est vraie, alors $x$ est peu probable. On observe $x$. Alors $H_{0}$ est peu probable."
+The Fisherian inference (induction) is of the form: *If $H_{0}$ is true, then we should PROBABLY not observe $x$. We observed $x$. Then, $H_{0}$ is PROBABLY false*.
 
-Or cet argument est invalide, le *modus tollens* ne s'applique pas au monde probabiliste (e.g., Pollard & Richardson, 1987; Rouder, Morey, Verhagen, Province, & Wagenmakers, 2016). 
+But this argument is invalid. The *modus tollens* does not apply to probabilistic statements (e.g., [Pollard & Richardson, 1987](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.505.9968&rep=rep1&type=pdf); [Rouder, Morey, Verhagen, Province, & Wagenmakers, 2016](http://www.ejwagenmakers.com/2016/RouderEtAl2016FreeLunch.pdf)).
 
-Par exemple: *si un individu est un homme, alors il est peu probable qu'il soit pape. Francois est pape. François n'est donc certainement pas un homme...*
+Let's take an example: *If Jane is an American, then it is unlikely that she is a U.S. Congressperson. Jane is a U.S. Congressperson. Then, Jane is probably not an American...*
 
-L'échec de la falsification
-========================================================
-type: lineheight
-incremental: true
-
-Forme logique d'un test expérimental d'une théorie $T$ (from Meehl, 1990)
-
-$$(T \land A_{t} \land C_{p} \land A_{i} \land C_{n}) \to (O1 \supset O2)$$
-
-Où $A_{t}$ est une conjonction d'hypothèses auxiliaires, $C_{p}$ est le *ceteribus paribus* ("all other things being equal"), $A_{i}$ est une théorie concernant les instruments, et $C_{n}$ un énoncé à propos des conditions particulières de cette expérience (*particulars*).
-
-Observer $(O1 \land \lnot O2)$ n'est pas suffisant pour falsifier $T$, car cela revient à dire que toute la partie gauche est fausse. Or, dire qu'une conjonction est fausse revient à énoncer une disjunction des conjoints (i.e., $(T \lor A_{t} \lor C_{p} \lor A_{i} \lor C_{n})$).
-
-En résumé, on a falsifié une combinaison de tous les élements de la partie gauche, mais observer $(O1 \land \lnot O2)$, ne falsifie pas (le coeur) de la théorie $T$ (see also Lakatos, 1970).
-
-L'échec de la falsification
+The failure of strict falsificationism
 ========================================================
 type: lineheight
 incremental: true
@@ -386,7 +373,7 @@ incremental: false
 
 On s'intéresse au lien entre deux variables aléatoires continues, $x$ et $y$.
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-8-1.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-10-1.png" title="plot of chunk unnamed-chunk-10" alt="plot of chunk unnamed-chunk-10" style="display: block; margin: auto;" />
 
 Comparaison de modèles
 ========================================================
@@ -395,7 +382,7 @@ incremental: false
 
 L'hypothèse de modélisation la plus simple est de postuler une relation linéaire.
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-9-1.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-11-1.png" title="plot of chunk unnamed-chunk-11" alt="plot of chunk unnamed-chunk-11" style="display: block; margin: auto;" />
 
 Comparaison de modèles
 ========================================================
@@ -404,7 +391,7 @@ incremental: false
 
 Cette description peut-être *améliorée* pour mieux prendre en compte les données qui s'écartent de la prédiction linéaire.
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-10-1.png" title="plot of chunk unnamed-chunk-10" alt="plot of chunk unnamed-chunk-10" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-12-1.png" title="plot of chunk unnamed-chunk-12" alt="plot of chunk unnamed-chunk-12" style="display: block; margin: auto;" />
 
 Comparaison de modèles
 ========================================================
@@ -413,7 +400,7 @@ incremental: true
 
 Un ensemble de $N$ points peut être *exhaustivement* (sans erreur) décrit par une fonction polynomiale d'ordre $N-1$. Augmenter la complexité du modèle améliore donc la précision de notre description des données mais réduit la généralisabilité de ses prédictions (*bias-variance tradeoff*).
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-11-1.png" title="plot of chunk unnamed-chunk-11" alt="plot of chunk unnamed-chunk-11" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-13-1.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" style="display: block; margin: auto;" />
 
 Nous avons besoin d'outils qui prennent en compte le rapport *qualité de la description* / *complexité*, c'est à dire la **parcimonie** des modèles (AIC, WAIC).
  
@@ -469,7 +456,7 @@ incremental: false
 
 <p align = "center"> hypothèse: &#128309 &#9898 &#9898 &#9898 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; données: &#128309 </p>
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-12-1.png" title="plot of chunk unnamed-chunk-12" alt="plot of chunk unnamed-chunk-12" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-14-1.png" title="plot of chunk unnamed-chunk-14" alt="plot of chunk unnamed-chunk-14" style="display: block; margin: auto;" />
 
 Enumérer les possibilités
 ========================================================
@@ -478,7 +465,7 @@ incremental: false
 
 <p align = "center"> hypothèse: &#128309 &#9898 &#9898 &#9898 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; données: &#128309 &#9898</p>
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-13-1.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-15-1.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" style="display: block; margin: auto;" />
 
 Enumérer les possibilités
 ========================================================
@@ -487,7 +474,7 @@ incremental: false
 
 <p align = "center"> hypothèse: &#128309 &#9898 &#9898 &#9898 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; données: &#128309 &#9898 &#128309</p>
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-14-1.png" title="plot of chunk unnamed-chunk-14" alt="plot of chunk unnamed-chunk-14" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-16-1.png" title="plot of chunk unnamed-chunk-16" alt="plot of chunk unnamed-chunk-16" style="display: block; margin: auto;" />
 
 Enumérer les possibilités
 ========================================================
@@ -496,7 +483,7 @@ incremental: false
 
 <p align = "center"> hypothèse: &#128309 &#9898 &#9898 &#9898 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; données: &#128309 &#9898 &#128309 </p>
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-15-1.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-17-1.png" title="plot of chunk unnamed-chunk-17" alt="plot of chunk unnamed-chunk-17" style="display: block; margin: auto;" />
 
 Enumérer les possibilités
 ========================================================
@@ -507,7 +494,7 @@ Sous cette hypothèse, $3$ chemins (sur $4^{3}=64$) conduisent au résultat obte
 
 <p align = "center"> &#9898 &#9898 &#9898 &#128309 &emsp;&emsp;&emsp;&emsp; &#9898 &#128309 &#128309 &#128309 &emsp;&emsp;&emsp;&emsp; &#9898 &#9898 &#128309 &#128309 </p>
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-16-1.png" title="plot of chunk unnamed-chunk-16" alt="plot of chunk unnamed-chunk-16" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-18-1.png" title="plot of chunk unnamed-chunk-18" alt="plot of chunk unnamed-chunk-18" style="display: block; margin: auto;" />
 
 Comparer les hypothèses
 ========================================================
@@ -784,7 +771,7 @@ incremental: true
 
 Une fonction de masse (*probability mass function*, ou *PMF*) est une fonction qui attribue une probabilité à chaque valeur d'une variable aléatoire. Exemple de la distribution binomiale pour une pièce non biaisée ($\theta=0.5$).
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-18-1.png" title="plot of chunk unnamed-chunk-18" alt="plot of chunk unnamed-chunk-18" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-20-1.png" title="plot of chunk unnamed-chunk-20" alt="plot of chunk unnamed-chunk-20" style="display: block; margin: auto;" />
 
 
 ```r
@@ -802,7 +789,7 @@ incremental: true
 
 Une densité de probabilité (*probability density function*, ou *PDF*), est une fonction qui permet de représenter une loi de probabilité sous forme d'intégrales.
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-20-1.png" title="plot of chunk unnamed-chunk-20" alt="plot of chunk unnamed-chunk-20" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-22-1.png" title="plot of chunk unnamed-chunk-22" alt="plot of chunk unnamed-chunk-22" style="display: block; margin: auto;" />
 
 
 ```r
@@ -820,14 +807,14 @@ incremental: true
 
 Une intégrale correspond à la **surface** (aire géométrique) délimitée par la représentation graphique d'une fonction, *l'aire sous la courbe*. Une distribution est dite **impropre** si son intégrale n'est pas égale à un nombre fini (e.g., $+ \infty$), et **normalisée** si son intégrale est égale à 1.
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-22-1.png" title="plot of chunk unnamed-chunk-22" alt="plot of chunk unnamed-chunk-22" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-24-1.png" title="plot of chunk unnamed-chunk-24" alt="plot of chunk unnamed-chunk-24" style="display: block; margin: auto;" />
 
 Aparté, qu'est-ce qu'une intégrale ?
 ========================================================
 type: lineheight
 incremental: true
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-23-1.png" title="plot of chunk unnamed-chunk-23" alt="plot of chunk unnamed-chunk-23" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-25-1.png" title="plot of chunk unnamed-chunk-25" alt="plot of chunk unnamed-chunk-25" style="display: block; margin: auto;" />
 
 L'intégrale de $f(x)$ sur l'intervalle [90 ; 96] vaut: $\int_{90}^{96} f(x) \ \mathrm{d}x = 0.142$.
 
@@ -1163,33 +1150,33 @@ type: lineheight
 <img src = "monty1.png" width = 600 height = 600>
 </div>
 
-<center> Que-feriez-vous (intuitivement) ? Analysez ensuite la situation en utilisant le théorème de Bayes. </center>
+<center> What would you do (intuitively) ? Then, analyse the situation using Bayes theorem. </center>
 
 Monty Hall
 ========================================================
 incremental: true
 type: lineheight
 
-Il s'agit d'un problème de probabilités conditionnelles... Définissons les événements suivants:
+This is actually a conditional probability problem... Let's define the following events:
 
-P1: l'animateur ouvre la porte 1 <br>
-P2: l'animateur ouvre la porte 2 <br>
-P3: l'animateur ouvre la porte 3 <br>
+D1: the game hosts opens door n°1 <br>
+D2: the game hosts opens door n°2 <br>
+D3: the game hosts opens door n°3 <br>
 
-V1: la voiture se trouve derrière la porte 1 <br>
-V2: la voiture se trouve derrière la porte 2 <br>
-V3: la voiture se trouve derrière la porte 3 <br>
+C1: the car is behing door n°1 <br>
+C2: the car is behing door n°2 <br>
+C3: the car is behing door n°3 <br>
 
-Si on a choisi la porte n°1 et que l'animateur a choisi la porte n°3 (*et qu'il sait où se trouve la voiture*), il s'ensuit que:
+If we choose door n°1 and the host chose door n°3 (*and given that he knows where is the car*), it follows that:
 
-$p(P3|V1)=\dfrac{1}{2}$, $p(P3|V2)=1$, $p(P3|V3)=0$
+$p(D3|C1)=\dfrac{1}{2}$, $p(D3|C2)=1$, $p(D3|C3)=0$
 
 Monty Hall
 ========================================================
 incremental: true
 type: lineheight
 
-On sait que $p(V3|P3)=0$, on veut connaître $p(V1|P3)$ et $p(V2|P3)$ afin de pouvoir choisir. Résolution par le théorème de Bayes.
+We know that $p(V3|P3)=0$, we want to know $p(V1|P3)$ and $p(V2|P3)$ in order to choose...
 
 $p(V1|P3)=\dfrac{p(P3|V1) \times p(V1)}{p(P3)}=\dfrac{\dfrac{1}{2} \times \dfrac{1}{3}}{\dfrac{1}{2}}=\dfrac{1}{3}$
 
@@ -1204,58 +1191,16 @@ type: lineheight
 <img src = "monty2.png" width = 600 height = 600>
 </div>
 
-Morale
+Summary
 ========================================================
 incremental: true
 type: lineheight
 
-Nos intuitions probabilistes sont, dans la grande majorité des cas, très mauvaises. Au lieu de compter sur elles, il est plus sage de se reposer sur des règles logiques (*modus ponens* et *modus tollens*) et probabilistes simples (règle du produit, règle de la somme, théorème de Bayes), nous assurant de réaliser l'inférence logique la plus juste.
+Our probabilistic intuitions are usually very bad. Instead of relying on them to make decisions, it is safer to rely on logic (e.g., *modus ponens* or *moduls tollens*) and probabilistic rules (the sum rule, the product rule, Bayes' rule). These rules will conduct us to the most logic inference.
 
-Autrement dit, "Don't be clever" (McElreath, 2015).
+In other words: "Don't be clever" (McElreath, 2015).
 
-Further resources
-========================================================
-incremental: false
-type: lineheight
-
-Books
-
-- McElreath, R. (2015). *Statistical Rethinking: A Bayesian Course with Examples in R and Stan*. CRC Press.
-- Kruschke, J. K. (2015). *Doing Bayesian Data Analysis, Second Edition: A Tutorial with R, JAGS, and Stan*. Academic Press / Elsevier.
--  Gelman, A., Carlin, J. B., Stern, H. S., Dunson, D. B., Vehtari, A., Rubin, D. B. (2013). *Bayesian Data Analysis, third edition*. London: CRC Press.
-- Noël, Y. (2013). *Psychologie statistique avec R*. Springer.
-
-Slides are available here: https://github.com/lnalborczyk
-
-References
-========================================================
-incremental: false
-type: lineheight
-
-Carnap, R. (1950). *Logical foundations of probability*. Chicago, IL, US: University of Chicago Press.
-
-Jaynes, E. (1986). Bayesian Methods: General Background. In J. Justice (Author), Maximum Entropy and Bayesian Methods in Applied Statistics Proceedings of the Fourth Maximum Entropy Workshop University of Calgary, 1984 (pp. 1-25). Cambridge: Cambridge University Press.
-
-Keynes, J. M. (1921). *Treatise on Probability*. London: Macmillan & Co.
-
-Kolmogorov, A. N. (1933). *Grundbegriffe der Wahrscheinlichkeitrechnung, Ergebnisse Der Mathematik*. Translated as *Foundations of Probability*. New York: Chelsea Publishing Company, 1950.
-
-Lakatos, I. (1970). Falsification and the methodology of scientific research programmes. In: Lakatos, Musgrave eds., pp. 91–195.
-
-Lindley, D. (2000). The Philosophy of Statistics. Journal of the Royal Statistical Society. *Series D (The Statistician), 49*(3), 293-337.
-
-References
-========================================================
-incremental: false
-type: lineheight
-
-Meehl, P. (1990). Appraising and amending theories: The strategy of Lakatosian defense and two principles that warrant using it. *Psychological Inquiry, 1*, 108-141, 173-180.
-
-Pollard, P., & Richardson, J. T. E. (1987). On the probability of making type I errors. *Psychological Bulletin, 102*(1), 159-163.
-
-Rouder, J. N., Morey, R. D., & Wagenmakers, E.-J. (2016). The Interplay between Subjectivity, Statistical Practice, and Psychological Science. *Collabra, 2*(1), 1-12.
-
-Rouder, J. N., Morey, R. D., Verhagen, J., Province, J. M., Wagenmakers, E. J. (2016). Is There a Free Lunch in Inference? *Topics in Cognitive Science, 8*, 520-47.
+<img src="morale.gif" title="plot of chunk unnamed-chunk-36" alt="plot of chunk unnamed-chunk-36" width="600px" style="display: block; margin: auto;" />
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script>
