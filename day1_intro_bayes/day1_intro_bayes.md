@@ -27,18 +27,16 @@ Do these two questions refer to the same concept of *probability* ?
 
 <img src="thinking.gif" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" width="600px" style="display: block; margin: auto;" />
 
-Probability axioms
+Probability axioms (Kolmogorov, 1933)
 ========================================================
 incremental: true
 type: lineheight
 
-A probability is a numerical value assigned to an event $A$, this event being a possibility of an ensemble $\Omega$ (the ensemble of all possible events). Probabilities conform to the following axioms (the third axiom is only valid for mutually exclusive events):
+A probability is **a numerical value** assigned to an event $A$, this event being a possibility of an ensemble $\Omega$ (the ensemble of all possible events). Probabilities conform to the following axioms (the third axiom is only valid for mutually exclusive events):
 
 + **Non-negativity.** $P(A_{i}) \geq 0$
 + **Normalisation.** $P(\Omega) = 1$
 + **Additivity.** $P(A_{1}\cup A_{2}\cup \ldots) = \sum_{i=1}^{+\infty}P(A_{i})$
-
-<small>*Kolmogorov, A.N. (1933). "Foundations of the Theory of Probability”.*</small>
 
 Classical (or theoretical) interpretation
 ========================================================
@@ -187,84 +185,6 @@ type: black
 
 <img src="pill.jpg" height="1000px" width="1600px" />
 
-What about randomness ?
-========================================================
-type: lineheight
-incremental: true
-
-Let's pick a series of numbers *at random*...
-
-
-```
-[1] 79 27 98 28 42
-```
-
-`runif, rnorm, rbinom...`
-
-
-```r
-RNGkind()[1] # default pseudorandom number generator in R
-```
-
-```
-[1] "Mersenne-Twister"
-```
-
-Mersenne-Twister
-========================================================
-type: lineheight
-incremental: false
-
-Introduced by Makoto Matsumoto and Takuji Nishimura in 1997, the [Mersenne Twister](https://en.wikipedia.org/wiki/Mersenne_Twister) algorithm is a pseudo-random numbers generator (PRNG). It is the default algorithm in Python, Ruby, R, PHP, Matlab...
-
-<div align = "center">
-<img src = "mersenne.png" width = 1200 height = 600>
-</div>
-
-Determinism and randomness
-========================================================
-type: lineheight
-incremental: true
-
-$$ Y_{i} \sim \mathrm{Uniform}(10,100) $$
-
-
-```r
-set.seed(666)
-as.integer(runif(5, 10, 100) )
-```
-
-```
-[1] 79 27 98 28 42
-```
-
-If I know the *seed* (i.e., where the algorithm starts) and the detailed mechanisms of the algorithm, I can predict without errors the numbers that wil be generated. Then, it would be difficult to maintain that these numbers have been generated *at random*...
-
-
-```
-[1] 79 27 98 28 42 76
-```
-
-
-```
-[1] 79 27 98 28 42 76 98
-```
-
-A language for uncertainty
-========================================================
-type: lineheight
-incremental: true
-
-*Randomness is the lack of pattern or predictability in events. A random sequence of events, symbols or steps has no order and does not follow an intelligible pattern or combination* ([Wikipédia](https://en.wikipedia.org/wiki/Randomness)).
-
-> "Ce que nous appelons hasard n’est et ne peut être que la cause ignorée d’un effet connu." -- Voltaire
-
-> "Le hasard, ce sont les lois que nous ne connaissons pas." -- Émile Borel
-
-> "Randomness is a proxy for lack of knowledge" -- Richard McElreath
-
-Randomness can be defined as a *subjective state of causal indetermination*. To talk about uncertain events (to quantify uncertainty), we use probabilities.
-
 A piece of formal logic
 ========================================================
 type: lineheight
@@ -307,7 +227,7 @@ incremental: true
 
 - If it rains, the ground is wet (A implies B). It did not rain (non A). Then, the ground is not wet (non A).
 
-<img src="trump.gif" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" width="600px" style="display: block; margin: auto;" />
+<img src="trump.gif" title="plot of chunk unnamed-chunk-3" alt="plot of chunk unnamed-chunk-3" width="600px" style="display: block; margin: auto;" />
 
 Valid inferences
 ========================================================
@@ -322,7 +242,7 @@ incremental: true
 
 - If my dog feels the presence of an intruder, he will bark (A implies B). My dog did not bark (not B). Then, he did not feel the presence of an intruder (not A).
 
-<img src="good.gif" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" width="400px" style="display: block; margin: auto;" />
+<img src="good.gif" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" width="400px" style="display: block; margin: auto;" />
 
 Logic, frequentism and probabilistic reasoning
 ========================================================
@@ -344,87 +264,36 @@ The failure of strict falsificationism
 type: lineheight
 incremental: true
 
-*Poppérisme naïf*: la science progresse par falsification logique, donc la statistique devrait viser la falsification. Mais...
+*Naive popperism*: science is progressing through falsification, then data analysis sould aim for falsification (e.g., using NHST). But...
 
-- les hypothèses (théoriques) ne sont pas les modèles (hypothèses statistiques)
+- (theoretical hypotheses) are not equivalent to (statistical) models, there is no one-to-one mapping between the two
 
 > "Models are devices that connect theories to data. A model is an instanciation of a theory as a set of probabilistic statements" -- (Rouder et al., 2016)
 
-- nos hypothèses sont souvent probabilistes
-- erreur de mesure
-- la falsification concerne le problème de la démarcation, pas celui de la méthode
-- la science est une technologie sociale, la falsification est **consensuelle**, et non pas logique
+- our hypothese are mostly continuous, probabilistic
+- observation errors
+- falsification concerns the demarcation problem
+- science is a social technology, falsification is consensual, it cannot be logic (see also [Meehl, 1990](https://www.jstor.org/stable/1448781?seq=1#page_scan_tab_contents))
 
-Notre stratégie
+We need a plan
 ========================================================
 type: lineheight
 incremental: true
 
-Besoin d'un cadre pour développer des modèles cohérents. Nos outils:
+The tools we are going to use:
 
-- *Bayesian data analysis*, utiliser les probabilités pour décrire l'incertitude, et étendre la logique au monde probabiliste
-- *multilevel modeling*, des modèles à multiples niveaux d'incertitude
-- approche par comparaison de modèle, au lieu d'essayer de falsifier un *null model*, comparer des modèles intéressants (AIC, WAIC)
+- *Bayesian data analysis*: using probability theory to describe uncertainty
+- ~~*Multilevel modelling*: describing and spreading uncertainty at multiple levels~~
+- ~~*Model comparison approach*: instead of trying to falsify a null model, comparing interesting and theoretically sound models (e.g., using AIC or WAIC)~~
 
-Comparaison de modèles
-========================================================
-type: lineheight
-incremental: false
-
-On s'intéresse au lien entre deux variables aléatoires continues, $x$ et $y$.
-
-<img src="day1_intro_bayes-figure/unnamed-chunk-10-1.png" title="plot of chunk unnamed-chunk-10" alt="plot of chunk unnamed-chunk-10" style="display: block; margin: auto;" />
-
-Comparaison de modèles
-========================================================
-type: lineheight
-incremental: false
-
-L'hypothèse de modélisation la plus simple est de postuler une relation linéaire.
-
-<img src="day1_intro_bayes-figure/unnamed-chunk-11-1.png" title="plot of chunk unnamed-chunk-11" alt="plot of chunk unnamed-chunk-11" style="display: block; margin: auto;" />
-
-Comparaison de modèles
-========================================================
-type: lineheight
-incremental: false
-
-Cette description peut-être *améliorée* pour mieux prendre en compte les données qui s'écartent de la prédiction linéaire.
-
-<img src="day1_intro_bayes-figure/unnamed-chunk-12-1.png" title="plot of chunk unnamed-chunk-12" alt="plot of chunk unnamed-chunk-12" style="display: block; margin: auto;" />
-
-Comparaison de modèles
+Exercice - The marbles bag
 ========================================================
 type: lineheight
 incremental: true
 
-Un ensemble de $N$ points peut être *exhaustivement* (sans erreur) décrit par une fonction polynomiale d'ordre $N-1$. Augmenter la complexité du modèle améliore donc la précision de notre description des données mais réduit la généralisabilité de ses prédictions (*bias-variance tradeoff*).
+Let's say we have a bag and that it contains four marbles. These marbles come in two colors: blue and white. We know that there are four marbles in the bag, but we don't know how many are of each color.
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-13-1.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" style="display: block; margin: auto;" />
-
-Nous avons besoin d'outils qui prennent en compte le rapport *qualité de la description* / *complexité*, c'est à dire la **parcimonie** des modèles (AIC, WAIC).
- 
-Inférence bayésienne
-========================================================
-type: lineheight
-incremental: true
-
-Dans ce cadre, pour chaque problème, nous allons suivre 3 étapes:
-
-- Construire le modèle (l'histoire des données): *likelihood* + *prior*
-- Mettre à jour grâce aux données (*updating*), calculer la probabilité *a posteriori*
-- Evaluer le modèle, *fit*, sensibilité, résumer les résultats, ré-ajuster
-
-> "Bayesian inference is really just counting and comparing of possibilities [...] in order to make good inference about what actually happened, it helps to consider everything that could have happened." -- McElreath (2015).
-
-Exercice - Problème du sac de billes
-========================================================
-type: lineheight
-incremental: true
-
-Imaginons que nous disposions d'un sac, contenant 4 billes. Ces billes peuvent être soit blanches, soit bleues. Nous savons qu'il y a précisémment 4 billes, mais nous ne connaissons pas le nombre de billes blanches, ou bleues.
-
-Nous savons cependant qu'il existe cinq possibilités (que nous considérerons comme nos *hypothèses*):
+We know that there are five possibilities (than we will call our *hypotheses*):
 
 > <p align = "center"> &#9898 &#9898 &#9898 &#9898</p>
 > <p align = "center"> &#128309 &#9898 &#9898 &#9898</p>
@@ -432,69 +301,63 @@ Nous savons cependant qu'il existe cinq possibilités (que nous considérerons c
 > <p align = "center">&#128309 &#128309 &#128309 &#9898</p>
 > <p align = "center">&#128309 &#128309 &#128309 &#128309</p>
 
-Exercice - Problème du sac de billes
+Exercice - The marbles bag
 ========================================================
 type: lineheight
 incremental: true
 
-Le but est de déterminer quelle combinaison serait la plus probable, **sachant certaines observations**. Imaginons que l'on tire trois billes à la suite, avec remise, et que l'on obtienne la séquence suivante:
+Our goal is to determine which hypothesis is the most plausible, given some **evidence** about the content of the bag. To obtain evidence, we can pull some marbles from the bag (with replacement). We did it three times, and obtained the following sequence:
 
 <p align = "center">&#128309 &#9898 &#128309</p>
 
-Cette séquence représente nos données. A partir de là, quelle **inférence** peut-on faire sur le contenu du sac ? En d'autres termes, que peut-on dire de la probabilité de chaque hypothèse ?
+This sequence represents some evidence about the content of the bag, in other words, our data. From there, what **inference** can we reasonably make about the content of the bag ? In other words, what can we say about the relative plausibility of each hypothesis ?
 
-> <p align = "center"> &#9898 &#9898 &#9898 &#9898</p>
-> <p align = "center"> &#128309 &#9898 &#9898 &#9898</p>
-> <p align = "center">&#128309 &#128309 &#9898 &#9898</p>
-> <p align = "center">&#128309 &#128309 &#128309 &#9898</p>
-> <p align = "center">&#128309 &#128309 &#128309 &#128309</p>
-
-Enumérer les possibilités
+Counting possibilities
 ========================================================
 type: lineheight
 incremental: false
 
-<p align = "center"> hypothèse: &#128309 &#9898 &#9898 &#9898 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; données: &#128309 </p>
+<p align = "center"> hypothesis: &#128309 &#9898 &#9898 &#9898 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; data: &#128309 </p>
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-14-1.png" title="plot of chunk unnamed-chunk-14" alt="plot of chunk unnamed-chunk-14" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-5-1.png" title="plot of chunk unnamed-chunk-5" alt="plot of chunk unnamed-chunk-5" style="display: block; margin: auto;" />
 
-Enumérer les possibilités
+Counting possibilities
 ========================================================
 type: lineheight
 incremental: false
 
-<p align = "center"> hypothèse: &#128309 &#9898 &#9898 &#9898 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; données: &#128309 &#9898</p>
+<p align = "center"> hypothesis: &#128309 &#9898 &#9898 &#9898 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; data: &#128309 &#9898</p>
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-15-1.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-6-1.png" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" style="display: block; margin: auto;" />
 
-Enumérer les possibilités
+Counting possibilities
 ========================================================
 type: lineheight
 incremental: false
 
-<p align = "center"> hypothèse: &#128309 &#9898 &#9898 &#9898 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; données: &#128309 &#9898 &#128309</p>
+<p align = "center"> hypothesis: &#128309 &#9898 &#9898 &#9898 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; data: &#128309 &#9898 &#128309</p>
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-16-1.png" title="plot of chunk unnamed-chunk-16" alt="plot of chunk unnamed-chunk-16" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-7-1.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" style="display: block; margin: auto;" />
 
-Enumérer les possibilités
+Counting possibilities
 ========================================================
 type: lineheight
 incremental: false
 
-<p align = "center"> hypothèse: &#128309 &#9898 &#9898 &#9898 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; données: &#128309 &#9898 &#128309 </p>
+<p align = "center"> hypothesis: &#128309 &#9898 &#9898 &#9898 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; data: &#128309 &#9898 &#128309 </p>
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-17-1.png" title="plot of chunk unnamed-chunk-17" alt="plot of chunk unnamed-chunk-17" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-8-1.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" style="display: block; margin: auto;" />
 
-Enumérer les possibilités
+Counting possibilities
 ========================================================
 incremental: false
 type: lineheight
 
-Sous cette hypothèse, $3$ chemins (sur $4^{3}=64$) conduisent au résultat obtenu. Qu'en est-il des autres hypothèses?
+Under this hypothesis, $3$ paths (out of $4^{3}=64$) are consistent with the data. What about the other hypotheses ?
 
 <p align = "center"> &#9898 &#9898 &#9898 &#128309 &emsp;&emsp;&emsp;&emsp; &#9898 &#128309 &#128309 &#128309 &emsp;&emsp;&emsp;&emsp; &#9898 &#9898 &#128309 &#128309 </p>
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-18-1.png" title="plot of chunk unnamed-chunk-18" alt="plot of chunk unnamed-chunk-18" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-9-1.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" style="display: block; margin: auto;" />
 
 Comparer les hypothèses
 ========================================================
@@ -503,7 +366,7 @@ type: lineheight
 
 <p align = "center"> &#128309 &#128309 &#128309 &#9898 </p>
 
-Au vu des données, cette hypothèse est la plus *probable* car c'est l'hypothèse qui maximise le nombre de manières possibles d'obtenir les données obtenues.
+Given our data, this hypothesis is the most *probable* because it's the one that **maximise** the possible ways of obtaining these data.
 
 <center>
 
@@ -516,8 +379,8 @@ Au vu des données, cette hypothèse est la plus *probable* car c'est l'hypothè
 </style>
 <table class="tg">
   <tr>
-    <th class="tg-gq9a">Hypothèse</th>
-    <th class="tg-gq9a">Façons d'obtenir les données</th>
+    <th class="tg-gq9a">Hypothesis</th>
+    <th class="tg-gq9a">Ways to produce the data</th>
   </tr>
   <tr>
     <td class="tg-gq9a"> <p> &#9898 &#9898 &#9898 &#9898 </p></td>
@@ -543,21 +406,23 @@ Au vu des données, cette hypothèse est la plus *probable* car c'est l'hypothè
 
 </center>
 
-Accumulation d'évidence
+Accumulating evidence
 ========================================================
 incremental: true
 type: lineheight
 
-Dans le cas précédent, nous avons considéré que toutes les hypothèses étaient équiprobables a priori (*principe d'indifférence*). Cependant, on pourrait avoir de l'information a priori, provenant de nos connaissances (des particularités des sacs de billes par exemple) ou de données antérieures.
+We previously considered that all hypotheses were a priori equiprobable ([principle of indifference](https://en.wikipedia.org/wiki/Principle_of_indifference)).
 
-Imaginons que nous tirions une nouvelle bille du sac, comment incorporer cette nouvelle donnée ?
+However, we could have a priori knowledge, either coming from our beliefs, from previous data or from knowledge about usual bags of this kind.
 
-Accumulation d'évidence
+Let's say we pull another marble out of the bag. How can we incorporate this new information into our previous analysis ?
+
+Accumulating evidence
 ========================================================
 incremental: false
 type: lineheight
 
-Il suffit d'appliquer la même stratégie que précédemment, et de mettre à jour le dernier compte en le multipliant par ces nouvelles données. *Yesterday's posterior is today's prior* (Lindley, 2000).
+We just have to apply the same strategy as previously. We can upate our previous counts by multiplying it by the new information. *Yesterday's posterior is today's prior* ([Lindley, 2000](http://www.phil.vt.edu/dmayo/personal_website/Lindley_Philosophy_of_Statistics.pdf)).
 
 <center>
 
@@ -571,10 +436,10 @@ Il suffit d'appliquer la même stratégie que précédemment, et de mettre à jo
 </style>
 <table class="tg">
   <tr>
-    <th class="tg-gq9a">Hypothèse</th>
-    <th class="tg-gq9a"><p>Façons de produire &#128309</p></th>
-    <th class="tg-baqh">Compte précédent</th>
-    <th class="tg-baqh">Nouveau compte</th>
+    <th class="tg-gq9a">Hypothesis</th>
+    <th class="tg-gq9a"><p>Ways to produce &#128309</p></th>
+    <th class="tg-baqh">Previous counts</th>
+    <th class="tg-baqh">New count</th>
   </tr>
   <tr>
     <td class="tg-gq9a"><p> &#9898 &#9898 &#9898 &#9898 </p></td>
@@ -610,12 +475,12 @@ Il suffit d'appliquer la même stratégie que précédemment, et de mettre à jo
 
 </center>
 
-Incorporer un prior
+Using prior information
 ========================================================
 incremental: false
 type: lineheight
 
-Supposons maintenant qu'un employé de l'usine de fabrication des billes nous dise que les billes bleues sont rares... Cet employé nous dit que pour chaque sac contenant 3 billes bleues, ils fabriquent deux sacs en contenant seulement deux, et trois sacs en contenant seulement une. Il nous apprend également que tous les sacs contiennent au moins une bille bleue et une bille blanche.
+Suppose that someone from the marble factory told us that blue marbles are rare. For every bag containing three blue marbles, they make two bags that only contain two blue marbles, and three bags that only contain one blue marble. He also told us that every bag has at least one marble of each color.
 
 <center>
 
@@ -629,10 +494,10 @@ Supposons maintenant qu'un employé de l'usine de fabrication des billes nous di
 </style>
 <table class="tg">
   <tr>
-    <th class="tg-gq9a">Hypothèse</th>
-    <th class="tg-gq9a"><p>Compte précédent</p></th>
-    <th class="tg-baqh">Prior usine</th>
-    <th class="tg-baqh">Nouveau compte</th>
+    <th class="tg-gq9a">Hypothesis</th>
+    <th class="tg-gq9a"><p>Previous counts</p></th>
+    <th class="tg-baqh">Factory count</th>
+    <th class="tg-baqh">New count</th>
   </tr>
   <tr>
     <td class="tg-gq9a"><p> &#9898 &#9898 &#9898 &#9898 </p></td>
@@ -668,25 +533,25 @@ Supposons maintenant qu'un employé de l'usine de fabrication des billes nous di
 
 </center>
 
-Des énumérations aux probabilités
-========================================================
-incremental: false
-type: lineheight
-
-La plausiblité d'une hypothèse après avoir observé certaines données est proportionnelle au nombre de façons qu'a cette hypothèse de produire les données observées, multiplié par sa plausibilité a priori.
-
-$$p(hypothesis|data)\propto p(data|hypothesis) \times p(hypothesis)$$
-
-Pour passer des *plausibilités* aux *probabilités*, il suffit de standardiser ces plausibilités pour que la somme des plausibilités de toutes les hypothèses possibles soit égale à $1$.
-
-$$p(hypothesis|data) = \frac{p(data|hypothesis) \times p(hypothesis)}{sum\ of\ products}$$
-
-Des énumérations aux probabilités
+From counts to probability
 ========================================================
 incremental: true
 type: lineheight
 
-Définissons $p$ comme la proportion de billes bleues.
+The plausibility of an hypothesis after seeing some data is proportional to the number of way this hypothesis can "produce" the data, muplitplied by its *a priori* plausibility.
+
+$$p(hypothesis|data)\propto p(data|hypothesis) \times p(hypothesis)$$
+
+Then, we construct probabilities by standardising thee plausibilities so that the sum of all plausibilities is equal to 1.
+
+$$p(hypothesis|data) = \frac{p(data|hypothesis) \times p(hypothesis)}{sum\ of\ products}$$
+
+From counts to probability
+========================================================
+incremental: true
+type: lineheight
+
+Let's define $p$ as the proportion of blue marbles.
 
 <center>
 
@@ -700,10 +565,10 @@ Définissons $p$ comme la proportion de billes bleues.
 </style>
 <table class="tg">
   <tr>
-    <th class="tg-gq9a">Hypothèse</th>
+    <th class="tg-gq9a">Hypothesis</th>
     <th class="tg-gq9a">p</th>
-    <th class="tg-baqh">Manières de produire les données</th>
-    <th class="tg-baqh">Plausibilité</th>
+    <th class="tg-baqh">Ways to produce the data</th>
+    <th class="tg-baqh">Plausibility</th>
   </tr>
   <tr>
     <td class="tg-gq9a"> &#9898 &#9898 &#9898 &#9898 </td>
@@ -749,29 +614,48 @@ ways / sum(ways)
 [1] 0.00 0.15 0.40 0.45 0.00
 ```
 
-Notations, terminologie
+Notations, terminology
 ========================================================
 incremental: false
 type: lineheight
 
-- $\theta$ un paramètre ou vecteur de paramètres (e.g., la proportion de billes bleues)
-- $\color{orangered}{p(x\vert \theta)}$ <span style="color:orangered"> la distribution de probabilité conditionnelle des données $x$ sachant le paramètre $\theta$. Une fois que la valeur de $x$ est connue, est vue comme la fonction de vraissemblance (*likelihood*) du paramètre $\theta$</span>
-- $\color{steelblue}{p(\theta)}$ <span style="color:steelblue"> la distribution de probabilité a priori de $\theta$</span>
-- $\color{purple}{p(\theta \vert x)}$ <span style="color:purple"> la distribution de probabilité a posteriori de $\theta$ (sachant $x$)</span>
-- $\color{green}{p(x)}$ <span style="color:green"> la distribution de probabilité marginale de $x$ (sur $\theta$)</span>
+- $\theta$ a parameter or vector of parameters (e.g., the proportion of blue marbles)
+- $\color{orangered}{p(x\vert \theta)}$ <span style="color:orangered"> the conditional probability distribution of the data $x$ given $\theta$. Once we know $x$, can be seen as the likelihood function of $\theta$</span>
+- $\color{steelblue}{p(\theta)}$ <span style="color:steelblue"> the a priori probability distribution of $\theta$</span>
+- $\color{purple}{p(\theta \vert x)}$ <span style="color:purple"> the a posteriori probability distribution of $\theta$ (given $x$)</span>
+- $\color{green}{p(x)}$ <span style="color:green"> the marginal probability of $x$ (over $\theta$)</span>
 
 <br>
 
 $$\color{purple}{p(\theta \vert x)} = \dfrac{\color{orangered}{p(x\vert \theta)} \color{steelblue}{p(\theta)}}{\color{green}{p(x)}} = \dfrac{\color{orangered}{p(x\vert \theta)} \color{steelblue}{p(\theta)}}{\color{green}{\sum\limits_{\theta}p(x|\theta)p(\theta)}} = \dfrac{\color{orangered}{p(x\vert \theta)} \color{steelblue}{p(\theta)}}{\color{green}{\int\limits_{\theta}p(x|\theta)p(\theta)\mathrm{d}x}} \propto \color{orangered}{p(x\vert \theta)} \color{steelblue}{p(\theta)}$$
 
-Loi de probabilité, cas discret
+Bayesian inference
 ========================================================
 type: lineheight
 incremental: true
 
-Une fonction de masse (*probability mass function*, ou *PMF*) est une fonction qui attribue une probabilité à chaque valeur d'une variable aléatoire. Exemple de la distribution binomiale pour une pièce non biaisée ($\theta=0.5$).
+For each problem, we will follow these three steps:
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-20-1.png" title="plot of chunk unnamed-chunk-20" alt="plot of chunk unnamed-chunk-20" style="display: block; margin: auto;" />
+- Building the model (the history of the data): likelihood + priors
+- Updating the model with the information contained in the data, compute the posterior probability
+- Evaluate the model, its fit, its assumptions, summarising the results, readjusting the model
+
+> *Bayesian inference is really just counting and comparing of possibilities [...] in order to make good inference about what actually happened, it helps to consider everything that could have happened.* ([McElreath, 2015](http://xcelab.net/rm/statistical-rethinking/)).
+
+Probability reminders...
+========================================================
+type: center
+incremental: false
+
+
+Probability distributions
+========================================================
+type: lineheight
+incremental: true
+
+A **probability mass function** (PMF) is a function that gives the probability that a discrete random variable is exactly equal to some value. Let's consider as an example the binomial distribution of a non biased coin ($\theta = 0.5$) for ten flips.
+
+<img src="day1_intro_bayes-figure/unnamed-chunk-11-1.png" title="plot of chunk unnamed-chunk-11" alt="plot of chunk unnamed-chunk-11" style="display: block; margin: auto;" />
 
 
 ```r
@@ -782,14 +666,14 @@ dbinom(x = 0:10, size = 10, prob = 0.5) %>% sum
 [1] 1
 ```
 
-Cas continu
+Probability distributions
 ========================================================
 type: lineheight
 incremental: true
 
-Une densité de probabilité (*probability density function*, ou *PDF*), est une fonction qui permet de représenter une loi de probabilité sous forme d'intégrales.
+A **probability density function** (PDF), or *density*, is a function that is used to specify the probability of the random variable falling within a particular range of values, as opposed to taking on any one value. This probability is given by the integral of this variable’s PDF over that range.
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-22-1.png" title="plot of chunk unnamed-chunk-22" alt="plot of chunk unnamed-chunk-22" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-13-1.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" style="display: block; margin: auto;" />
 
 
 ```r
@@ -800,21 +684,21 @@ integrate(dnorm, -Inf, Inf, mean = 100, sd = 15)
 1 with absolute error < 1.3e-06
 ```
 
-Aparté, qu'est-ce qu'une intégrale ?
+But... what is an integral ?
 ========================================================
 type: lineheight
 incremental: true
 
 Une intégrale correspond à la **surface** (aire géométrique) délimitée par la représentation graphique d'une fonction, *l'aire sous la courbe*. Une distribution est dite **impropre** si son intégrale n'est pas égale à un nombre fini (e.g., $+ \infty$), et **normalisée** si son intégrale est égale à 1.
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-24-1.png" title="plot of chunk unnamed-chunk-24" alt="plot of chunk unnamed-chunk-24" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-15-1.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" style="display: block; margin: auto;" />
 
-Aparté, qu'est-ce qu'une intégrale ?
+But... what is an integral ?
 ========================================================
 type: lineheight
 incremental: true
 
-<img src="day1_intro_bayes-figure/unnamed-chunk-25-1.png" title="plot of chunk unnamed-chunk-25" alt="plot of chunk unnamed-chunk-25" style="display: block; margin: auto;" />
+<img src="day1_intro_bayes-figure/unnamed-chunk-16-1.png" title="plot of chunk unnamed-chunk-16" alt="plot of chunk unnamed-chunk-16" style="display: block; margin: auto;" />
 
 L'intégrale de $f(x)$ sur l'intervalle [90 ; 96] vaut: $\int_{90}^{96} f(x) \ \mathrm{d}x = 0.142$.
 
@@ -1200,7 +1084,7 @@ Our probabilistic intuitions are usually very bad. Instead of relying on them to
 
 In other words: "Don't be clever" (McElreath, 2015).
 
-<img src="morale.gif" title="plot of chunk unnamed-chunk-36" alt="plot of chunk unnamed-chunk-36" width="600px" style="display: block; margin: auto;" />
+<img src="morale.gif" title="plot of chunk unnamed-chunk-27" alt="plot of chunk unnamed-chunk-27" width="600px" style="display: block; margin: auto;" />
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script>

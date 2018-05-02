@@ -208,3 +208,15 @@ h1, h2, h3 {
     line-height: 50%;
 }
 
+/* ############################################
+# centered transition slide
+#################################### */
+
+.center h3 {
+    margin: 0;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-style: italic;
+}
