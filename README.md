@@ -4,8 +4,8 @@
 
 ### Option 1
 
-+ Downloading the whole repository (by cliking on "download" on the green icon)
-+ Clicking on the .html file. This should open the slides in a new window of your web browser (this should normally with at least, Safari and Chrome).
++ Download the whole repository (by cliking on "download" on the green icon)
++ Click on the .html file. This should open the slides in a new window of your web browser (and should normally work with Safari and Chrome).
 
 ### Option 2
 
@@ -21,4 +21,4 @@ Click on the following links to see the slides online
 
 ## Acknowledgements
 
-This course has been funded by the Flemish government and the doctoral schools of UGent (grant number XXXX)...
+This course has been funded by the Flemish government and the doctoral schools of UGent.
