@@ -8,7 +8,7 @@ width: 1600
 height: 1000
 css: css-file.css
 
-Hypothesis testing
+Null Hypothesis Significance Testing (NHST)
 ========================================================
 incremental: true
 type: lineheight
@@ -22,30 +22,30 @@ Let's say we are interested in height differences between women and men...
 
 
 ```r
-x <- rnorm(100, 175, 10) # 100 men heights
-y <- rnorm(100, 170, 10) # 100 women heights
+men <- rnorm(100, 175, 10) # 100 men heights
+women <- rnorm(100, 170, 10) # 100 women heights
 ```
 
 
 ```r
-t.test(x, y)
+t.test(men, women)
 ```
 
 ```
 
 	Welch Two Sample t-test
 
-data:  x and y
-t = 3.1094, df = 193.84, p-value = 0.002157
+data:  men and women
+t = 3.8455, df = 195.5, p-value = 0.0001627
 alternative hypothesis: true difference in means is not equal to 0
 95 percent confidence interval:
- 1.762509 7.876731
+ 2.716070 8.434909
 sample estimates:
 mean of x mean of y 
- 175.5725  170.7529 
+ 177.0399  171.4644 
 ```
 
-Null hypothesis Significance Testing (NHST)
+Null Hypothesis Significance Testing (NHST)
 ========================================================
 incremental: true
 type: lineheight
@@ -55,13 +55,13 @@ We are going to simulate t-values computed on samples generated under the assump
 
 ```r
 nSims <- 1e4 # number of simulations
-t <- rep(NA, nSims) # initialises t vector
+t <- rep(NA, nSims) # initialising an empty vector
 
 for (i in 1:nSims) {
     
-    xx <- rnorm(100, 170, 10)
-    yy <- rnorm(100, 170, 10)
-    t[i] <- t.test(xx, yy)$statistic
+    men2 <- rnorm(100, 170, 10)
+    women2 <- rnorm(100, 170, 10)
+    t[i] <- t.test(men2, women2)$statistic
     
 }
 ```
@@ -71,7 +71,7 @@ for (i in 1:nSims) {
 t <- replicate(nSims, t.test(rnorm(100, 170, 10), rnorm(100, 170, 10) )$statistic)
 ```
 
-Null hypothesis Significance Testing (NHST)
+Null Hypothesis Significance Testing (NHST)
 ========================================================
 incremental: false
 type: lineheight
@@ -86,62 +86,82 @@ data.frame(t = t) %>%
 
 <img src="day1_model_comparison-figure/unnamed-chunk-5-1.png" title="plot of chunk unnamed-chunk-5" alt="plot of chunk unnamed-chunk-5" style="display: block; margin: auto;" />
 
-Null hypothesis Significance Testing (NHST)
+Null Hypothesis Significance Testing (NHST)
 ========================================================
 incremental: false
 type: lineheight
 
 
 ```r
-data.frame(x = c(-5, 5) ) %>%
-    ggplot(aes(x = x) ) +
-    stat_function(fun = dt, args = list(df = t.test(x, y)$parameter), size = 1.5) +
-    theme_bw(base_size = 20)
+data.frame(t = c(-5, 5) ) %>%
+    ggplot(aes(x = t) ) +
+    stat_function(fun = dt, args = list(df = t.test(men, women)$parameter), size = 1.5) +
+    theme_bw(base_size = 20) + ylab("density")
 ```
 
 <img src="day1_model_comparison-figure/unnamed-chunk-6-1.png" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" style="display: block; margin: auto;" />
 
-Null hypothesis Significance Testing (NHST)
+Null Hypothesis Significance Testing (NHST)
 ========================================================
 incremental: false
 type: lineheight
 
 
 ```r
-alpha <- 0.05
-abs(qt(alpha / 2, df = t.test(x, y)$parameter) ) # two-sided critical t-value
+alpha <- .05
+abs(qt(alpha / 2, df = t.test(men, women)$parameter) ) # two-sided critical t-value
 ```
 
 ```
-[1] 1.972018
+[1] 1.972173
 ```
 
 <img src="day1_model_comparison-figure/unnamed-chunk-8-1.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" style="display: block; margin: auto;" />
+
+Null Hypothesis Significance Testing (NHST)
+========================================================
+incremental: false
+type: lineheight
+
+
+```r
+tobs <- t.test(men, women)$statistic # observed t-value
+tobs %>% as.numeric
+```
+
+```
+[1] 3.845475
+```
+
+<img src="day1_model_comparison-figure/unnamed-chunk-10-1.png" title="plot of chunk unnamed-chunk-10" alt="plot of chunk unnamed-chunk-10" style="display: block; margin: auto;" />
 
 P-values
 ========================================================
 incremental: true
 type: lineheight
 
-A p-value is simply a tail area (an integral), under the distribution of test statistics under the null hypothesis... It gives the probability of observing the data we observed (or more extreme data), **given that the null hypothesis is true**.
+A p-value is simply a tail area (an integral), under the distribution of test statistics under the null hypothesis. It gives the probability of observing the data we observed (or more extreme data), **given that the null hypothesis is true**.
 
 $$p[\mathbf{t}(\mathbf{x}^{\text{rep}}|H_{0}) \geq t(x)]$$
 
 
 ```r
-t.test(x, y)$p.value
+t.test(men, women)$p.value
 ```
 
 ```
-[1] 0.00208192
+[1] 0.0001627272
 ```
 
 ```r
-2 * integrate(dt, abs(t.test(x, y)$statistic), Inf, df = t.test(x, y)$parameter)$value
+tvalue <- abs(t.test(men, women)$statistic)
+df <- t.test(men, women)$parameter
+
+2 * integrate(dt, tvalue, Inf, df = df)$value
 ```
 
 ```
-[1] 0.002081921
+[1] 0.0001627272
 ```
 
 Model comparison
@@ -164,23 +184,7 @@ Overfitting
 incremental: false
 type: lineheight
 
-
-```r
-ppnames <- c("afarensis","africanus","habilis","boisei",
-        "rudolfensis","ergaster","sapiens")
-brainvolcc <- c(438, 452, 612, 521, 752, 871, 1350)
-masskg <- c(37.0, 35.5, 34.5, 41.5, 55.5, 61.0, 53.5)
-
-d <- data.frame(species = ppnames, brain = brainvolcc, mass = masskg)
-
-d %>%
-    ggplot(aes(x = mass, y = brain, label = species) ) +
-    geom_point() +
-    ggrepel::geom_label_repel(hjust = 0, nudge_y = 50, size = 5) +
-    theme_bw(base_size = 20) + xlim(30, 70)
-```
-
-<img src="day1_model_comparison-figure/unnamed-chunk-10-1.png" title="plot of chunk unnamed-chunk-10" alt="plot of chunk unnamed-chunk-10" style="display: block; margin: auto;" />
+<img src="day1_model_comparison-figure/unnamed-chunk-12-1.png" title="plot of chunk unnamed-chunk-12" alt="plot of chunk unnamed-chunk-12" style="display: block; margin: auto;" />
 
 Overfitting
 ========================================================
@@ -222,7 +226,7 @@ Overfitting
 incremental: false
 type: lineheight
 
-<img src="day1_model_comparison-figure/unnamed-chunk-13-1.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" style="display: block; margin: auto;" />
+<img src="day1_model_comparison-figure/unnamed-chunk-15-1.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" style="display: block; margin: auto;" />
 
 Underfitting
 ========================================================
@@ -239,7 +243,7 @@ v_{i} &\sim \mathrm{Normal}(\mu_{i}, \sigma) \\
 mod1.7 <- lm(brain ~ 1, data = d)
 ```
 
-<img src="day1_model_comparison-figure/unnamed-chunk-15-1.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" style="display: block; margin: auto;" />
+<img src="day1_model_comparison-figure/unnamed-chunk-17-1.png" title="plot of chunk unnamed-chunk-17" alt="plot of chunk unnamed-chunk-17" style="display: block; margin: auto;" />
 
 Information theory
 ========================================================
@@ -421,11 +425,15 @@ beta <- coef(mod1.8)[2]
 
 # computing the log-likelihood
 
-ll <- sum(dnorm(
-        d$brain,
-        mean = alpha + beta * d$mass.,
-        sd = sd(residuals(mod1.8) ),
-        log = TRUE) )
+ll <-
+    sum(
+        dnorm(
+            d$brain,
+            mean = alpha + beta * d$mass.,
+            sd = sd(residuals(mod1.8) ),
+            log = TRUE
+            )
+        )
 
 # computing the deviance
 
@@ -472,7 +480,7 @@ type: lineheight
 
 Another way to fight overfitting is to use skeptical priors that will prevent the model to learn *too much* from the data. In other words, we can use a stronger prior in order to diminish the weight of the data.
 
-<img src="day1_model_comparison-figure/unnamed-chunk-23-1.png" title="plot of chunk unnamed-chunk-23" alt="plot of chunk unnamed-chunk-23" style="display: block; margin: auto;" />
+<img src="day1_model_comparison-figure/unnamed-chunk-25-1.png" title="plot of chunk unnamed-chunk-25" alt="plot of chunk unnamed-chunk-25" style="display: block; margin: auto;" />
 
 Regularisation and cross-validation
 ========================================================
@@ -485,7 +493,7 @@ type: lineheight
 
 How to decide on the widht of a prior ? How to know whether a prior is *sufficiently regularising* or not ? We can divide the dataset in two parts (training and test) in order to compare different priors. We can then choose the prior that provides the lower **out-of-sample deviance**. We call this strategy **cross-validation**.
 
-Out-of-sample deviane and information criteria
+Out-of-sample deviance and information criteria
 ========================================================
 incremental: false
 type: lineheight
@@ -529,7 +537,9 @@ It is convenient to normalise the model likelihoods such that they sum to 1 and 
 
 $$w_{i} = \dfrac{exp(-\Delta_{i}/2)}{\sum_{r = 1}^{R}exp(-\Delta_{r}/2)}$$
 
-The weights $w_{i}$ are useful as the *weihgt of evidence* in favor of model $g_{i}$ as being the actual best model in the set of models, in an information-theretical sense (i.e., the closest model to the truth).
+The weights $w_{i}$ are useful as the *weihgt of evidence* in favor of model $g_{i}$ as being the actual best model in the set of models, in an information-theretical sense (i.e., the closest model to the *truth*).
+
+From there, we can compute evidence ratios (ERs) as the ratios of weights: $ER_{ij} = \frac{w_{i}}{w_{j}}$, where $w_{i}$ and $w_{j}$ are the Akaike weights of models $i$ and $j$, respectively.
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script>

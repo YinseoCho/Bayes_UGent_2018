@@ -274,7 +274,7 @@ incremental: true
 
 - (theoretical hypotheses) are not equivalent to (statistical) models, there is no one-to-one mapping between the two
 
-> "Models are devices that connect theories to data. A model is an instanciation of a theory as a set of probabilistic statements" -- (Rouder et al., 2016)
+> *Models are devices that connect theories to data. A model is an instanciation of a theory as a set of probabilistic statements* ([Rouder et al., 2016](https://www.collabra.org/articles/10.1525/collabra.28/)).
 
 - our hypothese are mostly continuous, probabilistic
 - observation errors
@@ -452,7 +452,7 @@ line.polar(c(0, 2), pi / 2 + (2 / 3) * pi, lwd = 1)
 line.polar(c(0, 2), pi / 2 + 2 * (2 / 3) * pi, lwd = 1)
 ```
 
-Comparer les hypothèses
+Model comparison
 ========================================================
 incremental: false
 type: lineheight
@@ -780,7 +780,7 @@ But... what is an integral ?
 type: lineheight
 incremental: true
 
-Une intégrale correspond à la **surface** (aire géométrique) délimitée par la représentation graphique d'une fonction, *l'aire sous la courbe*. Une distribution est dite **impropre** si son intégrale n'est pas égale à un nombre fini (e.g., $+ \infty$), et **normalisée** si son intégrale est égale à 1.
+An integral corresponds to the **surface** delimited by the graphical representation of a function. In other words, it corresponds to the area under the curve. A distribution is said to be improper if its integral is not equal to a finite number (e.g., $+ \infty$), and normalised (or proper) if its integral is equal to 1.
 
 ```{r message = FALSE, echo = FALSE, fig.align = "center", fig.width = 8, fig.height = 6}
 cord.x <- c(90, seq(90, 96, 0.01), 96) 
@@ -797,8 +797,8 @@ data.frame(x = c(0, 200) ) %>%
         data = data.frame(cord.x, cord.y),
         aes(cord.x, cord.y)
         ) +
-        theme_bw(base_size = 20) +
-        xlab("QI") + ylab("")
+    theme_bw(base_size = 20) +
+    xlab("QI") + ylab("")
 ```
 
 But... what is an integral ?
@@ -818,24 +818,22 @@ data.frame(x = c(0, 200) ) %>%
         data = data.frame(cord.x, cord.y),
         aes(cord.x, cord.y)
         ) +
-        theme_bw(base_size = 20) +
-        xlab("QI") + ylab("")
+    theme_bw(base_size = 20) +
+    xlab("QI") + ylab("")
 ```
 
-L'intégrale de $f(x)$ sur l'intervalle [90 ; 96] vaut: $\int_{90}^{96} f(x) \ \mathrm{d}x = 0.142$.
+The integral of $f(x)$ on the [90 ; 96] interval is equal to $\int_{90}^{96} f(x) \ \mathrm{d}x = 0.142$.
 
 ```{r eval = TRUE, echo = TRUE, fig.align = "center", fig.width = 8, fig.height = 6}
 integrate(dnorm, 90, 96, mean = 100, sd = 15)
 ```
 
-Probabilité conjointe
+Joint probability
 ========================================================
 incremental: false
 type: lineheight
 
 ```{r, message = FALSE, echo = TRUE} 
-library(magrittr)
-
 data(HairEyeColor) # data adapted from Snee (1974)
 
 cont <- apply(HairEyeColor, c(1, 2), sum) %>% t 
@@ -843,9 +841,9 @@ cont <- round(cont / sum(cont), 2)
 cont
 ```
 
-Dans chaque cellule, on trouve la **probabilité conjointe** d'avoir telle couleur de cheveux **ET** telle couleur d'yeux, qui s'écrit $p(c,y)=p(y,c)$.
+In each cell we find the **joint probability** to have both a specific hair colour AND an eye colour. The joint probability is written as: $p(h, e) = p(e, h)$.
 
-Probabilité marginale
+Maginal probability
 ========================================================
 incremental: false
 type: lineheight
@@ -856,9 +854,9 @@ rownames(cont2) <- row.names(cont)
 cont2
 ```
 
-On peut aussi s'intéresser à la probabilité d'avoir des yeux bleus, de manière générale. Il s'agit de la probabilité **marginale** de l'événement *yeux bleus*, qui s'obtient par la somme de toutes les probabilités jointes impliquant l'évenement *yeux bleus*. Elle s'écrit $p(y)=\sum\limits_{c}p(y|c)p(c)$.
+We could also be interested in the probability of having blue eyes in average. We call it the **marginal probability** of the event *blues eyes*. It is obtained by summing all the joint probabilities involving the event *blue eyes*: $p(e) = \sum\limits_{h}p(e|h)p(h)$.
 
-Probabilité marginale
+Maginal probability
 ========================================================
 incremental: false
 type: lineheight
@@ -869,39 +867,41 @@ rownames(cont3) <- c(row.names(cont2), "marginal_hair")
 cont3
 ```
 
-On peut bien entendu aussi s'intéresser aux probabilités des couleurs de cheveux, de manière générale. Elle s'écrit $p(c)=\sum\limits_{y}p(c|y)p(y)$.
+Similary, we can compute the marginal probaility of having a particular hair colour, as $p(h) = \sum\limits_{e}p(h|e)p(e)$.
 
-Probabilité conditionnelle
+Conditional probability
 ========================================================
 incremental: true
 type: lineheight
+
+We could also be interested in the probability of a person having blond eyes, **given that** she has blue eyes.
 
 ```{r, echo = FALSE, eval = TRUE} 
-cont3["Blue",]
+cont3["Blue", ]
 ```
 
-On pourrait aussi s'intéresser à la probabilité qu'une personne ait les cheveux blonds, **sachant** qu'elle a les yeux bleus. Il s'agit d'une probabilité **conditionnelle**, et s'écrit $p(c|y)$. Cette probabilité conditionnelle peut se ré-écrire: $p(c|y)= \frac{p(c,y)}{p(y)}$.
+This is a **conditional probability** $p(h|e)$. This conditional probability can be rewrtittent as $p(h|e) =  \frac{p(h, e)}{p(e)}$.
 
 ```{r, echo = TRUE, eval = TRUE} 
-cont3["Blue","Blond"] / cont3["Blue","marginal_eye"]  
+cont3["Blue", "Blond"] / cont3["Blue", "marginal_eye"]  
 ```
 
-Probabilité conditionnelle, règle du produit
+Conditional probability, product rule
 ========================================================
 incremental: true
 type: lineheight
 
-On remarque dans le cas précédent que $p(blonds|bleus)$ **n'est pas nécessairement égal** à $p(bleus|blonds)$.
+We notice that, in the previous situation, $p(hairs = blond|eyes = blue)$ **is not necessarily equal to** $p(eyes = blue|hairs = blond)$.
 
-Autre exemple: la probabilité de mourir sachant qu'on a été attaqué par un requin n'est pas la même que la probabilité d'avoir été attaqué par un requin, sachant qu'on est mort.
+As an example, the probability of dying given that we have been attacked by a white shark is not the same as the probability of having been attacked by a shark, given that we are dead.
 
-De la même manière, $p(data|H_{0}) \neq p(H_{0}|data)$ -> [*"confusion of the inverse"*](https://en.wikipedia.org/wiki/Confusion_of_the_inverse).
+In a similar way, $p(data|H_{0}) \neq p(H_{0}|data)$ -> [*"confusion of the inverse"*](https://en.wikipedia.org/wiki/Confusion_of_the_inverse).
 
-A partir des axiomes de Kolmogorov (cf. début du cours), et des définitions précédentes des probabilités conjointes, marginales, et conditionnelles, découle la **règle du produit**:
+From the Kolmogorov axioms (cf beginning of this course), and the definitions of the previous slides, we can derive the **product rule**:
 
-$$p(a,b)=p(b)p(a|b)=p(a)p(b|a)$$
+$$p(a, b) = p(b)p(a|b) = p(a)p(b|a)$$
 
-Dérivation du théorème de Bayes
+Deriving Bayes theorem
 ========================================================
 incremental: true
 type: lineheight
@@ -916,63 +916,67 @@ $$p(x|y) = \dfrac{p(y|x)p(x)}{p(y)}$$
 
 $$p(hypothesis|data) = \frac{p(data|hypothesis) \times p(hypothesis)}{sum\ of\ products}$$
 
-Exemple - Diagnostique médical (Gigerenzer, 2002)
+Application example
+========================================================
+type: center
+incremental: false
+
+
+Medical diagnosis (Gigerenzer, 2002)
 ========================================================
 incremental: true
 type: lineheight
 
-- Chez les femmes âgées de 40-50 ans, sans antécédents familiaux et sans symptômes, la probabilité d'avoir un cancer du sein est de .008.
+- In women between 40 and 50 years, without family history and without symptoms, the probability of having a breast cancer is .008.
 
-- Propriétés de la mammographie:
-  - Si une femme a un cancer du sein, la probabilité d'avoir un résultat positif est de .90
-  - Si une femme n'a pas de cancer du sein, la probabilité d'avoir un résultat positif est de .07
+- Properties of the mammography
+  - If a woman has a breast cancer, the probability of obtaining a positive result is .90 (sensitivity)
+  - If a woman does not have a breast cancer, the probability of obtaining a positive result is .07 (1-specificity)
 
-- Imaginons qu'une femme passe une mammographie, et que le test est positif. Que doit-on **inférer** ? Quelle est la probabilité que cette femme ait un cancer du sein ?
-
-Logique du Maximum Likelihood
-========================================================
-incremental: true
-type: lineheight
-
-- Une approche générale de l'estimation de paramètre
-- Les paramètres **gouvernent** les données, les données **dépendent** des paramètres
-  - Sachant certaines valeurs des paramètres, nous pouvons calculer la **probabilité conditionelle** des données observées
-  - Le résultat de la mammographie (i.e., les données) dépend de la présence / absence d'un cancer du sein (i.e., le paramètre)
-- L'approche par *maximum likelihood* (ML) pose la question: "*Quelles sont les valeurs du paramètre qui rendent les données observées les plus probables ?*"
+- Let's ray a randomly picked woman passes the test and gets a positive result. What should we infer ? What is the probability of this woman having a breast cancer ?
 
 Maximum Likelihood
 ========================================================
 incremental: true
 type: lineheight
 
-- Spécifier la probabilité conditionnelle des données $p(x|\theta)$
-- Quand on le considère comme fonction de $\theta$, on parle de **likelihood**: $L(\theta|x)=p(x|\theta)$
-- L'approche par ML consiste donc à maximiser cette fonction, en utilisant les valeurs (connues) de $x$
+- The maximum likelihood approach is a general approach of parameter estimation
 
-Probabilité conditionnelle
+- One of the main idea is that the parameters have a fixed but unknown value, and that data depend on these parameters
+
+- Given certain parameters values, we can compute the **conditional probability** of the data
+
+- The maximum likelihood (ML) approach ask the following question: what are the parameters values that maximise, i.e., that make the observed data the most probable ?
+
+- When we consider it as a function of $\theta$, we talk about the **likelihood** function: $L(\theta|x) = p(x|\theta)$
+
+- The ML approach then consists in maximising this function (i.e., finding its maximum) by using the known values of $x$ (i.e., the data)
+
+Conditional probabilities...
 ========================================================
 incremental: true
 type: lineheight
 
-- Si une femme a un cancer du sein, la probabilité d'obtenir un résultat positif est de .90
-  - $p(Mam=+|Cancer=+)=.90$ 
-  - $p(Mam=-|Cancer=+)=.10$
+- If a woman has a breast cancer, the probability of obtaining a positive result is .90
+  - $p(mam=+|cancer=+)=.90$ 
+  - $p(mam=-|cancer=+)=.10$
   
-- Si une femme n'a pas de cancer du sein, la probabilité d'obtenir un résultat positif est de .07
-  - $p(Mam=+|Cancer=-)=.07$ 
-  - $p(Mam=-|Cancer=-)=.93$
+- If a woman does not have a breast cancer, the probability of obtaining a positive result is .07
+  - $p(mam=+|cancer=-)=.07$ 
+  - $p(mam=-|cancer=-)=.93$
 
-Diagnostique médical, maximum likelihood
+Maximum Likelihood
 ========================================================
 incremental: true
 type: lineheight
 
-- Une femme passe une mammographie, le résultat est positif...
-  - $p(Mam=+|Cancer=+)=.90$ 
-  - $p(Mam=+|Cancer=-)=.07$
+- A randomly picked woman gets a positive result...
+  - $p(mam=+|cancer=+)=.90$ 
+  - $p(mam=+|cancer=-)=.07$
   
-- ML: quelle est la valeur de *Cancer* qui **maximise** $Mam=+$ ?
-  - $p(Mam=+|Cancer=+)=.90$ 
+- The Maximum Likelihood approach asks the following quesiton: what is the value of *cancer* that **maximises** the probability of having a positive result (i.e., $Mam = +$) ?
+  - $p(mam=+|cancer=+)=.90$
+  - ~~$p(mam=+|cancer=-)=.07$~~
 
 ========================================================
 
@@ -982,20 +986,25 @@ type: lineheight
 
 <center>*Wait a minute...*</center>
 
-Diagnostique médical, fréquences naturelles
+Natural frequencies
 ========================================================
 incremental: true
 type: lineheight
 
-- Considérons 1000 femmes âgées de 40 à 50 ans, sans antécédents familiaux et sans symptômes de cancer
-  - 8 femmes sur 1000 ont un cancer
-- On réalise une mammographie
-  - Sur les 8 femmes ayant un cancer, 7 auront un résultat positif
-  - Sur les 992 femmes restantes, 69 auront un résultat positif
-- Une femme passe une mammographie, le résultat est positif
-- Que devrait-on **inférer** ?
+Let's summarise the situation.
 
-Diagnostique médical, fréquences naturelles
+- Let's consider 1000 women aged between 40 and 50 years, without family history of cancer or any syptoms
+  - 8 woment out of 1000 have a cancer
+
+- We do a mammography
+  - On the 8 women having a cancer, we can expect 7 of them to have a positive result
+  - On the 992 other women, 69 will have a positive result
+  
+- A randomly picked womand gets a positive result...
+
+- What should we infer ?
+
+Natural frequencies
 ========================================================
 incremental: true
 type: lineheight
@@ -1006,73 +1015,75 @@ type: lineheight
 
 <br>
 
-$$p(Cancer=+|Mam=+)=\frac{7}{7+69}=\frac{7}{76}\approx.09$$
+$$p(cancer = + | mam = +) = \frac{7}{7 + 69} = \frac{7}{76} \approx .09$$
 
-Diagnostique médical, théorème de Bayes
+Using Bayes theorem
 ========================================================
 incremental: true
 type: lineheight
 
 $$\color{purple}{p(\theta \vert x)} = \dfrac{\color{orangered}{p(x\vert \theta)} \color{steelblue}{p(\theta)}}{\color{green}{p(x)}}$$
 
-$\color{steelblue}{p(\theta)}$ <span style="color:steelblue"> la probabilité *a priori* de $\theta$: tout ce qu'on sait de $\theta$ avant d'observer les données. Par exemple: $p(Cancer=+)=.008$ et $p(Cancer=-)=.992$.</span>
+$\color{steelblue}{p(\theta)}$ <span style="color:steelblue"> is the prior probability of $\theta$: everything we know about $\theta$ before to observe any data. For instance: $p(cancer = +) = .008$ and $p(cancer = -) = .992$.</span>
 
 ```{r, echo = TRUE}
 prior <- c(0.008, 0.992)
 ```
 
-Diagnostique médical, théorème de Bayes
+Using Bayes theorem
 ========================================================
 incremental: true
 type: lineheight
 
 $$\color{purple}{p(\theta \vert x)} = \dfrac{\color{orangered}{p(x\vert \theta)} \color{steelblue}{p(\theta)}}{\color{green}{p(x)}}$$
 
-$\color{orangered}{p(x\vert \theta)}$ <span style="color:orangered"> probabilité conditionnelle des données ($x$) sachant le paramètre ($\theta$), qu'on appelle aussi la *likelihood* (*ou fonction de vraissemblance*) du paramètre ($\theta$).</span>
+$\color{orangered}{p(x\vert \theta)}$ <span style="color:orangered"> is the conditional probability of the data $x$ given the parameter $\theta$,  that we also call the likelihood function of $\theta$.</span>
 
 ```{r, echo = TRUE}
 like <- rbind(c(0.9, 0.1), c(0.07, 0.93) ) %>% data.frame
-colnames(like) <- c("Mam+", "Mam-")
-rownames(like) <- c("Cancer+", "Cancer-")
+colnames(like) <- c("mam+", "mam-")
+rownames(like) <- c("cancer+", "cancer-")
 like
 ```
 
-Diagnostique médical, théorème de Bayes
+Using Bayes theorem
 ========================================================
 incremental: true
 type: lineheight
 
 $$\color{purple}{p(\theta \vert x)} = \dfrac{\color{orangered}{p(x\vert \theta)} \color{steelblue}{p(\theta)}}{\color{green}{p(x)}}$$
 
-<span style="color:green"> $p(x)$ la probabilité marginale de $x$ (sur $\theta$). Sert à normaliser la distribution.</span>
+<span style="color:green"> $p(x)$ is the marginal probability of the data $x$ (over $\theta$). Aims to normalise the distribution.</span>
 
-$$\color{green}{p(x)=\sum\limits_{\theta}p(x|\theta)p(\theta)}$$
+$$\color{green}{p(x) = \sum\limits_{\theta}p(x|\theta)p(\theta)}$$
 
 ```{r, echo = TRUE}
-(marginal <- sum(like$"Mam+" * prior) )
+(marginal <- sum(like$"mam+" * prior) )
 ```
 
-Diagnostique médical, théorème de Bayes
+Using Bayes theorem
 ========================================================
 incremental: true
 type: lineheight
 
 $$\color{purple}{p(\theta \vert x)} = \dfrac{\color{orangered}{p(x\vert \theta)} \color{steelblue}{p(\theta)}}{\color{green}{p(x)}}$$
 
-$\color{purple}{p(\theta \vert x)}$ <span style="color:purple"> la probabilité a posteriori de $\theta$ sachant $x$, c'est à dire ce qu'on sait de $\theta$ après avoir pris connaissance de $x$.</span>
+$\color{purple}{p(\theta \vert x)}$ <span style="color:purple"> is the posterior probability of $\theta$ given the data $x$. It represents everything we know about $\theta$ after observing the data $x$.</span>
 
 ```{r, echo = TRUE}
-(posterior <- (like$"Mam+" * prior ) / marginal )
+(posterior <- (like$"mam+" * prior ) / marginal )
 ```
 
-L'inférence bayésienne comme mise à jour probabiliste des connaissances
+Bayesian inference as knowledge updating
 ========================================================
 incremental: true
 type: lineheight
 
-Avant de passer le mammogramme, la probabilité qu'une femme tirée au sort ait un cancer du sein était de $p(Cancer)=.008$ (*prior*). Après un résultat positif, cette probabilité est devenue $p(Cancer|Mam+)=.09$ (*posterior*). Ces probabilités sont des expressions de nos *connaissances*. Après un mammogramme positif, on pense toujours que c'est "très improbable" d'avoir un cancer, mais cette probabilité a considérablement évolué relativement à "avant le test".
+Before the mammography, the probability of a random woman having a breast cancer was $p(cancer)=.008$ (*prior*). After a positive result, this probability became $p(cancer|mam+) = .09$ (*posterior*).
 
-> A Bayesianly justifiable analysis is one that *treats known values as observed values of random variables, treats unknown values as unobserved random variables, and calculates the conditional distribution of unknowns given knowns and model specifications using Bayes’ theorem*. -- Rubin (1984)
+These probabilities reflect our knowledge and our uncertainty. After a positive mammography, we still think that is it highly improbable to have a cancer, but our initial prior probability has considerably increased relatively to "before the test".
+
+> *A Bayesianly justifiable analysis is one that treats known values as observed values of random variables, treats unknown values as unobserved random variables, and calculates the conditional distribution of unknowns given knowns and model specifications using Bayes’ theorem* ([Rubin, 1984](https://projecteuclid.org/euclid.aos/1176346785)).
 
 Monty Hall
 ========================================================

@@ -9,7 +9,7 @@ grViz("
         node [fontname = Helvetica, fontcolor = black,
         shape = plaintext, fixedsize = true, width = 1]
         
-        femmes [label = '1000 \n femmes']
+        femmes [label = '1000 \n women']
         cancer [label = '8 \n cancer']
         nocancer [label = '992 \n no cancer']
         mampos [label = '7 \n Mam=+']
