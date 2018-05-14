@@ -1,0 +1,375 @@
+A brief introduction to the tidyverse
+========================================================
+author: Antonio Schettino
+date: Ghent University (Belgium)
+autosize: true
+transition: none
+width: 1600
+height: 1000
+css: css-file.css
+
+<!-- For syntax highlighting -->
+<link rel="stylesheet" href="github.css">
+
+```{r setup_Rpres, include = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+Outline
+========================================================
+incremental: true
+type: lineheight
+
+
+
+Description of the dataset
+========================================================
+incremental: true
+type: lineheight
+
+
+
+participants viewed a
+total of nine mock adverts over three sessions. In these adverts there were three products (a brand
+of beer, a brand of wine, and a brand of water). These could be presented alongside positive,
+negative or neutral imagery. Over the three sessions and nine adverts, each type of product was
+paired with each type of imagery (read the previous chapter if you need more detail). After each
+advert participants rated the drinks on a scale ranging from –100 (dislike very much) through 0
+(neutral) to 100 (like very much). The design, thus far, has two independent variables: the type of
+drink (beer, wine or water) and the type of imagery used (positive, negative or neutral). I also
+took note of each person’s gender. It occurred to me that men and women might respond
+differently to the products (because, in keeping with stereotypes, men might mostly drink lager
+whereas women might drink wine).
+
+
+
+
+
+
+
+
+
+
+
+
+Setup
+========================================================
+incremental: true
+type: lineheight
+
+```{r setup}
+# if you want a clean environment:
+# dev.off() # clear plots (if no plots are present, comment it out or it will throw an error)
+# cat("\014") # clear console
+# rm(list=ls()) # clear environment
+
+# install packages
+install.packages("tidyverse")
+
+# load packages
+library(tidyverse)
+
+# in which directory are we now?
+getwd()
+
+# set directory
+setwd(paste0(getwd(), "/day1_intro_R_tidyverse/"))
+
+# did it work?
+getwd()
+```
+
+Load dataset
+========================================================
+incremental: true
+type: lineheight
+
+```{r load_data}
+# load data
+attitude <- 
+    read.table(
+        "MixedAttitude.dat", # file name
+        header = TRUE)       # data has headers
+
+# see data in console
+attitude
+
+# check variables in data frame
+str(attitude)
+
+# see data in RStudio
+View(attitude)
+```
+
+Clean & save dataset
+========================================================
+incremental: true
+type: lineheight
+
+```{r clean_data}
+# there was a technical problem while recording the data of participant #99,
+# i.e., the rating scale was out of the -100/100 range
+
+# filter out participant #99
+# (more specifically, keep all participants that are NOT participant #99)
+attitude.noOutlier <- 
+    attitude %>%
+    filter(ssj!=99)
+
+# THE PIPE OPERATOR
+# read it as "and then"
+# in the example above, load data.attitude "and then" filter out participant #99 
+
+# for our exercises, we will only need a subset of variables in this dataset
+# select and rename variables of interest
+attitude.noOutlier.selected <- 
+    attitude.noOutlier %>%
+    select(participant = ssj,
+           gender,
+           beer_positive = beerpos,
+           beer_neutral = beerneut,
+           water_positive = waterpos,
+           water_neutral = waterneu)
+
+# let's look at the variable 'gender'
+attitude.noOutlier.selected$gender
+unique(attitude.noOutlier.selected$gender)
+class(attitude.noOutlier.selected$gender)
+
+# the 'gender' variable contains 1s and 2s, which is not very clear
+# we will transform 'gender' as a factor with two levels, male and female 
+# Andy Field does not specify the coding, so we will assume that 1 is female and 2 is male
+attitude.noOutlier.selected.recoded <- 
+    attitude.noOutlier.selected %>%
+    mutate(sex = recode(                           # create a new variable 'sex'
+                    factor(gender),                # convert variable 'gender' as factor
+                    "1" = "female", "2" = "male")) # assign labels to factor levels
+
+# now we have two variables with identical information...
+# let's get rid of 'gender'
+attitude.noOutlier.selected.recoded <- 
+    attitude.noOutlier.selected.recoded %>%
+    select(-gender)
+
+# all the functions in the packages that we are going to use in this course need data in long format
+# wide format: one row per participant
+# long format: one row per observation
+
+# convert from wide to long format
+attitude.noOutlier.selected.recoded.long <-
+    attitude.noOutlier.selected.recoded %>% 
+    gather(key = "condition",               # name of new variable with all condition levels
+           value = "ratings",               # name of new variable with all values
+           beer_positive:water_neutral)     # variables to be collapsed
+
+# # convert from long to wide format
+# attitude.noOutlier.selected.recoded.wide <-
+#     attitude.noOutlier.selected.recoded.long %>%
+#     spread(condition,                            # name of variable to split into separate variables
+#            ratings)                              # name of variable with all values
+
+# this experiment had two independent variables: 
+# product (beer or water) and imagery (neutral or positive)
+# in our analysis we will need to know the separate contribution of these two independent variables and their interaction
+# so, we need to separate 'condition' into 2 variables
+
+attitude.noOutlier.selected.recoded.long.sep <-
+    attitude.noOutlier.selected.recoded.long %>%
+    separate(condition, c("product", "imagery")) %>% # the separation occurs here
+    # transform to factors
+    mutate(participant = factor(participant),
+           product = factor(product),
+           imagery = factor(imagery))
+
+# .dat file format is not what the cool kids use
+# save data as .csv
+write_csv(attitude.noOutlier.selected.recoded.long.sep,
+          paste0(getwd(), "/data_attitude.csv"))    # full path & file name
+
+# # read from .csv
+# attitude.noOutlier.selected.recoded.long.sep <- read_csv(paste0(getwd(), "/data_attitude.csv"))
+
+# all these modifications can be done in one go
+attitude.noOutlier.selected.recoded.long.sep <-
+    attitude %>%
+    filter(ssj!=99) %>%
+    select(participant = ssj,
+           gender,
+           beer_positive = beerpos,
+           beer_neutral = beerneut,
+           water_positive = waterpos,
+           water_neutral = waterneu) %>%
+    mutate(sex = recode(
+                    factor(gender),
+                    "1" = "female", "2" = "male")) %>%
+    select(-gender) %>%
+    gather(key = "condition",
+           value = "ratings",
+           beer_positive:water_neutral) %>%
+    separate(condition, c("product", "imagery")) %>%
+    mutate(participant = factor(participant),
+           product = factor(product),
+           imagery = factor(imagery)) %>%
+    write_csv(.,                                       # the point indicates the current data frame
+              paste0(getwd(), "/data_attitude.csv"))
+```
+
+Summarize dataset
+========================================================
+incremental: true
+type: lineheight
+
+```{r summarize_data}
+# summarize data
+summary.attitude.noOutlier.selected.recoded.long.sep <-
+    attitude.noOutlier.selected.recoded.long.sep %>%
+    group_by(product, imagery) %>%                      # group according to condition
+    summarize(n = n(),                                  # number of observations
+              mean = mean(ratings),                     # mean
+              sd = sd(ratings),                         # standard deviation
+              min = min(ratings),                       # range (min)
+              max = max(ratings))                       # range (max)
+
+# # group according to sex and condition
+# summary.attitude.noOutlier.selected.recoded.long.sep.sex <-
+#     attitude.noOutlier.selected.recoded.long.sep %>%
+#     group_by(sex, product, imagery) %>%
+#     summarize(n = n(),
+#               mean = mean(ratings),
+#               sd = sd(ratings),
+#               min = min(ratings),
+#               max = max(ratings))
+```
+
+
+Plots
+========================================================
+incremental: true
+type: lineheight
+
+
+```{r plot_data}
+# the most basic bar plot
+# uses aggregated data
+summary.attitude.noOutlier.selected.recoded.long.sep %>%
+    ggplot(.,                                            # data
+           aes(                                          # aesthetics
+               x = product,                              # 'product' on x-axis
+               y = mean,                                 # mean ratings on y-axis
+               fill = imagery)) +                        # separate colors for each level of 'imagery'
+    geom_bar(stat = "identity")                          # use the values in the data frame (no transformations)
+
+# it's a stacked bar graph! We don't want that!
+summary.attitude.noOutlier.selected.recoded.long.sep %>%
+    ggplot(.,
+           aes(
+               x = product,
+               y = mean,
+               fill = imagery)) +
+    geom_bar(stat = "identity",
+             position = position_dodge())                # bars are next to each other
+
+# still very ugly... these colors are hideous
+# let's use a more decent color palette
+install.packages("viridis") # 'viridis' uses colors that are easier to distinguish for people with colorblindness
+library(viridis)
+
+summary.attitude.noOutlier.selected.recoded.long.sep %>%
+    ggplot(.,
+           aes(
+               x = product,
+               y = mean,
+               fill = imagery)) +
+    geom_bar(stat = "identity",
+             position = position_dodge()) +
+    scale_fill_viridis(discrete = TRUE,                   # map colors to discrete values
+                       option = "cividis")                # see ?scale_color_viridis for other color palettes
+
+
+
+```
+
+
+classical analysis
+========================================================
+incremental: true
+type: lineheight
+
+
+
+
+
+repeated measures ANOVA
+========================================================
+incremental: true
+type: lineheight
+
+```{r rANOVA}
+
+
+install.packages("afex") # this package also installs a ton of other useful packages... including 'brms' ;)
+
+library(afex)
+library(multcomp)
+
+# repeated measures ANOVA
+rmANOVA.attitude <- aov_ez("participant",                            # variable with subject identifier
+                           "ratings",                                # dependent variable
+                           attitude.noOutlier.selected.recoded.long, # data frame
+                           within = "condition",                     # within-subject variable
+                           type = 3)                                 # type-III sums of squares (default in SPSS)
+
+
+
+
+
+
+# post-hoc tests
+afex_options(emmeans_model = "multivariate") # use appropriate degrees of freedom (NOT Satterthwaite approximated)
+
+summary(
+    as.glht(                                        # better p-value adjustment for multiple testing
+        pairs(                                      # compare differences between levels of indepedent variable
+            emmeans(rmANOVA.attitude, ~ condition), # if only this is run, estimated marginal means will be displayed
+            test = adjusted("free")                 # "free": generalization of the Bonferroni-Holm correction method 
+        )                                           # that takes correlations among the model parameters into account
+    )
+)
+
+
+
+
+# EFFECT SIZES
+
+
+
+# calculate omega squared and its 95% CI (why omega squared? see Lakens, 2013, Front Psychol)
+ANOVArm.valence.animacy.ncf <- conf.limits.ncf(F.value=ANOVArm.valence.animacy.F,df.1=ANOVArm.valence.animacy.df1,df.2=ANOVArm.valence.animacy.df2,conf.level=.95)
+ANOVArm.valence.animacy.omega <- convert.f.to.omegasq(ANOVArm.valence.animacy.F,ANOVArm.valence.animacy.df1,ANOVArm.valence.animacy.df2)
+ANOVArm.valence.animacy.omega.lower <- convert.ncf.to.omegasq(ANOVArm.valence.animacy.ncf$Lower.Limit,ANOVArm.valence.animacy.df1+ANOVArm.valence.animacy.df2+1)
+ANOVArm.valence.animacy.omega.upper <- convert.ncf.to.omegasq(ANOVArm.valence.animacy.ncf$Upper.Limit,ANOVArm.valence.animacy.df1+ANOVArm.valence.animacy.df2+1)
+
+
+
+
+# neutral vs. pleasant
+ttest.valence.main.NEUT.vs.POS <- t.test(value~emotion,data=stimparam.valence[stimparam.valence$emotion %in% c("NEUT","POS"),],paired=TRUE) # t-test
+Cohens.d.ttest.valence.main.NEUT.vs.POS <- ttest.valence.main.NEUT.vs.POS$statistic/sqrt(ttest.valence.main.NEUT.vs.POS$parameter+1) # Cohen's dz 
+nct.d.ttest.valence.main.NEUT.vs.POS <- conf.limits.nct(ttest.valence.main.NEUT.vs.POS$statistic,ttest.valence.main.NEUT.vs.POS$parameter,conf.level=.95) # lower and upper 95% CIs on the noncentrality parameter
+lower.d.ttest.valence.main.NEUT.vs.POS <- nct.d.ttest.valence.main.NEUT.vs.POS$Lower.Limit/sqrt(ttest.valence.main.NEUT.vs.POS$parameter+1) # lower 95% CI on Cohen's dz
+upper.d.ttest.valence.main.NEUT.vs.POS <- nct.d.ttest.valence.main.NEUT.vs.POS$Upper.Limit/sqrt(ttest.valence.main.NEUT.vs.POS$parameter+1) # upper 95% CI on Cohen's dz
+
+
+
+
+```
+
+
+
+post-hoc comparisons
+========================================================
+incremental: true
+type: lineheight
+
+
+
