@@ -42,7 +42,29 @@ differently to the products (because, in keeping with stereotypes, men might mos
 whereas women might drink wine).
 
 
-
+There is evidence from advertising research that attitudes towards stimuli can be changed using
+positive imagery (e.g., Stuart, Shimp, & Engle, 1987). As part of an initiative to stop binge drinking in
+teenagers, the government funded some scientists to look at whether negative imagery could be used
+to make teenagers’ attitudes towards alcohol more negative. The scientists designed a study to address
+this issue by comparing the effects of negative imagery against positive and neutral imagery for
+different types of drinks. Table 13.4 illustrates the experimental design and contains the data for this
+example (each row represents a single participant).
+Participants viewed a total of nine mock adverts over three sessions. In one session, they saw three
+adverts: (1) a brand of beer (Brain Death) presented with a negative image (a dead body with the
+slogan ‘drinking Brain Death makes your liver explode’); (2) a brand of wine (Dangleberry) presented
+in the context of a positive image (a sexy naked man or woman – depending on the participant’s
+preference – and the slogan ‘drinking Dangleberry wine makes you irresistible’); and (3) a brand of
+water (Puritan) presented alongside a neutral image (a person watching television accompanied by the
+slogan ‘drinking Puritan water makes you behave completely normally’). In a second session (a week
+later), the participants saw the same three brands, but this time Brain Death was accompanied by the
+positive imagery, Dangleberry by the neutral image and Puritan by the negative. In a third session, the
+participants saw Brain Death accompanied by the neutral image, Dangleberry by the negative image
+and Puritan by the positive. After each advert participants were asked to rate the drinks on a scale
+ranging from – 100 (dislike very much) through 0 (neutral) to 100 (like very much). The order of
+adverts was randomized, as was the order in which people participated in the three sessions. This
+design is quite complex. There are two independent variables: the type of drink (beer, wine or water)
+and the type of imagery used (positive, negative or neutral). These two variables completely cross
+over, producing nine experimental conditions
 
 
 
@@ -126,9 +148,9 @@ attitude.noOutlier.selected <-
     attitude.noOutlier %>%
     select(participant = ssj,
            gender,
-           beer_positive = beerpos,
+           beer_negative = beerneg,
            beer_neutral = beerneut,
-           water_positive = waterpos,
+           water_negative = waterneg,
            water_neutral = waterneu)
 
 # let's look at the variable 'gender'
@@ -160,7 +182,7 @@ attitude.noOutlier.selected.recoded.long <-
     attitude.noOutlier.selected.recoded %>% 
     gather(key = "condition",               # name of new variable with all condition levels
            value = "ratings",               # name of new variable with all values
-           beer_positive:water_neutral)     # variables to be collapsed
+           beer_negative:water_neutral)     # variables to be collapsed
 
 # # convert from long to wide format
 # attitude.noOutlier.selected.recoded.wide <-
@@ -169,16 +191,16 @@ attitude.noOutlier.selected.recoded.long <-
 #            ratings)                              # name of variable with all values
 
 # this experiment had two independent variables: 
-# product (beer or water) and imagery (neutral or positive)
-# in our analysis we will need to know the separate contribution of these two independent variables and their interaction
+# drink (beer or water) and imagery (neutral or negative)
+# in our analysis we will need to know the separate contribution
+# of these two independent variables and their interaction
 # so, we need to separate 'condition' into 2 variables
-
 attitude.noOutlier.selected.recoded.long.sep <-
     attitude.noOutlier.selected.recoded.long %>%
-    separate(condition, c("product", "imagery")) %>% # the separation occurs here
+    separate(condition, c("drink", "imagery")) %>% # the separation occurs here
     # transform to factors
     mutate(participant = factor(participant),
-           product = factor(product),
+           drink = factor(drink),
            imagery = factor(imagery))
 
 # .dat file format is not what the cool kids use
@@ -195,9 +217,9 @@ attitude.noOutlier.selected.recoded.long.sep <-
     filter(ssj!=99) %>%
     select(participant = ssj,
            gender,
-           beer_positive = beerpos,
+           beer_negative = beerneg,
            beer_neutral = beerneut,
-           water_positive = waterpos,
+           water_negative = waterneg,
            water_neutral = waterneu) %>%
     mutate(sex = recode(
                     factor(gender),
@@ -205,10 +227,10 @@ attitude.noOutlier.selected.recoded.long.sep <-
     select(-gender) %>%
     gather(key = "condition",
            value = "ratings",
-           beer_positive:water_neutral) %>%
-    separate(condition, c("product", "imagery")) %>%
+           beer_negative:water_neutral) %>%
+    separate(condition, c("drink", "imagery")) %>%
     mutate(participant = factor(participant),
-           product = factor(product),
+           drink = factor(drink),
            imagery = factor(imagery)) %>%
     write_csv(.,                                       # the point indicates the current data frame
               paste0(getwd(), "/data_attitude.csv"))
@@ -223,22 +245,26 @@ type: lineheight
 # summarize data
 summary.attitude.noOutlier.selected.recoded.long.sep <-
     attitude.noOutlier.selected.recoded.long.sep %>%
-    group_by(product, imagery) %>%                      # group according to condition
+    group_by(drink, imagery) %>%                        # group according to conditions
     summarize(n = n(),                                  # number of observations
               mean = mean(ratings),                     # mean
               sd = sd(ratings),                         # standard deviation
+              sem = sd/sqrt(n),                         # standard error of the mean
               min = min(ratings),                       # range (min)
-              max = max(ratings))                       # range (max)
+              max = max(ratings),                       # range (max)
+              ci.95 = 1.96 * sem)                       # 95% confidence interval
 
-# # group according to sex and condition
+# # group according to sex and conditions
 # summary.attitude.noOutlier.selected.recoded.long.sep.sex <-
 #     attitude.noOutlier.selected.recoded.long.sep %>%
-#     group_by(sex, product, imagery) %>%
+#     group_by(sex, drink, imagery) %>%
 #     summarize(n = n(),
 #               mean = mean(ratings),
-#               sd = sd(ratings),
+#               sd = sd(ratings),               
+#               sem = sd/sqrt(n),
 #               min = min(ratings),
-#               max = max(ratings))
+#               max = max(ratings),
+#               ci.95 = 1.96 * sem)
 ```
 
 
@@ -253,49 +279,115 @@ type: lineheight
 # uses aggregated data
 summary.attitude.noOutlier.selected.recoded.long.sep %>%
     ggplot(.,                                            # data
-           aes(                                          # aesthetics
-               x = product,                              # 'product' on x-axis
+           aes(x = drink,                                # 'product' on x-axis
                y = mean,                                 # mean ratings on y-axis
                fill = imagery)) +                        # separate colors for each level of 'imagery'
     geom_bar(stat = "identity")                          # use the values in the data frame (no transformations)
 
-# it's a stacked bar graph! We don't want that!
+# it's a stacked bar graph! we don't want that!
 summary.attitude.noOutlier.selected.recoded.long.sep %>%
     ggplot(.,
-           aes(
-               x = product,
+           aes(x = drink,
                y = mean,
                fill = imagery)) +
     geom_bar(stat = "identity",
-             position = position_dodge())                # bars are next to each other
+             position = position_dodge())                 # bars are next to each other
 
-# still very ugly... these colors are hideous
-# let's use a more decent color palette
+# add outlines
+summary.attitude.noOutlier.selected.recoded.long.sep %>%
+    ggplot(.,
+           aes(x = drink,
+               y = mean,
+               fill = imagery)) +
+    geom_bar(stat = "identity",
+             position = position_dodge(),
+             color = "black")                             # black outlines
+
+# something is missing... ah, error bars!
+summary.attitude.noOutlier.selected.recoded.long.sep %>%
+    ggplot(.,
+           aes(x = drink,
+               y = mean,
+               fill = imagery)) +
+    geom_bar(stat = "identity",
+             position = position_dodge(),
+             color = "black") +
+    geom_errorbar(aes(ymin = mean - ci.95,                # mean ratings ± 95% confidence interval
+                      ymax = mean + ci.95),
+                  width = .2,                             # width of the error bars
+                  position = position_dodge(.9))          # position (centered on the bar)
+
+# these colors are hideous... let's use a more decent color palette
 install.packages("viridis") # 'viridis' uses colors that are easier to distinguish for people with colorblindness
 library(viridis)
 
 summary.attitude.noOutlier.selected.recoded.long.sep %>%
     ggplot(.,
-           aes(
-               x = product,
+           aes(x = drink,
                y = mean,
                fill = imagery)) +
     geom_bar(stat = "identity",
-             position = position_dodge()) +
+             position = position_dodge(),
+             color = "black") +
+    geom_errorbar(aes(ymin = mean - ci.95,
+                      ymax = mean + ci.95),
+                  width = .2,
+                  position = position_dodge(.9)) +
     scale_fill_viridis(discrete = TRUE,                   # map colors to discrete values
                        option = "cividis")                # see ?scale_color_viridis for other color palettes
 
+# other cosmetic variations
+summary.attitude.noOutlier.selected.recoded.long.sep %>%
+    ggplot(.,
+           aes(x = drink,
+               y = mean,
+               fill = imagery)) +
+    geom_bar(stat = "identity",
+             position = position_dodge(),
+             color = "black") +
+    geom_errorbar(aes(ymin = mean - ci.95,
+                      ymax = mean + ci.95),
+                  width = .2,
+                  position = position_dodge(.9)) +
+    scale_fill_viridis(discrete = TRUE,
+                       option = "cividis") +
+    scale_y_continuous("",                                    # y-axis: no title
+                       limits = c(-15, 15),                   # y-axis: min/max values
+                       breaks = seq(-15, 15, 5)) +            # y-axis: tick marks
+    ggtitle("mean ratings") +                                 # plot title
+    theme_classic(base_size = 14) +                           # text size
+    theme(plot.title = element_text(size = 20,                # title: text size
+                                    hjust = .5),              # title: centered
+          legend.position = c(.9, .9))                        # legend position (upper right corner)
+    
+# no matter how pretty you make a bar graph, it still conceals information about the distribution of data points
+# the following graph shows:
+# - points representing the raw data
+# - vertical bars showing central tendencies
+# - smoothed densities
+# - rectangles representing inference intervals (e.g., 95% confidence intervals)
+install.packages("yarrr") 
+library(yarrr)
 
-
+pirateplot(formula = ratings ~ imagery + drink,                 # dependent ~ independent variables
+           data = attitude.noOutlier.selected.recoded.long.sep, # data frame
+           main = "mean ratings",                               # plot title
+           ylim = c(-25, 35),                                   # y-axis: axis limits
+           ylab = "",                                           # y-axis: no label
+           inf.method = "ci",                                   # type of inference: 95% confidence interval
+           inf.within = participant,                            # ID variable
+           # theme settings
+           pal = "espresso",                                    # color palette: see piratepal("all")
+           point.o = .5,                                        # data points: opacity (0-1)
+           point.cex = 1.3,                                     # data points: size
+           bean.b.o = .6,                                       # bean border: opacity (0-1)
+           bean.f.o = .6,                                       # bean filling: opacity (0-1)
+           cap.beans = TRUE,                                    # bean densities are capped at the data limits
+           bty = "n",                                           # no box around the plot
+           gl.col = "gray",                                     # background line color (major and minor lines)
+           gl.lwd = 1,                                          # background line width
+           gl.lty = 2)                                          # background line type (dashed)
 ```
-
-
-classical analysis
-========================================================
-incremental: true
-type: lineheight
-
-
 
 
 
@@ -313,16 +405,11 @@ library(afex)
 library(multcomp)
 
 # repeated measures ANOVA
-rmANOVA.attitude <- aov_ez("participant",                            # variable with subject identifier
-                           "ratings",                                # dependent variable
-                           attitude.noOutlier.selected.recoded.long, # data frame
-                           within = "condition",                     # within-subject variable
-                           type = 3)                                 # type-III sums of squares (default in SPSS)
-
-
-
-
-
+rmANOVA.attitude <- aov_ez("participant",                                # variable with subject identifier
+                           "ratings",                                    # dependent variable
+                           attitude.noOutlier.selected.recoded.long.sep, # data frame
+                           within = c("drink", "imagery"),               # within-subject variable
+                           type = 3)                                     # type-III sums of squares (default in SPSS)
 
 # post-hoc tests
 afex_options(emmeans_model = "multivariate") # use appropriate degrees of freedom (NOT Satterthwaite approximated)
@@ -330,7 +417,7 @@ afex_options(emmeans_model = "multivariate") # use appropriate degrees of freedo
 summary(
     as.glht(                                        # better p-value adjustment for multiple testing
         pairs(                                      # compare differences between levels of indepedent variable
-            emmeans(rmANOVA.attitude, ~ condition), # if only this is run, estimated marginal means will be displayed
+            emmeans(rmANOVA.attitude, ~ imagery:drink), # if only this is run, estimated marginal means will be displayed
             test = adjusted("free")                 # "free": generalization of the Bonferroni-Holm correction method 
         )                                           # that takes correlations among the model parameters into account
     )
@@ -338,9 +425,48 @@ summary(
 
 
 
+# EFFECT SIZES
+
+
+
+
+
+
+
+
+
+
+
+install.packages("bootES")
+
+library(bootES)
+
+
+
+
+
+
+
+
+bootES(data, R=2000, data.col=NULL, group.col=NULL, block.col=NULL, 
+       effect.type = c("unstandardized", "cohens.d", "hedges.g",
+                       "cohens.d.sigma", "r", "akp.robust.d"),
+       contrast = NULL,
+       slope.levels = NULL,
+       glass.control = NULL,
+       scale.weights = TRUE,
+       ci.type = c("bca", "norm", "basic", "perc", "stud", "none"),
+       ci.conf = 0.95,
+       plot = FALSE,
+       ...)   
+
 
 # EFFECT SIZES
 
+# bootstrapped robust measure of effect size and its 95% confidence intervals
+ANOVA.6Hz.stimtype.xi <- yuen.effect.ci(amp_6Hz ~ stimtype, ssVEP.6Hz.ANOVA, tr=trimMean, nboot=nbootstr)
+ANOVA.6Hz.emotion.xi <- yuen.effect.ci(amp_6Hz ~ emotion, ssVEP.6Hz.ANOVA, tr=trimMean, nboot=nbootstr)
+ANOVA.6Hz.interaction.xi <- yuen.effect.ci(amp_6Hz ~ stimtype*emotion, ssVEP.6Hz.ANOVA, tr=trimMean, nboot=nbootstr)
 
 
 # calculate omega squared and its 95% CI (why omega squared? see Lakens, 2013, Front Psychol)
