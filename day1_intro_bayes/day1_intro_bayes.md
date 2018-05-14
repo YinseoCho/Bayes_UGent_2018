@@ -105,7 +105,7 @@ The frequentist properties (in the long run) of objects (e.g., a coin) might be 
 
 The propensity interpretation postulates that these intrinsic properties define what we call as probability. In other words, the probability of an event = its intrinsic properties.
 
-This interpretation will usually agree with the frequentist interpretation but it shift the locus of probability from the external world (the observable relative frequency in the long run) to internal properties of objects.
+This interpretation will usually agree with the frequentist interpretation, but it shifts the locus of probability from the external world (the observable relative frequency in the long run) to internal properties of objects.
 
 Consequence: these properties are properties that are intrinsic to objects... The propensity interpretation then allows to talk about the probability of single events.
 
@@ -642,7 +642,7 @@ For each problem, we will follow these three steps:
 
 > *Bayesian inference is really just counting and comparing of possibilities [...] in order to make good inference about what actually happened, it helps to consider everything that could have happened.* ([McElreath, 2015](http://xcelab.net/rm/statistical-rethinking/)).
 
-Probability reminders...
+Reminders of probability...
 ========================================================
 type: center
 incremental: false
@@ -736,7 +736,7 @@ Eye     Black Brown  Red Blond
 
 In each cell we find the **joint probability** to have both a specific hair colour AND an eye colour. The joint probability is written as: $p(h, e) = p(e, h)$.
 
-Maginal probability
+Marginal probability
 ========================================================
 incremental: false
 type: lineheight
@@ -758,7 +758,7 @@ Green  0.01  0.05 0.02  0.03         0.11
 
 We could also be interested in the probability of having blue eyes in average. We call it the **marginal probability** of the event *blues eyes*. It is obtained by summing all the joint probabilities involving the event *blue eyes*: $p(e) = \sum\limits_{h}p(e|h)p(h)$.
 
-Maginal probability
+Marginal probability
 ========================================================
 incremental: false
 type: lineheight
@@ -794,7 +794,7 @@ We could also be interested in the probability of a person having blond eyes, **
 Blue  0.03  0.14 0.03  0.16         0.36
 ```
 
-This is a **conditional probability** $p(h|e)$. This conditional probability can be rewrtittent as $p(h|e) =  \frac{p(h, e)}{p(e)}$.
+This is a **conditional probability** $p(h|e)$. This conditional probability can be rewrtitten as $p(h|e) =  \frac{p(h, e)}{p(e)}$.
 
 
 ```r
@@ -836,7 +836,7 @@ $$p(x|y) = \dfrac{p(y|x)p(x)}{p(y)}$$
 
 $$p(hypothesis|data) = \frac{p(data|hypothesis) \times p(hypothesis)}{sum\ of\ products}$$
 
-Application example
+Example
 ========================================================
 type: center
 incremental: false
@@ -930,7 +930,7 @@ incremental: true
 type: lineheight
 
 <div align = "center" style = "border:none;">
-<img src = "diagram.png" width = 850 height = 500>
+<img src = "diagram2.png" width = 850 height = 500>
 </div>
 
 <br>
