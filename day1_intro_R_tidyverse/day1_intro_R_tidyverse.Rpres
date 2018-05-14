@@ -428,15 +428,24 @@ summary(
 # EFFECT SIZES
 
 
+attitude.bootES <-
+    attitude.noOutlier.selected.recoded.long.sep %>%
+    unite("condition", c(drink, imagery)) %>% # paste 'drink' and 'imagery' columns into 'condition'
+    spread(condition, ratings) %>% # convert from long to wide format
+    mutate(beer_negativeVSbeer_neutral = beer_negative - beer_neutral,
+           beer_negativeVSwater_negative = beer_negative - water_negative,
+           beer_negativeVSwater_neutral = beer_negative - water_neutral,
+           beer_neutralVSwater_negative = beer_neutral - water_negative,
+           beer_neutralVSwater_neutral = beer_neutral - water_neutral,
+           water_negativeVSwater_neutral = water_negative - water_neutral)
+           
+
+#######################################
+# FROM HERE
+#######################################
 
 
-
-
-
-
-
-
-
+# https://link.springer.com/content/pdf/10.3758%2Fs13428-013-0330-5.pdf
 install.packages("bootES")
 
 library(bootES)
