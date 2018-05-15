@@ -43,7 +43,7 @@ rm(list = ls())
 
 How to install packages:
 
-```{r setup_install_packages, results  = 'hide'}
+```{r setup_install_packages}
 install.packages("tidyverse")
 ```
 
@@ -55,7 +55,7 @@ It's good to know where your packages are. Type ```.libPaths()```.
 
 How to load packages:
 
-```{r setup_load_packages, results  = 'hide'}
+```{r setup_load_packages, message = FALSE}
 library(tidyverse)
 ```
 
@@ -75,40 +75,10 @@ Verify that you are in the right directory with ```getwd()```. If you still have
 
 ## The data
 
-### Data description
-
-The data come from 
-
-There is evidence from advertising research that attitudes towards stimuli can be changed using
-positive imagery (e.g., Stuart, Shimp, & Engle, 1987). As part of an initiative to stop binge drinking in
-teenagers, the government funded some scientists to look at whether negative imagery could be used
-to make teenagers’ attitudes towards alcohol more negative. The scientists designed a study to address
-this issue by comparing the effects of negative imagery against positive and neutral imagery for
-different types of drinks. Table 13.4 illustrates the experimental design and contains the data for this
-example (each row represents a single participant).
-Participants viewed a total of nine mock adverts over three sessions. In one session, they saw three
-adverts: (1) a brand of beer (Brain Death) presented with a negative image (a dead body with the
-slogan ‘drinking Brain Death makes your liver explode’); (2) a brand of wine (Dangleberry) presented
-in the context of a positive image (a sexy naked man or woman – depending on the participant’s
-preference – and the slogan ‘drinking Dangleberry wine makes you irresistible’); and (3) a brand of
-water (Puritan) presented alongside a neutral image (a person watching television accompanied by the
-slogan ‘drinking Puritan water makes you behave completely normally’). In a second session (a week
-later), the participants saw the same three brands, but this time Brain Death was accompanied by the
-positive imagery, Dangleberry by the neutral image and Puritan by the negative. In a third session, the
-participants saw Brain Death accompanied by the neutral image, Dangleberry by the negative image
-and Puritan by the positive. After each advert participants were asked to rate the drinks on a scale
-ranging from – 100 (dislike very much) through 0 (neutral) to 100 (like very much). The order of
-adverts was randomized, as was the order in which people participated in the three sessions. This
-design is quite complex. There are two independent variables: the type of drink (beer, wine or water)
-and the type of imagery used (positive, negative or neutral). These two variables completely cross
-over, producing nine experimental conditions
-
-### Load the data
-
-The data are in *.dat* format, so we are going to use ```read.table```.
+The data are in *.dat* format, so we are going to load them using ```read.table```.
 
 ```{r load_data}
-attitude <- 
+att <- 
     read.table(
         "MixedAttitude.dat", # file name
         header = TRUE)       # data has headers
@@ -120,11 +90,31 @@ Let's have a look at the data. If you have **RStudio**, you can click on the nam
    
 You can also type the name of the dataset in the console:
 
-```{r see_data}
-attitude
+```{r see_data, cols.print = 11, rows.print = 21}
+att
 ```
 
-### Clean & save the data
+These are the data of `r length(unique(att$ssj))` participants who saw **neutral**, **positive**, or **negative** advertisement of **beer**, **wine**, and **water** in 3 separate sessions. They were asked to rate the drinks on a scale ranging from – 100 (*dislike very much*) through 0 (*neutral*) to 100 (*like very much*). Researchers wanted to reduce binge drinking in teenagers, so they hoped that pairing negative imagery with alcoholic beverages would lower these ratings[^1].
+
+### Data cleaning
+
+#### Filtering
+
+Looking at the data, you can see that the ratings of participant #99 are a bit strange... perhaps there was a technical problem, i.e., the rating scale was out of the -100/100 range.   
+   
+Let's filter this participant out. More specifically, we keep all participants that are NOT participant #99.
+
+```{r filter}
+att.noOutlier <- 
+    att %>%
+    filter(ssj!=99)
+```
+
+Did it work?
+
+```{r filter_output, echo = FALSE, cols.print = 11, rows.print = 21}
+att.noOutlier
+```
 
 
 
@@ -138,3 +128,11 @@ attitude
 
 
 
+
+
+
+
+
+***
+
+[^1]: This data set is part of a set of exercises in the book [Discovering Statistics Using R (Field, Miles & Field, 2012)](https://www.discoveringstatistics.com/books/discovering-statistics-using-r/).
