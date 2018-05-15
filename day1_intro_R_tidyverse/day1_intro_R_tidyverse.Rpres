@@ -452,6 +452,8 @@ rmANOVA.attitude <- aov_ez("participant",                                # varia
                            within = c("drink", "imagery"),               # within-subject variable
                            type = 3)                                     # type-III sums of squares (default in SPSS)
 
+rmANOVA.attitude
+
 # post-hoc tests
 afex_options(emmeans_model = "multivariate") # use appropriate degrees of freedom (NOT Satterthwaite approximated)
 
@@ -465,9 +467,9 @@ posthoc.attitude <-
         )
     )
 
-# EFFECT SIZES
+posthoc.attitude
 
-# https://link.springer.com/content/pdf/10.3758%2Fs13428-013-0330-5.pdf
+# bootstrapped effect sizes
 install.packages("bootES")
 
 library(bootES)
@@ -518,6 +520,8 @@ for(i in 1:length(unique(attitude.bootES$diff.conds))) { # loop through conditio
 }
 
 summary.attitude.bootES <- format(summary.attitude.bootES, digits = 3)
+
+summary.attitude.bootES
 ```
 
 
