@@ -455,97 +455,69 @@ rmANOVA.attitude <- aov_ez("participant",                                # varia
 # post-hoc tests
 afex_options(emmeans_model = "multivariate") # use appropriate degrees of freedom (NOT Satterthwaite approximated)
 
-summary(
-    as.glht(                                        # better p-value adjustment for multiple testing
-        pairs(                                      # compare differences between levels of indepedent variable
-            emmeans(rmANOVA.attitude, ~ imagery:drink), # if only this is run, estimated marginal means will be displayed
-            test = adjusted("free")                 # "free": generalization of the Bonferroni-Holm correction method 
-        )                                           # that takes correlations among the model parameters into account
+posthoc.attitude <-
+    summary(
+        as.glht(                                            # better p-value adjustment for multiple testing
+            pairs(                                          # compare differences between levels of indepedent variable
+                emmeans(rmANOVA.attitude, ~ imagery:drink), # estimated marginal means
+                test = adjusted("free")                     # "free": generalization of Bonferroni-Holm correction,
+            )                                               # taking into account correlations among model parameters
+        )
     )
-)
-
-
 
 # EFFECT SIZES
-
-
-attitude.bootES <-
-    attitude.noOutlier.selected.recoded.long.sep %>%
-    unite("condition", c(drink, imagery)) %>% # paste 'drink' and 'imagery' columns into 'condition'
-    spread(condition, ratings) %>% # convert from long to wide format
-    mutate(beer_negativeVSbeer_neutral = beer_negative - beer_neutral,
-           beer_negativeVSwater_negative = beer_negative - water_negative,
-           beer_negativeVSwater_neutral = beer_negative - water_neutral,
-           beer_neutralVSwater_negative = beer_neutral - water_negative,
-           beer_neutralVSwater_neutral = beer_neutral - water_neutral,
-           water_negativeVSwater_neutral = water_negative - water_neutral)
-           
-
-#######################################
-# FROM HERE
-#######################################
-
 
 # https://link.springer.com/content/pdf/10.3758%2Fs13428-013-0330-5.pdf
 install.packages("bootES")
 
 library(bootES)
 
+# prepare data frame
+attitude.bootES <-
+    attitude.noOutlier.selected.recoded.long.sep %>%
+    unite("condition", c(drink, imagery)) %>%                                  # create 'condition' variable
+    spread(condition, ratings) %>%                                             # convert from long to wide format
+    # compute mean differences
+    mutate(beer_negativeVSbeer_neutral = beer_negative - beer_neutral,
+           beer_negativeVSwater_negative = beer_negative - water_negative,
+           beer_negativeVSwater_neutral = beer_negative - water_neutral,
+           beer_neutralVSwater_negative = beer_neutral - water_negative,
+           beer_neutralVSwater_neutral = beer_neutral - water_neutral,
+           water_negativeVSwater_neutral = water_negative - water_neutral) %>%
+    # delete unused variables (avoid conflict with MASS::lm.ridge)
+    dplyr::select(-c(beer_negative:water_neutral)) %>% 
+    # re-convert to long format
+    gather(key = "diff.conds",
+           value = "ratings",
+           beer_negativeVSbeer_neutral:water_negativeVSwater_neutral)
 
+# apply functions iteratively
+attitude.HedgesG <- 
+    attitude.bootES %>%
+    split(.$diff.conds) %>%               # split conditions in separate lists
+    # apply bootES function to all lists
+    map(~bootES(.,                        # data
+                data.col = "ratings",     # dependent variable
+                R = 5000,                 # number of samples
+                effect.type = "hedges.g", # type of effect size
+                ci.type = "bca",          # bootstrap method
+                ci.conf = .95))           # confidence level
 
+str(attitude.HedgesG)
 
+# initialize summary table
+summary.attitude.bootES <- data.frame(magrittr::extract2(posthoc.attitude, 1)$object,
+                                      "Hedges.G" = NA,
+                                      "CI.95.low" = NA,
+                                      "CI.95.high" = NA,
+                                      "bias" = NA,
+                                      "std.error" = NA)
 
+for(i in 1:length(unique(attitude.bootES$diff.conds))) { # loop through conditions
+    summary.attitude.bootES[i, 7:11] <- summary(magrittr::extract2(attitude.HedgesG, i))
+}
 
-
-
-bootES(data, R=2000, data.col=NULL, group.col=NULL, block.col=NULL, 
-       effect.type = c("unstandardized", "cohens.d", "hedges.g",
-                       "cohens.d.sigma", "r", "akp.robust.d"),
-       contrast = NULL,
-       slope.levels = NULL,
-       glass.control = NULL,
-       scale.weights = TRUE,
-       ci.type = c("bca", "norm", "basic", "perc", "stud", "none"),
-       ci.conf = 0.95,
-       plot = FALSE,
-       ...)   
-
-
-# EFFECT SIZES
-
-# bootstrapped robust measure of effect size and its 95% confidence intervals
-ANOVA.6Hz.stimtype.xi <- yuen.effect.ci(amp_6Hz ~ stimtype, ssVEP.6Hz.ANOVA, tr=trimMean, nboot=nbootstr)
-ANOVA.6Hz.emotion.xi <- yuen.effect.ci(amp_6Hz ~ emotion, ssVEP.6Hz.ANOVA, tr=trimMean, nboot=nbootstr)
-ANOVA.6Hz.interaction.xi <- yuen.effect.ci(amp_6Hz ~ stimtype*emotion, ssVEP.6Hz.ANOVA, tr=trimMean, nboot=nbootstr)
-
-
-# calculate omega squared and its 95% CI (why omega squared? see Lakens, 2013, Front Psychol)
-ANOVArm.valence.animacy.ncf <- conf.limits.ncf(F.value=ANOVArm.valence.animacy.F,df.1=ANOVArm.valence.animacy.df1,df.2=ANOVArm.valence.animacy.df2,conf.level=.95)
-ANOVArm.valence.animacy.omega <- convert.f.to.omegasq(ANOVArm.valence.animacy.F,ANOVArm.valence.animacy.df1,ANOVArm.valence.animacy.df2)
-ANOVArm.valence.animacy.omega.lower <- convert.ncf.to.omegasq(ANOVArm.valence.animacy.ncf$Lower.Limit,ANOVArm.valence.animacy.df1+ANOVArm.valence.animacy.df2+1)
-ANOVArm.valence.animacy.omega.upper <- convert.ncf.to.omegasq(ANOVArm.valence.animacy.ncf$Upper.Limit,ANOVArm.valence.animacy.df1+ANOVArm.valence.animacy.df2+1)
-
-
-
-
-# neutral vs. pleasant
-ttest.valence.main.NEUT.vs.POS <- t.test(value~emotion,data=stimparam.valence[stimparam.valence$emotion %in% c("NEUT","POS"),],paired=TRUE) # t-test
-Cohens.d.ttest.valence.main.NEUT.vs.POS <- ttest.valence.main.NEUT.vs.POS$statistic/sqrt(ttest.valence.main.NEUT.vs.POS$parameter+1) # Cohen's dz 
-nct.d.ttest.valence.main.NEUT.vs.POS <- conf.limits.nct(ttest.valence.main.NEUT.vs.POS$statistic,ttest.valence.main.NEUT.vs.POS$parameter,conf.level=.95) # lower and upper 95% CIs on the noncentrality parameter
-lower.d.ttest.valence.main.NEUT.vs.POS <- nct.d.ttest.valence.main.NEUT.vs.POS$Lower.Limit/sqrt(ttest.valence.main.NEUT.vs.POS$parameter+1) # lower 95% CI on Cohen's dz
-upper.d.ttest.valence.main.NEUT.vs.POS <- nct.d.ttest.valence.main.NEUT.vs.POS$Upper.Limit/sqrt(ttest.valence.main.NEUT.vs.POS$parameter+1) # upper 95% CI on Cohen's dz
-
-
-
-
+summary.attitude.bootES <- format(summary.attitude.bootES, digits = 3)
 ```
-
-
-
-post-hoc comparisons
-========================================================
-incremental: true
-type: lineheight
-
 
 
