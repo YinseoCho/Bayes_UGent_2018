@@ -173,7 +173,7 @@ attitude.noOutlier.selected.recoded <-
     attitude.noOutlier.selected.recoded %>%
     select(-gender)
 
-# all the functions in the packages that we are going to use in this course need data in long format
+# many functions in the packages we are going to use in this course need data in long format
 # wide format: one row per participant
 # long format: one row per observation
 
@@ -183,12 +183,6 @@ attitude.noOutlier.selected.recoded.long <-
     gather(key = "condition",               # name of new variable with all condition levels
            value = "ratings",               # name of new variable with all values
            beer_negative:water_neutral)     # variables to be collapsed
-
-# # convert from long to wide format
-# attitude.noOutlier.selected.recoded.wide <-
-#     attitude.noOutlier.selected.recoded.long %>%
-#     spread(condition,                            # name of variable to split into separate variables
-#            ratings)                              # name of variable with all values
 
 # this experiment had two independent variables: 
 # drink (beer or water) and imagery (neutral or negative)
@@ -333,8 +327,8 @@ summary.attitude.noOutlier.selected.recoded.long.sep %>%
                       ymax = mean + ci.95),
                   width = .2,
                   position = position_dodge(.9)) +
-    scale_fill_viridis(discrete = TRUE,                   # map colors to discrete values
-                       option = "cividis")                # see ?scale_color_viridis for other color palettes
+    scale_fill_viridis(option = "viridis",                # see ?scale_color_viridis for other color palettes
+                       discrete = TRUE)                   # map colors to discrete values
 
 # other cosmetic variations
 summary.attitude.noOutlier.selected.recoded.long.sep %>%
@@ -349,23 +343,72 @@ summary.attitude.noOutlier.selected.recoded.long.sep %>%
                       ymax = mean + ci.95),
                   width = .2,
                   position = position_dodge(.9)) +
-    scale_fill_viridis(discrete = TRUE,
-                       option = "cividis") +
+    scale_fill_viridis(option = "viridis",
+                       discrete = TRUE) +
     scale_y_continuous("",                                    # y-axis: no title
                        limits = c(-15, 15),                   # y-axis: min/max values
                        breaks = seq(-15, 15, 5)) +            # y-axis: tick marks
     ggtitle("mean ratings") +                                 # plot title
-    theme_classic(base_size = 14) +                           # text size
-    theme(plot.title = element_text(size = 20,                # title: text size
+    theme_classic(base_size = 18) +                           # text size
+    theme(plot.title = element_text(size = 24,                # title: text size
                                     hjust = .5),              # title: centered
           legend.position = c(.9, .9))                        # legend position (upper right corner)
     
 # no matter how pretty you make a bar graph, it still conceals information about the distribution of data points
 # the following graph shows:
-# - points representing the raw data
-# - vertical bars showing central tendencies
-# - smoothed densities
-# - rectangles representing inference intervals (e.g., 95% confidence intervals)
+# * points representing the raw data
+# * smoothed densities
+# * box and whisker plot:
+#   - vertical bars: medians
+#   - boxes: upper and lower quartile
+#   - whiskers: minimum and maximum values
+attitude.noOutlier.selected.recoded.long.sep %>%
+    unite("condition", c(drink, imagery)) %>%                  # paste 'drink' and 'imagery' columns into 'condition'
+    # plot
+    ggplot(., 
+           aes(x = condition, 
+               y = ratings)) +
+    # box and whisker plot
+    geom_boxplot(alpha = 1,                                    # boxes: transparency
+                 size = .5,                                    # boxes: line thickness
+                 outlier.alpha = 0) +                          # outliers: transparency
+    stat_boxplot(geom = 'errorbar',                            # whiskers
+                 size = .5,                                    # whiskers: line thickness
+                 width = .25) +                                # whiskers: width
+    # violin plot
+    geom_violin(aes(fill = condition),                         # density: color fill
+                color = "transparent",                         # outline: color
+                alpha = .25) +                                 # density: transparency
+    # jittered data points
+    geom_jitter(size = 3,                                      # point: size
+                alpha = .3,                                    # point: transparency
+                position = position_jitter(width = .1)) +      # point: jitter
+    scale_fill_viridis(option = "viridis",                     # color palette for all fills
+                       discrete = TRUE) + 
+    scale_color_viridis(option = "viridis",                    # color palette for all outlines
+                        discrete = TRUE) + 
+    scale_x_discrete(limits =                                  # x-axis: set variable order
+                         c("water_neutral", "water_negative", 
+                           "beer_neutral", "beer_negative")) + 
+    scale_y_continuous(name = "",                              # y-axis: title
+                       limits=c(-25, 35),                      # y-axis: min/max values
+                       breaks=seq(-25, 35, 5)) +               # y-axis: tick marks
+    geom_hline(yintercept = seq(-25, 35, 5),                   # reference lines
+               linetype = "dotted",                            # reference lines: type
+               colour = "#999999",                             # reference lines: color
+               size = .8,                                      # reference lines: thickness
+               alpha = .5) +                                   # reference lines: transparency
+    ggtitle("mean ratings") +                                  # plot title
+    theme_classic(base_size = 18) +                            # custom theme (resize text)
+    theme(legend.position="none",                              # no legend
+          plot.title = element_text(size = 24, hjust = .5))    # resize and center title
+
+# if you don't want to waste time doing it yourself, I recommend the 'yarrr' package
+# the following graph shows:
+# * points representing the raw data
+# * smoothed densities
+# * vertical bars showing central tendencies
+# * rectangles representing inference intervals (e.g., 95% confidence intervals)
 install.packages("yarrr") 
 library(yarrr)
 
@@ -388,8 +431,6 @@ pirateplot(formula = ratings ~ imagery + drink,                 # dependent ~ in
            gl.lwd = 1,                                          # background line width
            gl.lty = 2)                                          # background line type (dashed)
 ```
-
-
 
 repeated measures ANOVA
 ========================================================
