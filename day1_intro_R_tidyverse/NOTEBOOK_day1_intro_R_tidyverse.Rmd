@@ -1,5 +1,5 @@
 ---
-title: "Introduction to the```tidyverse```"
+title: "Introduction to the ```tidyverse```"
 output:
   html_notebook:
     highlight: haddock
@@ -10,22 +10,20 @@ editor_options:
   chunk_output_type: inline
 ---
 
+<style>
+pre {
+  overflow-x: auto;
+}
+pre code {
+  word-wrap: normal;
+  white-space: pre;
+}
+</style>
 
-
-```{r setup_notebook, include = FALSE} 
-knitr::opts_chunk$set(comment = '#',
-                      tidy = TRUE,
-                      fig.height = 4,
-                      fig.width = 4)
-```
-
+***
+***
 
 This is a hands-on introduction of the ```tidyverse```, a collection of **R** pacakages for data manipulation and plotting. There is no time to cover all the amazing things you can do with these packages. If you want to learn more, I suggest [R for Data Science](http://r4ds.had.co.nz/) by [Garrett Grolemund](https://www.oreilly.com/pub/au/5570) and [Hadley Wickham](http://hadley.nz/).
-
-
-
-
-
 
 # Setup
 
@@ -211,9 +209,9 @@ Our data are now in wide format. However, the packages we are going to use in th
 ```{r convert}
 att.filter.select.recode.long <-
     att.filter.select.recode %>% 
-    gather(key = "condition",               # name of new variable with all condition levels
-           value = "ratings",               # name of new variable with all values
-           beer_negative:water_neutral)     # variables to be collapsed
+    gather(key = "condition",           # name of new variable with all condition levels
+           value = "ratings",           # name of new variable with all values
+           beer_negative:water_neutral) # variables to be collapsed
 
 head(att.filter.select.recode.long, n = 5)
 ```
@@ -249,7 +247,7 @@ If you want to read from ***.csv***, use ```read_csv```.
 
 ## Concatenate operations
 
-Thanks to the versatility of the ```tidyverse``` (especially the **pipe operator**), all the above operations can be performed in one go:
+Thanks to the versatility of the ```tidyverse``` (especially the pipe operator), all the above operations can be performed in one go:
 
 ```{r all_operations}
 att.filter.select.recode.long.sep <-
@@ -363,7 +361,7 @@ These colors are hideous... let's use a more decent color palette.
    
 The package ```viridis``` uses colors that are easier to distinguish for people with colorblindness.
 
-```{r viridis, eval = FALSE}
+```{r install_viridis, eval = FALSE}
 install.packages("viridis")
 ```
 
@@ -418,7 +416,8 @@ summary.att.filter.select.recode.long.sep %>%
 ## RDI plots
 
 No matter how pretty a bar graph is, it remains a suboptimal way of displaying your data.   
-A better solution is to use **RDI** plots, which show **R**aw data, **D**escriptive and **I**nferential statistics.   
+A better solution is to use **RDI** plots, which show **R**aw data, **D**escriptive & **I**nferential statistics.   
+   
 The following graph shows:
 
 * points representing the raw data
@@ -432,7 +431,7 @@ The following graph shows:
 ```{r RDI_ggplot}
 att.filter.select.recode.long.sep %>%                          # we need the complete data frame, not the summary
     unite("condition", c(drink, imagery)) %>%                  # paste 'drink' and 'imagery' columns into 'condition'
-    # plot
+    # base plot
     ggplot(., 
            aes(x = condition, 
                y = ratings)) +
@@ -472,17 +471,41 @@ att.filter.select.recode.long.sep %>%                          # we need the com
           plot.title = element_text(size = 24, hjust = .5))    # resize and center title
 ```
 
+If you don't want to waste time doing it yourself, I recommend the [```yarrr```](https://cran.r-project.org/web/packages/yarrr/vignettes/pirateplot.html) package.   
+   
+The ```pirateplot``` function creates a graph showing:
 
+* points representing the raw data
+* smoothed densities
+* vertical bars showing central tendencies
+* rectangles representing inference intervals (e.g., 95% confidence intervals)
 
+```{r install_yarrr, eval = FALSE}
+install.packages("yarrr")
+```
 
+```{r RDI_pirateplot, message = FALSE}
+library(yarrr)
 
-
-
-
-
-
-
-
+pirateplot(formula = ratings ~ imagery + drink,      # dependent ~ independent variables
+           data = att.filter.select.recode.long.sep, # data frame
+           main = "mean ratings",                    # plot title
+           ylim = c(-25, 35),                        # y-axis: axis limits
+           ylab = "",                                # y-axis: no label
+           inf.method = "ci",                        # type of inference: 95% confidence interval
+           inf.within = participant,                 # ID variable
+           # theme settings
+           pal = "espresso",                         # color palette: see piratepal("all")
+           point.o = .5,                             # data points: opacity (0-1)
+           point.cex = 1.3,                          # data points: size
+           bean.b.o = .6,                            # bean border: opacity (0-1)
+           bean.f.o = .6,                            # bean filling: opacity (0-1)
+           cap.beans = TRUE,                         # bean densities are capped at the data limits
+           bty = "n",                                # no box around the plot
+           gl.col = "gray",                          # background line color (major and minor lines)
+           gl.lwd = 1,                               # background line width
+           gl.lty = 2)                               # background line type (dashed)
+```
 
 # Data analysis
 
