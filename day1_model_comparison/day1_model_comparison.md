@@ -537,9 +537,431 @@ It is convenient to normalise the model likelihoods such that they sum to 1 and 
 
 $$w_{i} = \dfrac{exp(-\Delta_{i}/2)}{\sum_{r = 1}^{R}exp(-\Delta_{r}/2)}$$
 
-The weights $w_{i}$ are useful as the *weihgt of evidence* in favor of model $g_{i}$ as being the actual best model in the set of models, in an information-theretical sense (i.e., the closest model to the *truth*).
+The weights $w_{i}$ are useful as the *weight of evidence* in favour of model $g_{i}$ as being the actual best model in the set of models, in an information-theretical sense (i.e., the closest model to the *truth*).
 
 From there, we can compute evidence ratios (ERs) as the ratios of weights: $ER_{ij} = \frac{w_{i}}{w_{j}}$, where $w_{i}$ and $w_{j}$ are the Akaike weights of models $i$ and $j$, respectively.
+
+Akaike weights and evidence ratios
+========================================================
+incremental: true
+type: lineheight
+
+We want to predict how many kilo calories per gram of milk (`kcal.per.g`) different species do have, as a function of neocortex volume and body mass. We can fit a few models and compare them using the AIC.
+
+
+```r
+library(rethinking)
+data(milk)
+
+d <-
+    milk %>%
+    na.omit %>%
+    mutate(neocortex = neocortex.perc / 100)
+
+head(d, 10)
+```
+
+```
+              clade             species kcal.per.g perc.fat perc.protein
+1     Strepsirrhine      Eulemur fulvus       0.49    16.60        15.42
+2  New World Monkey  Alouatta seniculus       0.47    21.22        23.58
+3  New World Monkey          A palliata       0.56    29.66        23.46
+4  New World Monkey        Cebus apella       0.89    53.41        15.80
+5  New World Monkey          S sciureus       0.92    50.58        22.33
+6  New World Monkey    Cebuella pygmaea       0.80    41.35        20.85
+7  New World Monkey   Callimico goeldii       0.46     3.93        25.30
+8  New World Monkey  Callithrix jacchus       0.71    38.38        20.09
+9  Old World Monkey Miopithecus talpoin       0.68    40.15        18.08
+10 Old World Monkey           M mulatta       0.97    55.51        13.17
+   perc.lactose mass neocortex.perc neocortex
+1         67.98 1.95          55.16    0.5516
+2         55.20 5.25          64.54    0.6454
+3         46.88 5.37          64.54    0.6454
+4         30.79 2.51          67.64    0.6764
+5         27.09 0.68          68.85    0.6885
+6         37.80 0.12          58.85    0.5885
+7         70.77 0.47          61.69    0.6169
+8         41.53 0.32          60.32    0.6032
+9         41.77 1.55          69.97    0.6997
+10        31.32 3.24          70.41    0.7041
+```
+
+Akaike weights and evidence ratios
+========================================================
+incremental: true
+type: lineheight
+
+
+```r
+m1 <- lm(kcal.per.g ~ 1, data = d, na.action = na.fail)
+m2 <- lm(kcal.per.g ~ 1 + neocortex, data = d, na.action = na.fail)
+m3 <- lm(kcal.per.g ~ 1 + log(mass), data = d, na.action = na.fail)
+m4 <- lm(kcal.per.g ~ 1 + neocortex + log(mass), data = d, na.action = na.fail)
+```
+
+
+```r
+library(MuMIn) # package for MultiModel Inference
+
+(ictab <- model.sel(list(m1 = m1, m2 = m2, m3 = m3, m4 = m4) ) )
+```
+
+```
+Model selection table 
+     (Int)    ncr log(mss) df logLik  AICc delta weight
+m4 -1.0850 2.7930 -0.09640  4 12.678 -14.0  0.00  0.926
+m1  0.6576                  2  6.229  -7.6  6.42  0.037
+m3  0.7052        -0.03169  3  7.369  -6.9  7.13  0.026
+m2  0.3533 0.4503           3  6.437  -5.0  8.99  0.010
+Models ranked by AICc(x) 
+```
+
+Model averaging
+========================================================
+incremental: true
+type: lineheight
+
+
+```r
+mavg <- model.avg(ictab)
+summary(mavg)
+```
+
+```
+
+Call:
+model.avg(object = ictab)
+
+Component model call: 
+lm(formula = <4 unique values>, data = d, na.action = na.fail)
+
+Component models: 
+       df logLik   AICc delta weight
+12      4  12.68 -14.02  0.00   0.93
+(Null)  2   6.23  -7.60  6.42   0.04
+2       3   7.37  -6.89  7.13   0.03
+1       3   6.44  -5.03  8.99   0.01
+
+Term codes: 
+neocortex log(mass) 
+        1         2 
+
+Model-averaged coefficients:  
+(full average) 
+            Estimate Std. Error Adjusted SE z value Pr(>|z|)   
+(Intercept) -0.95838    0.67184     0.70741   1.355  0.17549   
+neocortex    2.59136    1.05470     1.10947   2.336  0.01951 * 
+log(mass)   -0.09011    0.03306     0.03474   2.594  0.00949 **
+ 
+(conditional average) 
+            Estimate Std. Error Adjusted SE z value Pr(>|z|)   
+(Intercept) -0.95838    0.67184     0.70741   1.355  0.17549   
+neocortex    2.76725    0.83735     0.90980   3.042  0.00235 **
+log(mass)   -0.09462    0.02684     0.02899   3.264  0.00110 **
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Relative variable importance: 
+                     log(mass) neocortex
+Importance:          0.95      0.94     
+N containing models:    2         2     
+```
+
+Model averaging
+========================================================
+incremental: false
+type: lineheight
+
+We can then plot the predictions of each model and the averaged predictions (in black, along with its 95% CIs),  according to `neocortex` and for an average value of `mass`.
+
+<img src="day1_model_comparison-figure/unnamed-chunk-30-1.png" title="plot of chunk unnamed-chunk-30" alt="plot of chunk unnamed-chunk-30" style="display: block; margin: auto;" />
+
+Practice - 1/3
+========================================================
+incremental: false
+type: lineheight
+
+Using the attitude `dataset` explored previously...
+
+
+```r
+data <- read.csv("attitude.csv")
+head(data)
+```
+
+```
+  participant    sex drink  imagery ratings
+1           1 female  beer negative       6
+2           2 female  beer negative      30
+3           3 female  beer negative      15
+4           4 female  beer negative      30
+5           5 female  beer negative      12
+6           6 female  beer negative      17
+```
+
+Practice - 2/3
+========================================================
+incremental: false
+type: lineheight
+
+Build the following linear models, using the `lm` function...
+
+$$
+\begin{align}
+
+\mathcal{M_{1}} : \text{ratings}_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
+\mu_{i} &= \alpha + \beta_{1} \text{sex}_{i} \\
+
+\mathcal{M_{2}} : \text{ratings}_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
+\mu_{i} &= \alpha + \beta_{1} \text{sex}_{i} + \beta_{2} \text{drink}_{i} \\
+
+\mathcal{M_{3}} : \text{ratings}_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
+\mu_{i} &= \alpha + \beta_{1} \text{sex}_{i} + \beta_{2} \text{drink}_{i} + \beta_{3} \text{imagery}_{i} \\
+
+\mathcal{M_{4}} : \text{ratings}_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
+\mu_{i} &= \alpha + \beta_{1} \text{drink}_{i} + \beta_{2} \text{imagery}_{i} \\
+
+\mathcal{M_{5}} : \text{ratings}_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
+\mu_{i} &= \alpha + \beta_{1} \text{sex}_{i} + \beta_{2} \text{imagery}_{i} \\
+
+\end{align}
+$$
+
+Practice - 3/3
+========================================================
+incremental: false
+type: lineheight
+
+1. Compare these models using the AIC. Compare the ranks and the weights of the models.
+
+2. For each model, plot the estimated mean and 90% confidence interval of the mean, overlaid on the raw data. How the predictions differ across the models ?
+
+3. Make a plot of the averaged predictions (averaged on the three best models). How these averaged predictions differ from the predictions of the best model (i.e., the model with the lowest AIC) ?
+
+4. Compute the out-of-sample deviance of each model.
+
+5. Compare the out-of-sample deviance values computed above to the AIC values. Based on the deviance values, which model makes the best predictions ? Is the AIC a good estimator of the out-of-sample deviance ?
+
+Solution - question 1
+========================================================
+incremental: false
+type: lineheight
+
+
+```r
+m1 <- lm(ratings ~ sex, data)
+m2 <- lm(ratings ~ drink, data)
+m3 <- lm(ratings ~ drink + imagery + drink:imagery, data)
+m4 <- lm(ratings ~ sex + drink + imagery + drink:imagery, data)
+m5 <- lm(ratings ~ sex + drink + imagery, data)
+
+(ictab <- model.sel(list(m1 = m1, m2 = m2, m3 = m3, m4 = m4, m5 = m5) ) )
+```
+
+```
+Model selection table 
+   (Int) sex drn img drn:img df   logLik  AICc delta weight
+m5 7.325   +   +   +          5 -298.315 607.4  0.00  0.567
+m4 8.825   +   +   +       +  6 -297.418 608.0  0.55  0.432
+m3 4.450       +   +       +  5 -304.472 619.8 12.32  0.001
+m2 7.225       +              3 -310.868 628.1 20.61  0.000
+m1 6.275   +                  3 -313.437 633.2 25.75  0.000
+Models ranked by AICc(x) 
+```
+
+Solution - question 2
+========================================================
+incremental: false
+type: lineheight
+
+
+```r
+n.trials <- 1e4
+age.seq <- seq(from = -2, to = 3.5, length.out = 58)
+prediction.data <- data.frame(age = age.seq)
+
+computeMu <- function(model, data, n.trials) {
+    
+    mu <- link(fit = model, data = data, n = n.trials)
+    return(mu)
+
+}
+
+computeMuMean <- function(mu) {
+    
+    mu.mean <- apply(X = mu, MARGIN = 2, FUN = mean)
+    return(mu.mean)
+    
+}
+
+computeMuHPDI <- function(mu) {
+    
+    mu.HPDI <- apply(X = mu, MARGIN = 2, FUN = HPDI, prob = 0.97)
+    return(mu.HPDI)
+    
+}
+```
+
+Solution - question 2
+========================================================
+incremental: false
+type: lineheight
+
+
+```r
+simulateHeights <- function(model, prediction.data) {
+    
+    simulated.heights <- sim(fit = model, data = prediction.data)
+    return(simulated.heights)
+    
+}
+
+plotResults <- function(model, prediction.data, original.data, n.trials) {
+    
+    mu <- computeMu(model, prediction.data, n.trials)
+    mu.mean <- computeMuMean(mu)
+    mu.HPDI <- computeMuHPDI(mu)
+    simulated.heights <- simulateHeights(model = model, prediction.data = prediction.data)
+    simulated.heights.HPDI <- apply(X = simulated.heights, MARGIN = 2, FUN = HPDI)
+    plot(height ~ age, data = original.data, col = "steelblue", pch = 16)
+    lines(x = prediction.data$age, y = mu.mean, lty = 2)
+    lines(x = prediction.data$age, y = mu.HPDI[1, ], lty = 2)
+    lines(x = prediction.data$age, y = mu.HPDI[2, ], lty = 2)
+    shade(object = simulated.heights.HPDI, lim = prediction.data$age)
+    
+}
+```
+
+Solution - question 2
+========================================================
+incremental: false
+type: lineheight
+
+
+```r
+plotResults(
+    model = mod3.1, prediction.data = prediction.data,
+    original.data = d1, n.trials = n.trials)
+
+plotResults(
+    model = mod3.2, prediction.data = prediction.data,
+    original.data = d1, n.trials = n.trials)
+
+plotResults(
+    model = mod3.3, prediction.data = prediction.data,
+    original.data = d1, n.trials = n.trials)
+
+plotResults(
+    model = mod3.4, prediction.data = prediction.data,
+    original.data = d1, n.trials = n.trials)
+
+plotResults(
+    model = mod3.5, prediction.data = prediction.data,
+    original.data = d1, n.trials = n.trials)
+
+plotResults(
+    model = mod3.6, prediction.data = prediction.data,
+    original.data = d1, n.trials = n.trials)
+```
+
+Solution - question 3
+========================================================
+incremental: false
+type: lineheight
+
+
+```r
+h.ensemble <- ensemble(mod3.4, mod3.5, mod3.6, data = list(age = age.seq) )
+mu.mean <- apply(h.ensemble$link, 2, mean)
+mu.ci <- t(apply(h.ensemble$link, 2, HPDI) )
+height.ci <- t(apply(h.ensemble$sim, 2, HPDI) )
+
+ggplot(data = d1, aes(x = as.numeric(age), y = height) ) +
+    geom_point(size = 2) +
+    geom_line(data = data.frame(age = age.seq, height = mu.mean) ) +
+    geom_ribbon(
+        data = data.frame(mu.ci), inherit.aes = FALSE,
+        aes(x = age.seq, ymin = mu.ci[, 1], ymax = mu.ci[, 2]), alpha = 0.2) +
+    geom_ribbon(
+        data = data.frame(height.ci), inherit.aes = FALSE,
+        aes(x = age.seq, ymin = height.ci[, 1], ymax = height.ci[, 2]), alpha = 0.1) +
+    theme_bw(base_size = 20) + xlim(-2, 3) + ylim(60, 190)
+```
+
+Solution - question 4
+========================================================
+incremental: false
+type: lineheight
+
+
+```r
+# model 1
+coefs <- coef(mod3.1)
+mu <- coefs["alpha"] + coefs["beta.1"] * d2$age
+log.likelihood <- sum(dnorm(x = d2$height, mean = mu, sd = coefs["sigma"], log = TRUE) )
+dev.mod3.1 <- -2 * log.likelihood
+
+# model 2
+coefs <- coef(mod3.2)
+mu <- coefs["alpha"] + coefs["beta.1"] * d2$age + coefs["beta.2"] * (d2$age)^2
+log.likelihood <- sum(dnorm(x = d2$height, mean = mu, sd = coefs["sigma"], log = TRUE) )
+dev.mod3.2 <- -2 * log.likelihood
+
+# model 3
+coefs <- coef(mod3.3)
+mu <- coefs["alpha"] + coefs["beta.1"] * d2$age + coefs["beta.2"] * (d2$age)^2 + coefs["beta.3"] * (d2$age)^3
+log.likelihood <- sum(dnorm(x = d2$height, mean = mu, sd = coefs["sigma"], log = TRUE) )
+dev.mod3.3 <- -2 * log.likelihood
+```
+
+Solution - question 4
+========================================================
+incremental: false
+type: lineheight
+
+
+```r
+# model 4
+coefs <- coef(mod3.4)
+mu <- coefs["alpha"] + coefs["beta.1"]*d2$age + coefs["beta.2"]*(d2$age)^2 + coefs["beta.3"]*(d2$age)^3 + coefs["beta.4"]*(d2$age)^4
+log.likelihood <- sum(dnorm(x = d2$height, mean = mu, sd = coefs["sigma"], log = TRUE) )
+dev.mod3.4 <- -2 * log.likelihood
+
+# model 5
+coefs <- coef(mod3.5)
+mu <- coefs["alpha"] + coefs["beta.1"]*d2$age + coefs["beta.2"]*(d2$age)^2 + coefs["beta.3"]*(d2$age)^3 + coefs["beta.4"]*(d2$age)^4 + coefs["beta.5"]*(d2$age)^5
+log.likelihood <- sum(dnorm(x = d2$height, mean = mu, sd = coefs["sigma"], log = TRUE) )
+dev.mod3.5 <- -2 * log.likelihood
+
+# model 6
+coefs <- coef(mod3.6)
+mu <- coefs["alpha"] + coefs["beta.1"]*d2$age + coefs["beta.2"]*(d2$age)^2 + coefs["beta.3"]*(d2$age)^3 + coefs["beta.4"]*(d2$age)^4 + coefs["beta.5"]*(d2$age)^5 + coefs["beta.6"]*(d2$age)^6
+log.likelihood <- sum(dnorm(x = d2$height, mean = mu, sd = coefs["sigma"], log = TRUE) )
+dev.mod3.6 <- -2 * log.likelihood
+```
+
+Solution - question 5
+========================================================
+incremental: false
+type: lineheight
+
+
+```r
+deviances <- c(dev.mod3.1,dev.mod3.2,dev.mod3.3,dev.mod3.4,dev.mod3.5,dev.mod3.6)
+comparison <- compare(mod3.1,mod3.2,mod3.3,mod3.4,mod3.5,mod3.6)
+comparison <- as.data.frame(comparison@output)
+comparison <- comparison[order(rownames(comparison) ), ]
+waics <- comparison$WAIC
+
+data.frame(deviance = deviances, waic = waics) %>%
+    gather(type, value) %>%
+    mutate(x = rep(1:6, 2) ) %>%
+    ggplot(aes(x = x, y = value, colour = type) ) +
+    scale_colour_grey() +
+    geom_point(size = 2) +
+    scale_x_continuous(breaks = 1:6) +
+    theme_bw(base_size = 20) + xlab("model") + ylab("Déviance/WAIC")
+```
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script>
