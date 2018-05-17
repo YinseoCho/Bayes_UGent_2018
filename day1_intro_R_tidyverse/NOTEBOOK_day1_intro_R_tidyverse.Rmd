@@ -23,7 +23,7 @@ pre code {
 ***
 ***
 
-This is a hands-on introduction of the ```tidyverse```, a collection of **R** pacakages for data manipulation and plotting. There is no time to cover all the amazing things you can do with these packages. If you want to learn more, I suggest [R for Data Science](http://r4ds.had.co.nz/) by [Garrett Grolemund](https://www.oreilly.com/pub/au/5570) and [Hadley Wickham](http://hadley.nz/).
+This is a hands-on introduction to the ```tidyverse```, a collection of **R** pacakages for data manipulation and plotting. There is no time to cover all the amazing things you can do with these packages. If you want to learn more, I suggest [R for Data Science](http://r4ds.had.co.nz/) by [Garrett Grolemund](https://www.oreilly.com/pub/au/5570) and [Hadley Wickham](http://hadley.nz/).
 
 # Setup
 
@@ -506,11 +506,13 @@ pirateplot(formula = ratings ~ imagery + drink,      # dependent ~ independent v
            gl.lty = 2)                               # background line type (dashed)
 ```
 
-The graphs above suggest that negative imagery may have influenced ratings to *water* more than to beer. It is time to statistically verify our hypothesis.
+The graphs above suggest that negative imagery may have influenced ratings to *water* more than to beer. 
 
 # Data analysis
 
-The aim of this study was to assess whether negative imagery would influence the likeness ratings of alcoholic beverages. We will now run a 2 (**drink**: water, beer) x 2 (**imagery** neutral, negative) repeated measures ANOVA on these ratings.   
+The aim of this study was to assess whether negative imagery would influence the likeness ratings of alcoholic beverages. It's time to statistically verify the hypothesis.   
+   
+We will run a 2 (**drink**: water, beer) x 2 (**imagery** neutral, negative) repeated measures ANOVA on these ratings.   
    
 For this demonstration I chose the package ```afex```, authored by [Henrik Singmann](http://singmann.org/about-me/).
 
@@ -543,11 +545,7 @@ The results show:
 
 ## Paired contrasts
 
-
-
-
-
-
+The _**drink x imagery**_ interaction is statistically significant... let's run paired comparisons. ```afex``` uses functions included in the ```emmeans``` and ```multcomp``` packages.
 
 ```{r paired_contrasts}
 # set afex_options as below to use appropriate degrees of freedom (not Satterthwaite approximated)
@@ -567,23 +565,40 @@ posthoc.att <-
 posthoc.att
 ```
 
+The output has all you need to report in a publication... well, almost. Something is missing.   
+   
+## Effect sizes
 
+It is good practice to report **effect sizes** along with *p*-values, so that readers can make their own mind with respect to the importance of the observed effects. Even better, you could report **confidence intervals** around effect sizes, so that readers can have a clearer picture of the *precision* of your estimation.   
+   
+I particularly like the idea of **bootstrapping** effect sizes, a better approach when the data are known not to be normally distributed or when the distribution is unknown[^2]. I will show you how to do it using the package ```bootES```[^3].   
+   
+We will compute **Hegdes's** _**g**_, an unbiased estimate of $\delta$ (for details, see [here](http://journals.sagepub.com/doi/abs/10.1177/0013164404264850))
+   
+Because our dependent variable consists of ratings collected from the same partiicpants in different conditions (i.e., repeated measures), we must first manually compute the difference scores between our contrasts of interest (see the output of the paired comparisons above).
 
+```{r bootES_data_preparation}
+att.bootES <-
+    att.filter.select.recode.long.sep %>%
+    unite("condition", c(drink, imagery)) %>%                                  # create 'condition' variable
+    spread(condition, ratings) %>%                                             # convert from long to wide format
+    # compute mean differences
+    mutate(beer_negativeVSbeer_neutral = beer_negative - beer_neutral,
+           beer_negativeVSwater_negative = beer_negative - water_negative,
+           beer_negativeVSwater_neutral = beer_negative - water_neutral,
+           beer_neutralVSwater_negative = beer_neutral - water_negative,
+           beer_neutralVSwater_neutral = beer_neutral - water_neutral,
+           water_negativeVSwater_neutral = water_negative - water_neutral) %>%
+    # delete unused variables
+    # here we must specify that we want to use the 'select' function from 'dplyr' (part of the 'tidyverse'), because there is another function ('lm.ridge' in the 'MASS' package) that creates conflict
+    dplyr::select(-c(beer_negative:water_neutral)) %>%
+    # re-convert to long format
+    gather(key = "diff.conds",
+           value = "ratings",
+           beer_negativeVSbeer_neutral:water_negativeVSwater_neutral)
 
-
-
-
-
-
-
-
-
-The output has all you need to report in a publication... well, almost.
-
-
-
-
-
+head(att.bootES, n = 5)
+```
 
 
 
@@ -591,3 +606,7 @@ The output has all you need to report in a publication... well, almost.
 ***
 
 [^1]: This is a modified version of a dataset included in the book [Discovering Statistics Using R (Field, Miles & Field, 2012)](https://www.discoveringstatistics.com/books/discovering-statistics-using-r/).
+
+[^2]: If you prefer **not** to bootstrap your effect sizes, you can use the ```MBESS``` package (a useful tutorial can be found [here](http://osc.centerforopenscience.org/2014/03/06/confidence%20intervals/)). If you want to do it in **SPSS**, see [here](https://daniellakens.blogspot.be/2014/06/calculating-confidence-intervals-for.html).
+
+[^3]: A clear explanation of how to use ```bootES``` is provided by the authors of the package in their [paper](https://link.springer.com/article/10.3758/s13428-013-0330-5).
