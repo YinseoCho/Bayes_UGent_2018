@@ -23,5 +23,4 @@ Click on the following links to see the slides online
 
 This course has been funded by the Flemish government and the doctoral schools of UGent.
 
-<img src="logos/doctoral_school.png" alt="drawing" width="200" height="200"/>
-<img src="logos/flanders.png" alt="drawing" width="200" height="100"/>
+<img src="logos/doctoral_school.png" alt="drawing" width="200" height="200"/> <img src="logos/flanders.png" alt="drawing" width="400" height="100"/>
