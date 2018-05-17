@@ -313,7 +313,7 @@ summary.att.filter.select.recode.long.sep %>%
     geom_bar(stat = "identity")               # use the values in the data frame (no transformations)
 ```
 
-What the hell is that! Oh no, it's a **stacked bar graph**! We don't want that! How can we get separate bars for negative and neutral imagery?
+What the hell is that?!? Oh no, it's a **stacked bar graph**! We don't want that! How can we get separate bars for negative and neutral imagery?
 
 ```{r barplot_2}
 summary.att.filter.select.recode.long.sep %>%
@@ -427,7 +427,6 @@ The following graph shows:
     - boxes: upper and lower quartiles
     - whiskers: minimum and maximum values
 
-
 ```{r RDI_ggplot}
 att.filter.select.recode.long.sep %>%                          # we need the complete data frame, not the summary
     unite("condition", c(drink, imagery)) %>%                  # paste 'drink' and 'imagery' columns into 'condition'
@@ -507,7 +506,79 @@ pirateplot(formula = ratings ~ imagery + drink,      # dependent ~ independent v
            gl.lty = 2)                               # background line type (dashed)
 ```
 
+The graphs above suggest that negative imagery may have influenced ratings to *water* more than to beer. It is time to statistically verify our hypothesis.
+
 # Data analysis
+
+The aim of this study was to assess whether negative imagery would influence the likeness ratings of alcoholic beverages. We will now run a 2 (**drink**: water, beer) x 2 (**imagery** neutral, negative) repeated measures ANOVA on these ratings.   
+   
+For this demonstration I chose the package ```afex```, authored by [Henrik Singmann](http://singmann.org/about-me/).
+
+```{r install_afex, eval = FALSE}
+install.packages("afex") # 'afex' also installs many other useful packages... including 'brms'!
+```
+
+## Repeated measures ANOVA
+
+The code below shows how to run an ANOVA with this versatile and user-friendly package.
+
+```{r rANOVA, message = FALSE}
+library(afex)
+library(multcomp) # we didn't explicitly install this package, but it's part of the dependencies of 'afex'
+
+rmANOVA.att <- aov_ez("participant",                     # variable with subject identifier
+                      "ratings",                         # dependent variable
+                      att.filter.select.recode.long.sep, # data frame
+                      within = c("drink", "imagery"),    # within-subject variable
+                      type = 3)                          # type-III sums of squares (default in SPSS)
+
+rmANOVA.att
+```
+
+The results show:
+
+* a statistically significant main effect of _**drink**_ (*F*<sub>(`r summary(rmANOVA.att)$univariate.tests[2, 2]`, `r summary(rmANOVA.att)$univariate.tests[2, 4]`)</sub> = `r format(rmANOVA.att$anova_table$F[1], digits = 3)`, *p* = `r format(summary(rmANOVA.att)$univariate.tests[2, 6], digits = 1)`, $\eta$<sup>2</sup><sub>G</sub> = `r format(rmANOVA.att$anova_table$ges[1], digits = 2)`)
+* a statistically significant main effect of _**imagery**_ (*F*<sub>(`r summary(rmANOVA.att)$univariate.tests[3, 2]`, `r summary(rmANOVA.att)$univariate.tests[3, 4]`)</sub> = `r format(rmANOVA.att$anova_table$F[2], digits = 4)`, *p* = `r format(summary(rmANOVA.att)$univariate.tests[3, 6], digits = 2)`, $\eta$<sup>2</sup><sub>G</sub> = `r format(rmANOVA.att$anova_table$ges[2], digits = 2)`)
+* a statistically significant _**drink x imagery**_ interaction (*F*<sub>(`r summary(rmANOVA.att)$univariate.tests[4, 2]`, `r summary(rmANOVA.att)$univariate.tests[4, 4]`)</sub> = `r format(rmANOVA.att$anova_table$F[3], digits = 3)`, *p* = `r format(summary(rmANOVA.att)$univariate.tests[4, 6], digits = 2)`, $\eta$<sup>2</sup><sub>G</sub> = `r format(rmANOVA.att$anova_table$ges[3], digits = 1)`)
+
+## Paired contrasts
+
+
+
+
+
+
+
+```{r paired_contrasts}
+# set afex_options as below to use appropriate degrees of freedom (not Satterthwaite approximated)
+# for details, see https://cran.r-project.org/web/packages/afex/vignettes/afex_anova_example.html#post-hoc-contrasts-and-plotting
+afex_options(emmeans_model = "multivariate") 
+
+posthoc.att <-
+    summary(
+        as.glht(                                       # better p-value adjustment for multiple testing
+            pairs(                                     # compare differences between estimated marginal means
+                emmeans(rmANOVA.att, ~ imagery:drink), # estimated marginal means
+                test = adjusted("free")                # "free": generalization of Bonferroni-Holm correction,
+            )                                          # taking into account correlations among model parameters
+        )
+    )
+
+posthoc.att
+```
+
+
+
+
+
+
+
+
+
+
+
+
+The output has all you need to report in a publication... well, almost.
 
 
 
@@ -519,4 +590,4 @@ pirateplot(formula = ratings ~ imagery + drink,      # dependent ~ independent v
 
 ***
 
-[^1]: This dataset is part of the book [Discovering Statistics Using R (Field, Miles & Field, 2012)](https://www.discoveringstatistics.com/books/discovering-statistics-using-r/).
+[^1]: This is a modified version of a dataset included in the book [Discovering Statistics Using R (Field, Miles & Field, 2012)](https://www.discoveringstatistics.com/books/discovering-statistics-using-r/).
