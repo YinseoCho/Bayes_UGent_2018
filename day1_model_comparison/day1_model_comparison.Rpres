@@ -16,6 +16,7 @@ type: lineheight
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(cache = TRUE)
 library(tidyverse)
+set.seed(9992)
 ```
 
 <!-- For syntax highlighting -->
@@ -165,7 +166,7 @@ Model comparison
 incremental: true
 type: lineheight
 
-Two common problems in statistical learning: overfitting and underfitting... how to avoid it ?
+Two common problems in statistical modelling / learning: overfitting and underfitting... how to avoid it ?
 
 - Using regularisation. The aim is to constrain the learning, to constrain the influence of the incoming data on the inference.
 - Using cross-validation or information criteria (e.g., AIC, WAIC)
@@ -567,7 +568,8 @@ data(milk)
 d <-
     milk %>%
     na.omit %>%
-    mutate(neocortex = neocortex.perc / 100)
+    mutate(neocortex = neocortex.perc / 100) %>%
+    select(species, kcal.per.g, mass, neocortex)
 
 head(d, 10)
 ```
@@ -592,12 +594,13 @@ library(MuMIn) # package for MultiModel Inference
 
 Model averaging
 ========================================================
-incremental: true
+incremental: false
 type: lineheight
 
+We could select the best model and base our inference on this model only. But this strategy would ignore the uncertainty in model selection (i.e., that the best is only probably the best model). Another strategy would be to construct averaged predictions, where the predictions of each model are weighted by the relative predictive abilities of the model, expressed by its Akaike weight...
+
 ```{r eval = TRUE, echo = TRUE}
-mavg <- model.avg(ictab)
-summary(mavg)
+(mavg <- model.avg(ictab) )
 ```
 
 Model averaging
@@ -607,12 +610,12 @@ type: lineheight
 
 We can then plot the predictions of each model and the averaged predictions (in black, along with its 95% CIs),  according to `neocortex` and for an average value of `mass`.
 
-```{r eval = TRUE, echo = FALSE, fig.align = "center", fig.width = 12, fig.height = 8}
+```{r eval = TRUE, echo = FALSE, fig.align = "center", fig.width = 15, fig.height = 10}
 # predictions for new data along the range of original data variable (neocortex), other
 # variables are held constant at their means
 
 nseq <- function(x, len = length(x) ) seq(min(x, na.rm = TRUE), max(x, na.rm=TRUE), length = len)
-newdata <- as.data.frame(lapply(lapply(d[, c(7, 9)], mean), rep, 25) )
+newdata <- as.data.frame(lapply(lapply(d[, 3:4], mean), rep, 25) )
 newdata$neocortex <- nseq(d$neocortex, nrow(newdata) )
 
 # predictions from each of the models in a set and averaged predictions
@@ -631,7 +634,10 @@ pred %>%
     filter(model != "avg") %>%
     ggplot(aes(x = neocortex, y = p, colour = model) ) +
     geom_line(lwd = 1) +
-    geom_line(data = filter(pred, model == "avg"), lwd = 1, colour = "black", show.legend = FALSE) +
+    geom_line(
+        data = filter(pred, model == "avg"),
+        lwd = 1, colour = "black", show.legend = FALSE
+        ) +
     # geom_line(
     #     data = filter(pred, model == "avg"), aes(y = p - ci),
     #     lty = 2, lwd = 1, colour = "black", show.legend = FALSE
@@ -646,7 +652,7 @@ pred %>%
         colour = NA,
         show.legend = FALSE
         ) +
-    theme_bw(base_size = 20) +
+    theme_bw(base_size = 25) +
     ylab("predicted kcal.per.g")
 ```
 
@@ -655,11 +661,11 @@ Practice - 1/3
 incremental: false
 type: lineheight
 
-Using the attitude `dataset` explored previously...
+Using the `attitude` dataset explored previously.
 
 ```{r eval = TRUE, echo = TRUE}
 data <- read.csv("attitude.csv")
-head(data)
+head(data, 10)
 ```
 
 Practice - 2/3
@@ -667,7 +673,7 @@ Practice - 2/3
 incremental: false
 type: lineheight
 
-Build the following linear models, using the `lm` function...
+Build the following linear models, using the `lm` function.
 
 $$
 \begin{align}
@@ -676,16 +682,16 @@ $$
 \mu_{i} &= \alpha + \beta_{1} \text{sex}_{i} \\
 
 \mathcal{M_{2}} : \text{ratings}_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
-\mu_{i} &= \alpha + \beta_{1} \text{sex}_{i} + \beta_{2} \text{drink}_{i} \\
+\mu_{i} &= \alpha + \beta_{1} \text{drink}_{i} \\
 
 \mathcal{M_{3}} : \text{ratings}_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
-\mu_{i} &= \alpha + \beta_{1} \text{sex}_{i} + \beta_{2} \text{drink}_{i} + \beta_{3} \text{imagery}_{i} \\
+\mu_{i} &= \alpha + \beta_{1} \text{drink}_{i} + \beta_{2} \text{imagery}_{i} + \beta_{3} \text{drink}_{i} \times \text{imagery}_{i} \\
 
 \mathcal{M_{4}} : \text{ratings}_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
-\mu_{i} &= \alpha + \beta_{1} \text{drink}_{i} + \beta_{2} \text{imagery}_{i} \\
+\mu_{i} &= \alpha + \beta_{1} \text{sex}_{i} + \beta_{2} \text{drink}_{i} + \beta_{3} \text{imagery}_{i} + \beta_{4} \text{drink}_{i} \times \text{imagery}_{i} \\
 
 \mathcal{M_{5}} : \text{ratings}_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
-\mu_{i} &= \alpha + \beta_{1} \text{sex}_{i} + \beta_{2} \text{imagery}_{i} \\
+\mu_{i} &= \alpha + \beta_{1} \text{sex}_{i} + \beta_{2} \text{drink}_{i} + \beta_{3} \text{imagery}_{i} \\
 
 \end{align}
 $$
@@ -700,10 +706,6 @@ type: lineheight
 2. For each model, plot the estimated mean and 90% confidence interval of the mean, overlaid on the raw data. How the predictions differ across the models ?
 
 3. Make a plot of the averaged predictions (averaged on the three best models). How these averaged predictions differ from the predictions of the best model (i.e., the model with the lowest AIC) ?
-
-4. Compute the out-of-sample deviance of each model.
-
-5. Compare the out-of-sample deviance values computed above to the AIC values. Based on the deviance values, which model makes the best predictions ? Is the AIC a good estimator of the out-of-sample deviance ?
 
 Solution - question 1
 ========================================================
@@ -725,91 +727,15 @@ Solution - question 2
 incremental: false
 type: lineheight
 
-```{r eval = FALSE, echo = TRUE}
-n.trials <- 1e4
-age.seq <- seq(from = -2, to = 3.5, length.out = 58)
-prediction.data <- data.frame(age = age.seq)
-
-computeMu <- function(model, data, n.trials) {
-    
-    mu <- link(fit = model, data = data, n = n.trials)
-    return(mu)
-
-}
-
-computeMuMean <- function(mu) {
-    
-    mu.mean <- apply(X = mu, MARGIN = 2, FUN = mean)
-    return(mu.mean)
-    
-}
-
-computeMuHPDI <- function(mu) {
-    
-    mu.HPDI <- apply(X = mu, MARGIN = 2, FUN = HPDI, prob = 0.97)
-    return(mu.HPDI)
-    
-}
-```
-
-Solution - question 2
-========================================================
-incremental: false
-type: lineheight
-
-```{r eval = FALSE, echo = TRUE}
-simulateHeights <- function(model, prediction.data) {
-    
-    simulated.heights <- sim(fit = model, data = prediction.data)
-    return(simulated.heights)
-    
-}
-
-plotResults <- function(model, prediction.data, original.data, n.trials) {
-    
-    mu <- computeMu(model, prediction.data, n.trials)
-    mu.mean <- computeMuMean(mu)
-    mu.HPDI <- computeMuHPDI(mu)
-    simulated.heights <- simulateHeights(model = model, prediction.data = prediction.data)
-    simulated.heights.HPDI <- apply(X = simulated.heights, MARGIN = 2, FUN = HPDI)
-    plot(height ~ age, data = original.data, col = "steelblue", pch = 16)
-    lines(x = prediction.data$age, y = mu.mean, lty = 2)
-    lines(x = prediction.data$age, y = mu.HPDI[1, ], lty = 2)
-    lines(x = prediction.data$age, y = mu.HPDI[2, ], lty = 2)
-    shade(object = simulated.heights.HPDI, lim = prediction.data$age)
-    
-}
-```
-
-Solution - question 2
-========================================================
-incremental: false
-type: lineheight
-
-```{r eval = FALSE, echo = TRUE, fig.align = "center"}
-plotResults(
-    model = mod3.1, prediction.data = prediction.data,
-    original.data = d1, n.trials = n.trials)
-
-plotResults(
-    model = mod3.2, prediction.data = prediction.data,
-    original.data = d1, n.trials = n.trials)
-
-plotResults(
-    model = mod3.3, prediction.data = prediction.data,
-    original.data = d1, n.trials = n.trials)
-
-plotResults(
-    model = mod3.4, prediction.data = prediction.data,
-    original.data = d1, n.trials = n.trials)
-
-plotResults(
-    model = mod3.5, prediction.data = prediction.data,
-    original.data = d1, n.trials = n.trials)
-
-plotResults(
-    model = mod3.6, prediction.data = prediction.data,
-    original.data = d1, n.trials = n.trials)
+```{r eval = TRUE, echo = TRUE, fig.align = "center", fig.width = 12, fig.height = 8}
+data %>%
+    ggplot(aes(x = drink, fill = sex, y = ratings) ) +
+    geom_violin(
+        aes(x = drink, group = drink, colour = sex, fill = sex, y = ratings),
+        alpha = 0.5, show.legend = FALSE
+        ) +
+    geom_dotplot(binaxis = "y", stackdir = "center") +
+    facet_wrap(~imagery) + theme_bw(base_size = 20)
 ```
 
 Solution - question 3
@@ -817,94 +743,15 @@ Solution - question 3
 incremental: false
 type: lineheight
 
-```{r eval = FALSE, echo = TRUE, results = "hide", fig.align = "center", fig.height = 5}
-h.ensemble <- ensemble(mod3.4, mod3.5, mod3.6, data = list(age = age.seq) )
-mu.mean <- apply(h.ensemble$link, 2, mean)
-mu.ci <- t(apply(h.ensemble$link, 2, HPDI) )
-height.ci <- t(apply(h.ensemble$sim, 2, HPDI) )
-
-ggplot(data = d1, aes(x = as.numeric(age), y = height) ) +
-    geom_point(size = 2) +
-    geom_line(data = data.frame(age = age.seq, height = mu.mean) ) +
-    geom_ribbon(
-        data = data.frame(mu.ci), inherit.aes = FALSE,
-        aes(x = age.seq, ymin = mu.ci[, 1], ymax = mu.ci[, 2]), alpha = 0.2) +
-    geom_ribbon(
-        data = data.frame(height.ci), inherit.aes = FALSE,
-        aes(x = age.seq, ymin = height.ci[, 1], ymax = height.ci[, 2]), alpha = 0.1) +
-    theme_bw(base_size = 20) + xlim(-2, 3) + ylim(60, 190)
-```
-
-Solution - question 4
-========================================================
-incremental: false
-type: lineheight
-
-```{r eval = FALSE, echo = TRUE, results = "hide", fig.align = "center"}
-# model 1
-coefs <- coef(mod3.1)
-mu <- coefs["alpha"] + coefs["beta.1"] * d2$age
-log.likelihood <- sum(dnorm(x = d2$height, mean = mu, sd = coefs["sigma"], log = TRUE) )
-dev.mod3.1 <- -2 * log.likelihood
-
-# model 2
-coefs <- coef(mod3.2)
-mu <- coefs["alpha"] + coefs["beta.1"] * d2$age + coefs["beta.2"] * (d2$age)^2
-log.likelihood <- sum(dnorm(x = d2$height, mean = mu, sd = coefs["sigma"], log = TRUE) )
-dev.mod3.2 <- -2 * log.likelihood
-
-# model 3
-coefs <- coef(mod3.3)
-mu <- coefs["alpha"] + coefs["beta.1"] * d2$age + coefs["beta.2"] * (d2$age)^2 + coefs["beta.3"] * (d2$age)^3
-log.likelihood <- sum(dnorm(x = d2$height, mean = mu, sd = coefs["sigma"], log = TRUE) )
-dev.mod3.3 <- -2 * log.likelihood
-```
-
-Solution - question 4
-========================================================
-incremental: false
-type: lineheight
-
-```{r eval = FALSE, echo = TRUE, results = "hide", fig.align = "center"}
-# model 4
-coefs <- coef(mod3.4)
-mu <- coefs["alpha"] + coefs["beta.1"]*d2$age + coefs["beta.2"]*(d2$age)^2 + coefs["beta.3"]*(d2$age)^3 + coefs["beta.4"]*(d2$age)^4
-log.likelihood <- sum(dnorm(x = d2$height, mean = mu, sd = coefs["sigma"], log = TRUE) )
-dev.mod3.4 <- -2 * log.likelihood
-
-# model 5
-coefs <- coef(mod3.5)
-mu <- coefs["alpha"] + coefs["beta.1"]*d2$age + coefs["beta.2"]*(d2$age)^2 + coefs["beta.3"]*(d2$age)^3 + coefs["beta.4"]*(d2$age)^4 + coefs["beta.5"]*(d2$age)^5
-log.likelihood <- sum(dnorm(x = d2$height, mean = mu, sd = coefs["sigma"], log = TRUE) )
-dev.mod3.5 <- -2 * log.likelihood
-
-# model 6
-coefs <- coef(mod3.6)
-mu <- coefs["alpha"] + coefs["beta.1"]*d2$age + coefs["beta.2"]*(d2$age)^2 + coefs["beta.3"]*(d2$age)^3 + coefs["beta.4"]*(d2$age)^4 + coefs["beta.5"]*(d2$age)^5 + coefs["beta.6"]*(d2$age)^6
-log.likelihood <- sum(dnorm(x = d2$height, mean = mu, sd = coefs["sigma"], log = TRUE) )
-dev.mod3.6 <- -2 * log.likelihood
-```
-
-Solution - question 5
-========================================================
-incremental: false
-type: lineheight
-
-```{r eval = FALSE, echo = TRUE, fig.align = "center", fig.width = 8, fig.height = 6}
-deviances <- c(dev.mod3.1,dev.mod3.2,dev.mod3.3,dev.mod3.4,dev.mod3.5,dev.mod3.6)
-comparison <- compare(mod3.1,mod3.2,mod3.3,mod3.4,mod3.5,mod3.6)
-comparison <- as.data.frame(comparison@output)
-comparison <- comparison[order(rownames(comparison) ), ]
-waics <- comparison$WAIC
-
-data.frame(deviance = deviances, waic = waics) %>%
-    gather(type, value) %>%
-    mutate(x = rep(1:6, 2) ) %>%
-    ggplot(aes(x = x, y = value, colour = type) ) +
-    scale_colour_grey() +
-    geom_point(size = 2) +
-    scale_x_continuous(breaks = 1:6) +
-    theme_bw(base_size = 20) + xlab("model") + ylab("Déviance/WAIC")
+```{r eval = TRUE, echo = TRUE, fig.align = "center", fig.width = 12, fig.height = 8}
+data %>%
+    ggplot(aes(x = drink, fill = sex, y = ratings) ) +
+    geom_violin(
+        aes(x = drink, group = drink, colour = sex, fill = sex, y = ratings),
+        alpha = 0.5, show.legend = FALSE
+        ) +
+    geom_dotplot(binaxis = "y", stackdir = "center") +
+    facet_wrap(~imagery) + theme_bw(base_size = 20)
 ```
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
