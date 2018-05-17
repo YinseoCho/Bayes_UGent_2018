@@ -22,3 +22,5 @@ Click on the following links to see the slides online
 ## Acknowledgements
 
 This course has been funded by the Flemish government and the doctoral schools of UGent.
+
+![](logos/doctoral_school.png) ![](logos/flanders.png)
