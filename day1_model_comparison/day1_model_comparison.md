@@ -169,10 +169,10 @@ Model comparison
 incremental: true
 type: lineheight
 
-Two common problems in statistical modelling / learning: overfitting and underfitting... how to avoid it ?
+Two common problems in statistical modelling / learning: **overfitting** and **underfitting**... how to avoid it ?
 
-- Using regularisation. The aim is to constrain the learning, to constrain the influence of the incoming data on the inference.
-- Using cross-validation or information criteria (e.g., AIC, WAIC)
+- Using **regularisation**. The aim is to constrain the learning, to constrain the influence of the incoming data on the inference.
+- Using cross-validation or information criteria (e.g., AIC, WAIC), to evaluate the predictive abilities of our models
 
 <br>
 
@@ -254,7 +254,7 @@ We would like to mesure the *distance* between our model and the *full reality* 
 
 We can define **information** as the amount of reduction in uncertainty. When we learn a new outcome (a new observation), how much does it reduce our uncertainty ?
 
-We need a way a measuring uncertainty. For $n$ possible events, with each event $i$ having a probability $p_{i}$, a measure of uncertainty is given by:
+We first need a way a measuring uncertainty... For $n$ possible events, with each event $i$ having a probability $p_{i}$, a measure of uncertainty is given by the entropy:
 
 $$H(p) = - \text{E log}(p_{i}) = - \sum_{i=1}^{n}p_{i} \text{log}(p_{i})$$
 
@@ -309,7 +309,7 @@ type: lineheight
 
 $$D_{KL}(p,q) = \sum_{i} p_{i}\big(\text{log}(p_{i}) - \text{log}(q_{i})\big) = \sum_{i} p_{i} \text{log}\bigg(\frac{p_{i}}{q_{i}}\bigg)$$
 
-As an example, let's say that the *true* probability of the events *rain* and *sun* is $p_{1} = 0.3$ and $p_{2} = 0.7$. What uncertainty do we add if we think that the probabilities are rather $q_{1} = 0.25$ and $q_{2} = 0.75$ ?
+As an example, let's say that the *true* probability of the events *rain* and *sun* is $p_{1} = 0.3$ and $p_{2} = 0.7$. What uncertainty do we add if we think that the probabilities are instead $q_{1} = 0.25$ and $q_{2} = 0.75$ ?
 
 
 ```r
@@ -364,16 +364,14 @@ $$
 
 Toward the deviance...
 ========================================================
-incremental: false
+incremental: true
 type: lineheight
 
 Fine. But we do not know the full reality in real life...
 
 We do not need to know it ! When comparing two models (two distributions) $q$ and $r$, to approximate $p$, we can compare their divergences. Thus, $\text{E} \ \text{log}(p_{i})$ will be the same quantity for both divergences... !
 
-<div align = "center" style="border:none;">
-<img src = "mind_blowing.jpg" width = 400 height = 400>
-</div>
+<img src="mind_blowing.jpg" title="plot of chunk unnamed-chunk-23" alt="plot of chunk unnamed-chunk-23" width="400px" style="display: block; margin: auto;" />
 
 Toward the deviance...
 ========================================================
@@ -393,7 +391,7 @@ Deviance
 incremental: true
 type: lineheight
 
-To approximate $\text{E} \ \log(p_{i})$, we use the [deviance](https://en.wikipedia.org/wiki/Deviance_%28statistics%29) of a model, whic measures "how bad" is a model to explain some data.
+To approximate $\text{E} \ \log(p_{i})$, we use the [deviance](https://en.wikipedia.org/wiki/Deviance_%28statistics%29) of a model, which measures *how bad* is a model to explain some data.
 
 $$D(q) = -2 \sum_{i} \log(q_{i})$$
 
@@ -480,7 +478,7 @@ type: lineheight
 
 Another way to fight overfitting is to use skeptical priors that will prevent the model to learn *too much* from the data. In other words, we can use a stronger prior in order to diminish the weight of the data.
 
-<img src="day1_model_comparison-figure/unnamed-chunk-25-1.png" title="plot of chunk unnamed-chunk-25" alt="plot of chunk unnamed-chunk-25" style="display: block; margin: auto;" />
+<img src="day1_model_comparison-figure/unnamed-chunk-26-1.png" title="plot of chunk unnamed-chunk-26" alt="plot of chunk unnamed-chunk-26" style="display: block; margin: auto;" />
 
 Regularisation and cross-validation
 ========================================================
@@ -491,7 +489,7 @@ type: lineheight
 <img src = "inout2.png" width = 1200 height = 600>
 </div>
 
-How to decide on the widht of a prior ? How to know whether a prior is *sufficiently regularising* or not ? We can divide the dataset in two parts (training and test) in order to compare different priors. We can then choose the prior that provides the lower **out-of-sample deviance**. We call this strategy **cross-validation**.
+How to decide on the width of a prior ? How to know whether a prior is *sufficiently regularising* or not ? We can divide the dataset in two parts (training and test) in order to compare different priors. We can then choose the prior that provides the lower **out-of-sample deviance**. We call this strategy **cross-validation**.
 
 Out-of-sample deviance and information criteria
 ========================================================
@@ -546,7 +544,7 @@ Akaike weights and evidence ratios
 incremental: true
 type: lineheight
 
-We want to predict how many kilo calories per gram of milk (`kcal.per.g`) different species do have, as a function of neocortex volume and body mass. We can fit a few models and compare them using the AIC.
+We want to predict how many kilocalories per gram of milk (`kcal.per.g`) different species do have, as a function of neocortex volume and body mass. We can fit a few models and compare them using the AIC.
 
 
 ```r
@@ -639,7 +637,7 @@ type: lineheight
 
 We can then plot the predictions of each model and the averaged predictions (in black, along with its 95% CIs),  according to `neocortex` and for an average value of `mass`.
 
-<img src="day1_model_comparison-figure/unnamed-chunk-30-1.png" title="plot of chunk unnamed-chunk-30" alt="plot of chunk unnamed-chunk-30" style="display: block; margin: auto;" />
+<img src="day1_model_comparison-figure/unnamed-chunk-31-1.png" title="plot of chunk unnamed-chunk-31" alt="plot of chunk unnamed-chunk-31" style="display: block; margin: auto;" />
 
 Practice - 1/3
 ========================================================
@@ -734,7 +732,7 @@ m1 6.275   +                  3 -313.437 633.2 25.75  0.000
 Models ranked by AICc(x) 
 ```
 
-Solution - question 2
+Solution - question 2 (raw data)
 ========================================================
 incremental: false
 type: lineheight
@@ -742,35 +740,177 @@ type: lineheight
 
 ```r
 data %>%
+    # plotting the raw data
     ggplot(aes(x = drink, fill = sex, y = ratings) ) +
+    # adding violing plots
     geom_violin(
-        aes(x = drink, group = drink, colour = sex, fill = sex, y = ratings),
+        aes(x = drink, group = drink, fill = sex, y = ratings),
         alpha = 0.5, show.legend = FALSE
         ) +
-    geom_dotplot(binaxis = "y", stackdir = "center") +
-    facet_wrap(~imagery) + theme_bw(base_size = 20)
-```
-
-<img src="day1_model_comparison-figure/unnamed-chunk-33-1.png" title="plot of chunk unnamed-chunk-33" alt="plot of chunk unnamed-chunk-33" style="display: block; margin: auto;" />
-
-Solution - question 3
-========================================================
-incremental: false
-type: lineheight
-
-
-```r
-data %>%
-    ggplot(aes(x = drink, fill = sex, y = ratings) ) +
-    geom_violin(
-        aes(x = drink, group = drink, colour = sex, fill = sex, y = ratings),
-        alpha = 0.5, show.legend = FALSE
-        ) +
+    # adding individual data points
     geom_dotplot(binaxis = "y", stackdir = "center") +
     facet_wrap(~imagery) + theme_bw(base_size = 20)
 ```
 
 <img src="day1_model_comparison-figure/unnamed-chunk-34-1.png" title="plot of chunk unnamed-chunk-34" alt="plot of chunk unnamed-chunk-34" style="display: block; margin: auto;" />
+
+Solution - question 2 (model 1)
+========================================================
+incremental: false
+type: lineheight
+
+
+```r
+data %>%
+    # predictions of model 1
+    mutate(
+        p = predict(m1, interval = "confidence", level = 0.90)[, 1],
+        lwr = predict(m1, interval = "confidence", level = 0.90)[, 2],
+        upr = predict(m1, interval = "confidence", level = 0.90)[, 3]
+        ) %>%
+    ggplot(aes(x = drink, colour = sex, fill = sex, y = ratings) ) +
+    # adding individual data points
+    geom_dotplot(binaxis = "y", stackdir = "center", alpha = 0.5, dotsize = 0.5) +
+    # adding model predictions
+    geom_point(aes(y = p), shape = 18, size = 10, show.legend = FALSE) +
+    geom_errorbar(aes(ymin = lwr, ymax = upr), width = 0, size = 2, show.legend = FALSE) +
+    geom_line(aes(y = p, group = sex), size = 2, show.legend = FALSE) +
+    facet_wrap(~imagery) + theme_bw(base_size = 20)
+```
+
+<img src="day1_model_comparison-figure/unnamed-chunk-35-1.png" title="plot of chunk unnamed-chunk-35" alt="plot of chunk unnamed-chunk-35" style="display: block; margin: auto;" />
+
+Solution - question 2 (model 2)
+========================================================
+incremental: false
+type: lineheight
+
+
+```r
+data %>%
+    # predictions of model 2
+    mutate(
+        p = predict(m2, interval = "confidence", level = 0.90)[, 1],
+        lwr = predict(m2, interval = "confidence", level = 0.90)[, 2],
+        upr = predict(m2, interval = "confidence", level = 0.90)[, 3]
+        ) %>%
+    ggplot(aes(x = drink, colour = sex, fill = sex, y = ratings) ) +
+    # adding individual data points
+    geom_dotplot(binaxis = "y", stackdir = "center", alpha = 0.5, dotsize = 0.5) +
+    # adding model predictions
+    geom_point(aes(y = p), colour = "black", shape = 18, size = 10, show.legend = FALSE) +
+    geom_errorbar(aes(ymin = lwr, ymax = upr), colour = "black", width = 0, size = 2, show.legend = FALSE) +
+    geom_line(aes(y = p, group = sex), colour = "black", size = 2, show.legend = FALSE) +
+    facet_wrap(~imagery) + theme_bw(base_size = 20)
+```
+
+<img src="day1_model_comparison-figure/unnamed-chunk-36-1.png" title="plot of chunk unnamed-chunk-36" alt="plot of chunk unnamed-chunk-36" style="display: block; margin: auto;" />
+
+Solution - question 2 (model 3)
+========================================================
+incremental: false
+type: lineheight
+
+
+```r
+data %>%
+    # predictions of model 3
+    mutate(
+        p = predict(m3, interval = "confidence", level = 0.90)[, 1],
+        lwr = predict(m3, interval = "confidence", level = 0.90)[, 2],
+        upr = predict(m3, interval = "confidence", level = 0.90)[, 3]
+        ) %>%
+    ggplot(aes(x = drink, colour = sex, fill = sex, y = ratings) ) +
+    # adding individual data points
+    geom_dotplot(binaxis = "y", stackdir = "center", alpha = 0.5, dotsize = 0.5) +
+    # adding model predictions
+    geom_point(aes(y = p), colour = "black", shape = 18, size = 10, show.legend = FALSE) +
+    geom_errorbar(aes(ymin = lwr, ymax = upr), colour = "black", width = 0, size = 2, show.legend = FALSE) +
+    geom_line(aes(y = p, group = sex), colour = "black", size = 2, show.legend = FALSE) +
+    facet_wrap(~imagery) + theme_bw(base_size = 20)
+```
+
+<img src="day1_model_comparison-figure/unnamed-chunk-37-1.png" title="plot of chunk unnamed-chunk-37" alt="plot of chunk unnamed-chunk-37" style="display: block; margin: auto;" />
+
+Solution - question 2 (model 4)
+========================================================
+incremental: false
+type: lineheight
+
+
+```r
+data %>%
+    # predictions of model 4
+    mutate(
+        p = predict(m4, interval = "confidence", level = 0.90)[, 1],
+        lwr = predict(m4, interval = "confidence", level = 0.90)[, 2],
+        upr = predict(m4, interval = "confidence", level = 0.90)[, 3]
+        ) %>%
+    ggplot(aes(x = drink, colour = sex, fill = sex, y = ratings) ) +
+    # adding individual data points
+    geom_dotplot(binaxis = "y", stackdir = "center", alpha = 0.5, dotsize = 0.5) +
+    # adding model predictions
+    geom_point(aes(y = p), shape = 18, size = 10, show.legend = FALSE) +
+    geom_errorbar(aes(ymin = lwr, ymax = upr), width = 0, size = 2, show.legend = FALSE) +
+    geom_line(aes(y = p, group = sex), size = 2, show.legend = FALSE) +
+    facet_wrap(~imagery) + theme_bw(base_size = 20)
+```
+
+<img src="day1_model_comparison-figure/unnamed-chunk-38-1.png" title="plot of chunk unnamed-chunk-38" alt="plot of chunk unnamed-chunk-38" style="display: block; margin: auto;" />
+
+Solution - question 2 (model 5)
+========================================================
+incremental: false
+type: lineheight
+
+
+```r
+data %>%
+    # predictions of model 5
+    mutate(
+        p = predict(m5, interval = "confidence", level = 0.90)[, 1],
+        lwr = predict(m5, interval = "confidence", level = 0.90)[, 2],
+        upr = predict(m5, interval = "confidence", level = 0.90)[, 3]
+        ) %>%
+    ggplot(aes(x = drink, colour = sex, fill = sex, y = ratings) ) +
+    # adding individual data points
+    geom_dotplot(binaxis = "y", stackdir = "center", alpha = 0.5, dotsize = 0.5) +
+    # adding model predictions
+    geom_point(aes(y = p), shape = 18, size = 10, show.legend = FALSE) +
+    geom_errorbar(aes(ymin = lwr, ymax = upr), width = 0, size = 2, show.legend = FALSE) +
+    geom_line(aes(y = p, group = sex), size = 2, show.legend = FALSE) +
+    facet_wrap(~imagery) + theme_bw(base_size = 20)
+```
+
+<img src="day1_model_comparison-figure/unnamed-chunk-39-1.png" title="plot of chunk unnamed-chunk-39" alt="plot of chunk unnamed-chunk-39" style="display: block; margin: auto;" />
+
+Solution - question 3 (averaged predictions)
+========================================================
+incremental: false
+type: lineheight
+
+
+```r
+mavg <- model.avg(ictab)
+
+data %>%
+    # plotting averaged predictions
+    mutate(
+        p = predict(mavg, se.fit = TRUE)$fit,
+        lwr = p - 1.96 * predict(mavg, se.fit = TRUE)$se.fit,
+        upr = p + 1.96 * predict(mavg, se.fit = TRUE)$se.fit
+        ) %>%
+    ggplot(aes(x = drink, colour = sex, fill = sex, y = ratings) ) +
+    # adding individual data points
+    geom_dotplot(binaxis = "y", stackdir = "center", alpha = 0.5, dotsize = 0.5) +
+    # adding model predictions
+    geom_point(aes(y = p), shape = 18, size = 10, show.legend = FALSE) +
+    geom_errorbar(aes(ymin = lwr, ymax = upr), width = 0, size = 2, show.legend = FALSE) +
+    geom_line(aes(y = p, group = sex), size = 2, show.legend = FALSE) +
+    facet_wrap(~imagery) + theme_bw(base_size = 20)
+```
+
+<img src="day1_model_comparison-figure/unnamed-chunk-40-1.png" title="plot of chunk unnamed-chunk-40" alt="plot of chunk unnamed-chunk-40" style="display: block; margin: auto;" />
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script>
