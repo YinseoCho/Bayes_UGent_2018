@@ -243,7 +243,7 @@ write_csv(att.filter.select.recode.long.sep,
           paste0(getwd(), "/data_attitude.csv")) # full path & file name
 ```
 
-If you want to read from ***.csv***, use ```read_csv```.
+If you want to read from *.csv*, use ```read_csv```.
 
 ## Concatenate operations
 
@@ -278,7 +278,7 @@ head(att.filter.select.recode.long.sep, n = 5)
 
 # Data summary
 
-It is often required to provude summary statistics of the data. How to do it with the ```tidyverse```?
+It is often required to provide summary statistics of the data. How to do it with the ```tidyverse```?
 
 ```{r summary}
 summary.att.filter.select.recode.long.sep <-
@@ -553,16 +553,12 @@ The _**drink x imagery**_ interaction is statistically significant... let's run 
 afex_options(emmeans_model = "multivariate") 
 
 posthoc.att <-
-    summary(
-        as.glht(                                       # better p-value adjustment for multiple testing
-            pairs(                                     # compare differences between estimated marginal means
-                emmeans(rmANOVA.att, ~ imagery:drink), # estimated marginal means
-                test = adjusted("free")                # "free": generalization of Bonferroni-Holm correction,
-            )                                          # taking into account correlations among model parameters
-        )
-    )
-
-posthoc.att
+    emmeans(rmANOVA.att, ~ imagery:drink) %>% # estimated marginal means
+    pairs(.,                                  # compare differences between estimated marginal means
+          test = adjusted("free")) %>%        # "free": generalization of Bonferroni-Holm correction, taking into account correlations among model parameters
+    as.glht(.) %>%                            # better p-value adjustment for multiple testing
+    summary(.) %>%                            # cleaner output
+    print(.)
 ```
 
 The output has all you need to report in a publication... well, almost. Something is missing.   
@@ -572,10 +568,14 @@ The output has all you need to report in a publication... well, almost. Somethin
 It is good practice to report **effect sizes** along with *p*-values, so that readers can make their own mind with respect to the importance of the observed effects. Even better, you could report **confidence intervals** around effect sizes, so that readers can have a clearer picture of the *precision* of your estimation.   
    
 I particularly like the idea of **bootstrapping** effect sizes, a better approach when the data are known not to be normally distributed or when the distribution is unknown[^2]. I will show you how to do it using the package ```bootES```[^3].   
-   
+
+```{r install_bootES, eval = FALSE}
+install.packages("bootES")
+```
+
 We will compute **Hegdes's** _**g**_, an unbiased estimate of $\delta$ (for details, see [here](http://journals.sagepub.com/doi/abs/10.1177/0013164404264850))
    
-Because our dependent variable consists of ratings collected from the same partiicpants in different conditions (i.e., repeated measures), we must first manually compute the difference scores between our contrasts of interest (see the output of the paired comparisons above).
+Because our dependent variable consists of ratings collected from the same participants in different conditions (i.e., repeated measures), we must first manually compute the difference scores between our contrasts of interest (see the output of the paired comparisons above).
 
 ```{r bootES_data_preparation}
 att.bootES <-
@@ -599,6 +599,54 @@ att.bootES <-
 
 head(att.bootES, n = 5)
 ```
+
+Now we can calculate the standardized effect size for each difference scores. Using functions in the ```purrr``` package (part of the ```tidyverse```!), we will create separate lists for each difference score and calculate bootstrapped Hegdes's _g_ for each of them.
+
+```{r bootES_purrr, message = FALSE}
+library(bootES)
+
+att.HedgesG <- 
+    att.bootES %>%
+    split(.$diff.conds) %>%               # split difference scores in separate lists
+    # apply bootES function to all lists
+    map(~bootES(.,                        # data
+                data.col = "ratings",     # dependent variable
+                R = 5000,                 # number of samples
+                effect.type = "hedges.g", # type of effect size
+                ci.type = "bca",          # bootstrap method
+                ci.conf = .95))           # confidence level
+```
+
+The result is a data frame containing `r length(unique(att.bootES$diff.conds))` lists (i.e., the number of ```diff.conds```), each containing the results of the bootstrapping procedure. As an example, let's look at the list containing the bootstrapped Hegdes's _g_ for the difference ratings of beer after seeing negative vs. neutral imagery:
+
+```{r bootES_purrr_output}
+att.HedgesG$beer_negativeVSbeer_neutral
+```
+
+## Summary of paired contrasts
+
+The final step is to summarize the information stored in different lists in one single data frame that can later be converted into a table and cleaned up for publication. This is one way to do it:
+
+```{r bootES_summary}
+# initialize summary table: what do you want to report?
+summary.att.bootES <- data.frame(magrittr::extract2(posthoc.att, 1)$object, # extract2, a function of 'magrittr' (part of the 'tidyverse'!), extracts values from lists (similarly to [[]] in base R)
+                                 "Hedges.g" = NA,
+                                 "CI.95.low" = NA,
+                                 "CI.95.high" = NA,
+                                 "bias" = NA,
+                                 "std.error" = NA)
+
+# OH MY GOD A LOOP IN R!
+for(i in 1:length(unique(att.bootES$diff.conds))) {                            # loop through conditions
+    summary.att.bootES[i, 7:11] <- summary(magrittr::extract2(att.HedgesG, i)) # extract values from the list with bootstrapped Hedges's g
+}
+
+summary.att.bootES
+```
+
+That's it. I hope I managed to at least give you a glimpse of the versatility, readability, and user-friendliness of the ```tidyverse```.
+
+
 
 
 
