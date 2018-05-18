@@ -36,7 +36,9 @@ A probability is **a numerical value** assigned to an event $A$, this event bein
 
 + **Non-negativity.** $P(A_{i}) \geq 0$
 + **Normalisation.** $P(\Omega) = 1$
-+ **Additivity.** $P(A_{1}\cup A_{2}\cup \ldots) = \sum_{i=1}^{+\infty}P(A_{i})$
++ **Additivity.** $P(A_{1} \lor A_{2}) = P(A_{1}) + P(A_{2})$
+
+This last axiom is also known as the **sum rule**, and can be generalised to non mutually exclusive events: $P(A_{1} \lor A_{2}) = P(A_{1}) + P(A_{2}) - P(A_{1} \land A_{2})$.
 
 Classical (or theoretical) interpretation
 ========================================================
@@ -266,7 +268,7 @@ incremental: true
 
 *Naive popperism*: science is progressing through falsification, then data analysis sould aim for falsification (e.g., using NHST). But...
 
-- (theoretical hypotheses) are not equivalent to (statistical) models, there is no one-to-one mapping between the two
+- (theoretical hypotheses) are not equivalent to (statistical) models, there is no one-to-one mapping between theoretical and statistical hypotheses
 
 > *Models are devices that connect theories to data. A model is an instanciation of a theory as a set of probabilistic statements* ([Rouder et al., 2016](https://www.collabra.org/articles/10.1525/collabra.28/)).
 
@@ -293,7 +295,7 @@ incremental: true
 
 Let's say we have a bag and that it contains four marbles. These marbles come in two colors: blue and white. We know that there are four marbles in the bag, but we don't know how many are of each color.
 
-We know that there are five possibilities (than we will call our *hypotheses*):
+We know that there are five possibilities (we will call them our *hypotheses*):
 
 > <p align = "center"> &#9898 &#9898 &#9898 &#9898</p>
 > <p align = "center"> &#128309 &#9898 &#9898 &#9898</p>
@@ -310,7 +312,7 @@ Our goal is to determine which hypothesis is the most plausible, given some **ev
 
 <p align = "center">&#128309 &#9898 &#128309</p>
 
-This sequence represents some evidence about the content of the bag, in other words, our data. From there, what **inference** can we reasonably make about the content of the bag ? In other words, what can we say about the relative plausibility of each hypothesis ?
+This sequence represents some evidence about the content of the bag, in other words, our data. From there, what **inference** can we reasonably make about the content of the bag ? What can we say about the relative plausibility of each hypothesis ?
 
 Counting possibilities
 ========================================================
@@ -653,7 +655,7 @@ Probability distributions
 type: lineheight
 incremental: true
 
-A **probability mass function** (PMF) is a function that gives the probability that a discrete random variable is exactly equal to some value. Let's consider as an example the binomial distribution of a non biased coin ($\theta = 0.5$) for ten flips.
+A **probability mass function** (PMF) is a function that gives the probability that a discrete random variable is exactly equal to some value. Let's consider as an example the binomial distribution of a non-biased coin ($\theta = 0.5$) for ten flips.
 
 <img src="day1_intro_bayes-figure/unnamed-chunk-11-1.png" title="plot of chunk unnamed-chunk-11" alt="plot of chunk unnamed-chunk-11" style="display: block; margin: auto;" />
 
@@ -671,7 +673,7 @@ Probability distributions
 type: lineheight
 incremental: true
 
-A **probability density function** (PDF), or *density*, is a function that is used to specify the probability of the random variable falling within a particular range of values, as opposed to taking on any one value. This probability is given by the integral of this variable’s PDF over that range.
+A **probability density function** (PDF), or *density*, is a function that is used to specify the probability of the random variable falling within a particular range of values, as opposed to taking on any specific value. This probability is given by the integral of this variable’s PDF over that range.
 
 <img src="day1_intro_bayes-figure/unnamed-chunk-13-1.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" style="display: block; margin: auto;" />
 
@@ -913,14 +915,14 @@ type: lineheight
 
 Let's summarise the situation.
 
-- Let's consider 1000 women aged between 40 and 50 years, without family history of cancer or any syptoms
-  - 8 woment out of 1000 have a cancer
+- Let's consider 1000 women aged between 40 and 50 years, without family history of cancer or any symptoms
+  - 8 women out of 1000 have a cancer
 
 - We do a mammography
   - On the 8 women having a cancer, we can expect 7 of them to have a positive result
   - On the 992 other women, 69 will have a positive result
   
-- A randomly picked womand gets a positive result...
+- A randomly picked woman gets a positive result...
 
 - What should we infer ?
 
