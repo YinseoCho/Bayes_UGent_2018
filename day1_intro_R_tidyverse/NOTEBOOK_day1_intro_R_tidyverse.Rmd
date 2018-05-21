@@ -119,7 +119,7 @@ Let's filter this participant out. More specifically, we keep all participants t
 ```{r filter}
 att.filter <- 
     att %>%
-    filter(ssj!=99)
+    filter(ssj != 99)
 ```
 
 Verify that it worked.
@@ -251,8 +251,10 @@ Thanks to the versatility of the ```tidyverse``` (especially the pipe operator),
 
 ```{r all_operations}
 att.filter.select.recode.long.sep <-
-    att %>%
-    filter(ssj!=99) %>%
+    read.table(
+        "MixedAttitude.dat",
+        header = TRUE) %>%
+    filter(ssj != 99) %>%
     select(participant = ssj,
            gender,
            beer_negative = beerneg,
@@ -292,6 +294,71 @@ summary.att.filter.select.recode.long.sep <-
               max = max(ratings),            # range (max)
               ci.95 = 1.96 * sem) %>%        # 95% confidence interval
     print(.)                                 # another way of displaying the results in console
+```
+
+# Exercises
+
+## Exercise 1
+
+Do the following operations _**in one go**_:
+
+* load the original data (```MixedAttitude.dat```)
+* convert ```gender``` to a **categorical** variable with 2 levels:
+    - 1 --> female
+    - 2 --> male
+* eliminate from the dataset the following variables: ```beerpos```, ```beerneg```, ```beerneut```, ```winepos```, ```waterpos```
+* using the function ```rename```, rename the variables you kept:
+    - ssj --> participant
+    - wineneg --> wine_negative
+    - wineneut --> wine_neutral
+    - waterneg --> water_negative
+    - waterneu --> water_neutral
+* filter out all participants who rated water preceded by neutral imagery as _**lower than -10**_
+* convert the dataset to **long** format
+* separate conditions into 2 variables (**drink** and **imagery**) and convert them to factors
+* save the dataset as ```data_attitude_exercise.csv```
+* separately for **drink**, **imagery**, and **gender**, calculate the following summary statistics:
+    - number of observations
+    - median
+    - median absolute deviation
+    - minumum value
+    - maximum value
+* display the results in console
+
+```{r exercise_1}
+read.table(
+    "MixedAttitude.dat",
+    header = TRUE) %>%
+    mutate(gender = recode(
+        factor(gender),
+                    "1" = "female", "2" = "male")) %>%
+    select(-c(
+            beerpos,
+            beerneg,
+            beerneut,
+            winepos,
+            waterpos)) %>%
+    rename(participant = ssj,
+           wine_negative = wineneg,
+           wine_neutral = wineneut,
+           water_negative = waterneg,
+           water_neutral = waterneu) %>%
+    filter(water_neutral >= -10) %>%
+    gather(key = "condition",
+           value = "ratings",
+           wine_negative:water_neutral) %>%
+    separate(condition, c("drink", "imagery")) %>%
+    mutate(drink = factor(drink),
+           imagery = factor(imagery)) %>%
+    write_csv(.,
+              paste0(getwd(), "/data_attitude_exercise.csv")) %>%
+    group_by(drink, imagery, gender) %>%
+    summarize(n = n(),
+              median = median(ratings),
+              mad = mad(ratings),
+              min = min(ratings),
+              max = max(ratings)) %>%
+    print(.)
 ```
 
 # Plotting
@@ -472,16 +539,16 @@ att.filter.select.recode.long.sep %>%                          # we need the com
 
 If you don't want to waste time doing it yourself, I recommend the [```yarrr```](https://cran.r-project.org/web/packages/yarrr/vignettes/pirateplot.html) package.   
    
+```{r install_yarrr, eval = FALSE}
+install.packages("yarrr")
+```
+
 The ```pirateplot``` function creates a graph showing:
 
 * points representing the raw data
 * smoothed densities
 * vertical bars showing central tendencies
 * rectangles representing inference intervals (e.g., 95% confidence intervals)
-
-```{r install_yarrr, eval = FALSE}
-install.packages("yarrr")
-```
 
 ```{r RDI_pirateplot, message = FALSE}
 library(yarrr)
@@ -508,6 +575,94 @@ pirateplot(formula = ratings ~ imagery + drink,      # dependent ~ independent v
 
 The graphs above suggest that negative imagery may have influenced ratings to *water* more than to beer. 
 
+# Exercises
+
+## Exercise 2.1
+
+Compute the following operations _**in one go**_:
+
+* load ```data_attitude_exercise.csv``` (use a function from the ```tidyverse``` instead of ```read.table```)
+* separately for **drink**, **imagery**, and **gender**, calculate the summary statistics that you will need for the plot (i.e., means and 95% confidence intervals)
+* create bar graphs:
+    - separate bars for negative and neutral imagery
+    - separate graphs for **male** and **female** participants, placed horizontally (hint: use ```facet_grid```)
+    - black outlines
+    - error bars displaying 95% confidence intervals
+    - ```viridis``` color palette
+    - no title on the *x*-axis
+    - limit the *y*-axis from -20 to +20, with tick marks every 5
+    - add a plot title
+    - text size in the plot: 18 points
+    - text size of the title: 32 points
+    - title in the center
+    - legend position in the center of the graph (not overlapping with the bars)
+    - no legend title
+    - no legend background
+
+```{r exercise_2_1, message = FALSE}
+read_csv(paste0(getwd(), "/data_attitude_exercise.csv")) %>%
+    group_by(drink, imagery, gender) %>% 
+    summarize(mean = mean(ratings),
+              ci.95 = 1.96 * sd(ratings)/sqrt(n())) %>%
+    ggplot(.,
+           aes(x = drink,
+               y = mean,
+               fill = imagery)) +
+    geom_bar(stat = "identity",
+             position = position_dodge(),
+             color = "black",
+             size = 1) +
+    geom_errorbar(aes(ymin = mean - ci.95,
+                      ymax = mean + ci.95),
+                  width = .2,
+                  position = position_dodge(.9)) +
+    facet_grid(. ~ gender) +
+    scale_fill_viridis(option = "viridis",
+                       discrete = TRUE) +
+    scale_y_continuous("",
+                       limits = c(-20, 20),
+                       breaks = seq(-20, 20, 5)) +
+    ggtitle("mean ratings") +
+    theme_classic(base_size = 18) +
+    theme(plot.title = element_text(size = 32,
+                                    hjust = .5),
+          legend.position = c(.55, .85),
+          legend.title = element_blank(),
+          legend.background = element_rect(fill = "transparent"))
+```
+
+## Exercise 2.2
+
+Compute the following operations _**in one go**_:
+
+* load ```data_attitude_exercise.csv```
+* using the ```yarrr``` package, create an RDI graph similar to the bar graph of **Exercise 2.1** (i.e., separate graphs for female and male participants)
+* modify it as you please (check the ```pirateplot``` options), e.g., change color palette (**hint**: type ```piratepal("all")```)
+
+```{r exercise_2_2, message = FALSE}
+read_csv(paste0(getwd(), "/data_attitude_exercise.csv")) %>%
+    mutate(imagery = recode(imagery,
+                            "negative" = "neg",
+                            "neutral" = "neut")) %>%
+    pirateplot(formula = ratings ~ imagery + drink + gender,
+               data = .,
+               main = "mean ratings",
+               ylim = c(-25, 25),
+               ylab = "",
+               inf.method = "ci",
+               inf.within = participant,
+               pal = "pony",
+               point.o = .5,
+               point.cex = 1.3,
+               bean.b.o = .6,
+               bean.f.o = .6,
+               cap.beans = TRUE,
+               bty = "n",
+               gl.col = "gray",
+               gl.lwd = 1,
+               gl.lty = 2)
+```
+
 # Data analysis
 
 The aim of this study was to assess whether negative imagery would influence the likeness ratings of alcoholic beverages. It's time to statistically verify the hypothesis.   
@@ -524,7 +679,7 @@ install.packages("afex") # 'afex' also installs many other useful packages... in
 
 The code below shows how to run an ANOVA with this versatile and user-friendly package.
 
-```{r rANOVA, message = FALSE}
+```{r rmANOVA, message = FALSE}
 library(afex)
 library(multcomp) # we didn't explicitly install this package, but it's part of the dependencies of 'afex'
 
@@ -573,7 +728,7 @@ I particularly like the idea of **bootstrapping** effect sizes, a better approac
 install.packages("bootES")
 ```
 
-We will compute **Hegdes's** _**g**_, an unbiased estimate of $\delta$ (for details, see [here](http://journals.sagepub.com/doi/abs/10.1177/0013164404264850))
+We will compute **Hegdes's _g_**, an unbiased estimate of $\delta$ (for details, see [here](http://journals.sagepub.com/doi/abs/10.1177/0013164404264850))
    
 Because our dependent variable consists of ratings collected from the same participants in different conditions (i.e., repeated measures), we must first manually compute the difference scores between our contrasts of interest (see the output of the paired comparisons above).
 
@@ -644,7 +799,168 @@ for(i in 1:length(unique(att.bootES$diff.conds))) {                            #
 summary.att.bootES
 ```
 
+# Exercises
+
+## Exercise 3.1
+
+Run the same analyses using the exercise dataset (i.e., wine instead of beer):
+
+* 2 (**drink**) x 2 (**imagery**) repeated measures ANOVA on likeness ratings
+* paired contrasts
+* bootstrapped effect sizes (calculate **Pearson's _r_** instead of **Hegdes's _g_**)
+* summary table of paired contrasts
+
+```{r exercise_3_1_rmANOVA, message = FALSE}
+# ANOVA
+ex31.rmANOVA.att <- 
+    read_csv(paste0(getwd(), "/data_attitude_exercise.csv")) %>%
+    aov_ez("participant",
+           "ratings",
+           .,
+           within = c("drink", "imagery"),
+           type = 3)
+
+ex31.rmANOVA.att
+```
+
+```{r exercise_3_1_paired_contrasts, message = FALSE}
+# paired contrasts
+ex31.posthoc.att <-
+    emmeans(ex31.rmANOVA.att, ~ imagery:drink) %>%
+    pairs(.,
+          test = adjusted("free")) %>%
+    as.glht(.) %>%
+    summary(.)
+
+# bootstrapped effect sizes
+ex31.att.bootES <-
+    read_csv(paste0(getwd(), "/data_attitude_exercise.csv")) %>%
+    unite("condition", c(drink, imagery)) %>%
+    spread(condition, ratings) %>%
+    mutate(wine_negativeVSwine_neutral = wine_negative - wine_neutral,
+           wine_negativeVSwater_negative = wine_negative - water_negative,
+           wine_negativeVSwater_neutral = wine_negative - water_neutral,
+           wine_neutralVSwater_negative = wine_neutral - water_negative,
+           wine_neutralVSwater_neutral = wine_neutral - water_neutral,
+           water_negativeVSwater_neutral = water_negative - water_neutral) %>%
+    dplyr::select(-c(water_negative:wine_neutral)) %>%
+    gather(key = "diff.conds",
+           value = "ratings",
+           wine_negativeVSwine_neutral:water_negativeVSwater_neutral)
+
+ex31.att.PearsonR <- 
+    ex31.att.bootES %>%
+    split(.$diff.conds) %>%
+    map(~bootES(.,
+                data.col = "ratings",
+                R = 5000,
+                effect.type = "r",
+                ci.type = "bca",
+                ci.conf = .95))
+
+# summary table
+summary.ex31.att.bootES <- data.frame(magrittr::extract2(ex31.posthoc.att, 1)$object,
+                                 "Pearson.r" = NA,
+                                 "CI.95.low" = NA,
+                                 "CI.95.high" = NA,
+                                 "bias" = NA,
+                                 "std.error" = NA)
+
+# OH MY GOD ANOTHER LOOP IN R!
+for(i in 1:length(unique(ex31.att.bootES$diff.conds))) {
+    summary.ex31.att.bootES[i, 7:11] <- summary(magrittr::extract2(ex31.att.PearsonR, i))
+}
+
+summary.ex31.att.bootES
+```
+
+## Exercise 3.2
+
+Run a 2 (**gender**) x 2 (**drink**) x 2 (**imagery**) mixed ANOVA on likeness ratings:
+
+* remember: ```gender``` is a between-subject factor!
+* paired contrasts: test **only** difference ratings between *female* and *male* participants (**hint**: see example [here](https://cran.r-project.org/web/packages/afex/vignettes/afex_anova_example.html#post-hoc-contrasts-and-plotting)):
+    - wine_negative
+    - wine_neutral
+    - water_negative
+    - water_neutral
+* bootstrapped effect sizes (**Cohen's _d_** ) of the paired comparisons of interest
+* summary table of paired contrasts
+
+```{r exercise_3_2_mixedANOVA, message = FALSE}
+# ANOVA
+ex32.rmANOVA.att <- 
+    read_csv(paste0(getwd(), "/data_attitude_exercise.csv")) %>%
+    aov_ez("participant",
+           "ratings",
+           .,
+           within = c("drink", "imagery"),
+           between = "gender",
+           type = 3)
+
+ex32.rmANOVA.att
+```
+
+```{r exercise_3_2_paired_contrasts, message = FALSE}
+# paired contrasts (only a subset of them)
+ex32.posthoc.att <-
+    emmeans(ex32.rmANOVA.att, ~ gender|imagery|drink) %>%
+    pairs(.,
+          test = adjusted("free")) %>%
+    as.glht(.) %>%
+    summary(.)
+
+# bootstrapped effect sizes
+ex32.att.bootES <-
+    read_csv(paste0(getwd(), "/data_attitude_exercise.csv")) %>%
+    unite("condition", c(drink, imagery))
+
+ex32.att.CohenD <- 
+    ex32.att.bootES %>%
+    split(.$condition) %>%
+    map(~bootES(.,
+                data.col = "ratings",
+                group.col = "gender",
+                contrast = c("female", "male"),
+                R = 5000,
+                effect.type = "cohens.d",
+                ci.type = "bca",
+                ci.conf = .95))
+
+# summary table
+summary.ex32.att.bootES <- data.frame("contrast" = c("negative, wine, female - male",
+                                                     "neutral, wine, female - male",
+                                                     "negative, water, female - male",
+                                                     "neutral, water, female - male"),
+                                      "estimate" = NA,
+                                      "SE" = NA,
+                                      "df" = NA,
+                                      "t.ratio" = NA,
+                                      "p.value" = NA,
+                                      "Cohen.d" = NA,
+                                      "CI.95.low" = NA,
+                                      "CI.95.high" = NA,
+                                      "bias" = NA,
+                                      "std.error" = NA)
+
+# OH MY GOD ANOTHER LOOP IN R! THIS IS GETTING RIDICULOUS!
+for(i in 1:length(unique(ex32.att.bootES$condition))) {
+    # subsetting this list turned out to be more complicated than I thought... here is a very inelegant workaround
+    summary.ex32.att.bootES[i, "estimate"] <- magrittr::extract2(ex32.posthoc.att, i)$test$coefficients
+    summary.ex32.att.bootES[i, "SE"] <- magrittr::extract2(ex32.posthoc.att, i)$test$sigma
+    summary.ex32.att.bootES[i, "df"] <- magrittr::extract2(ex32.posthoc.att, i)$df
+    summary.ex32.att.bootES[i, "t.ratio"] <- magrittr::extract2(ex32.posthoc.att, i)$test$tstat
+    summary.ex32.att.bootES[i, "p.value"] <- magrittr::extract2(ex32.posthoc.att, i)$test$pvalues
+    summary.ex32.att.bootES[i, 7:11] <- summary(magrittr::extract2(ex32.att.CohenD, i))
+}
+
+summary.ex32.att.bootES
+```
+
 That's it. I hope I managed to at least give you a glimpse of the versatility, readability, and user-friendliness of the ```tidyverse```.
+
+
+    
 
 
 
