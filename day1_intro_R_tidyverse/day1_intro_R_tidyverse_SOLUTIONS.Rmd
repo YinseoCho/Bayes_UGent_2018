@@ -823,7 +823,7 @@ ex31.rmANOVA.att <-
 ex31.rmANOVA.att
 ```
 
-```{r exercise_3_1_paired_contrasts, message = FALSE}
+```{r exercise_3_1_paired_contrasts, message = FALSE, warning = FALSE}
 # paired contrasts
 ex31.posthoc.att <-
     emmeans(ex31.rmANOVA.att, ~ imagery:drink) %>%
