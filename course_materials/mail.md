@@ -14,9 +14,9 @@ install.packages(c("data.table", "coda", "mvtnorm", "devtools", "MASS", "ellipse
 
 Slides, data, and scripts will be available on Github (from the first day of the course) following this link: https://github.com/lnalborczyk/Bayes_UGent_2018
 
-Although a good knowledge of R was a prerequisite of registration, please find atached a short introduction to the R language, which will be necessary to understand the examples discussed during the course.
+Although a good knowledge of R was a prerequisite of registration, please find attached a short introduction to the R language, which will be necessary to understand the examples discussed during the course.
 
-Please find below an updated version of the planning, and accept our apologies concerning the discrepancies between this planning and the initial planning.
+Please find below an updated version of the planning, and accept our apologies concerning the discrepancies between this planning and the initial planning. We believe the updated program is an improvement and hope you will feel the same.
 
 Day 1 (Wednesday 13 June)
 
