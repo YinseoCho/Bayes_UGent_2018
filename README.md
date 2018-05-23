@@ -11,7 +11,7 @@
 
 Click on the following links to see the slides online
 
-[Introduction to the tidyverse]()
+[Hands-on data science with ```tidyverse```]()
 
 [The model comparison approach to data analysis]()
 
