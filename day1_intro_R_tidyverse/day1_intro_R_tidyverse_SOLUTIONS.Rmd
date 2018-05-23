@@ -11,6 +11,7 @@ editor_options:
   chunk_output_type: inline
 ---
 
+<!-- ##### add slider to code boxes ##### -->
 <style>
 pre {
   overflow-x: auto;
@@ -20,6 +21,7 @@ pre code {
   white-space: pre;
 }
 </style>
+<!-- #################################### -->
 
 ***
 ***
@@ -129,13 +131,13 @@ Verify that it worked.
 att.filter
 ```
 
-The symbol **```%>%```** is the **pipe operator** , which allows to serially concatenate functions to the same data frame. Read it as *"and then"*. In the example below, we called the data frame ```att``` **and then** applied the ```filter``` function to discard participant #99.
+The symbol **```%>%```** is the **pipe operator** , which allows to serially concatenate functions applied to the same data frame. Read it as _**"and then"**_. In the example below, we called the data frame ```att``` **and then** applied the ```filter``` function to discard participant #99.
 
 ## Variable selection
 
 For the exercises in this course, we will only need a subset of variables in this dataset.   
    
-Researchers were interested in reducing binge drinking, so it makes sense to focus our attention on **negative** imagery and one alcoholic beverage. We choose **beer**, because we are in Belgium. We also need control conditions, i.e., **neutral** imagery and **water**.
+Researchers were interested in reducing binge drinking, so we will focus our attention on **negative** imagery and one alcoholic beverage. We choose **beer**, because we are in Belgium. We also need control conditions, i.e., **neutral** imagery and **water**.
    
 In the next code, we will simultaneously **select** and **rename** the variables we want to keep.
 
@@ -279,7 +281,7 @@ att.filter.select.recode.long.sep <-
 head(att.filter.select.recode.long.sep, n = 5)
 ```
 
-# Data summary
+## Summary
 
 It is often required to provide summary statistics of the data. How to do it with ```tidyverse```?
 
@@ -407,7 +409,7 @@ summary.att.filter.select.recode.long.sep %>%
              size = 1)                        # line thickness
 ```
 
-Something is missing... ah, error bars!
+Something is missing... ah, error bars! Display 95% confidence intervals.
 
 ```{r barplot_4}
 summary.att.filter.select.recode.long.sep %>%
@@ -574,7 +576,7 @@ pirateplot(formula = ratings ~ imagery + drink,      # dependent ~ independent v
            gl.lty = 2)                               # background line type (dashed)
 ```
 
-The graphs above suggest that negative imagery may have influenced ratings to *water* more than to beer. 
+The graphs above suggest that negative imagery may have influenced ratings to water more than to beer. 
 
 # Exercises
 
@@ -647,7 +649,7 @@ read_csv(paste0(getwd(), "/data_attitude_exercise.csv")) %>%
                             "neutral" = "neut")) %>%
     pirateplot(formula = ratings ~ imagery + drink + gender,
                data = .,
-               main = "mean ratings",
+               main = "",
                ylim = c(-25, 25),
                ylab = "",
                inf.method = "ci",
@@ -668,7 +670,7 @@ read_csv(paste0(getwd(), "/data_attitude_exercise.csv")) %>%
 
 The aim of this study was to assess whether negative imagery would influence the likeness ratings of alcoholic beverages. It's time to statistically verify this hypothesis.   
    
-We will run a 2 (**drink**: water, beer) x 2 (**imagery** neutral, negative) repeated measures ANOVA on these ratings.   
+We will run a 2 (**drink**: water, beer) x 2 (**imagery**: neutral, negative) repeated measures ANOVA on these ratings.   
    
 For this demonstration I chose the package ```afex```, authored by [Henrik Singmann](http://singmann.org/about-me/).
 
@@ -808,7 +810,7 @@ Run the same analyses using the exercise dataset (i.e., wine instead of beer):
 
 * 2 (**drink**) x 2 (**imagery**) repeated measures ANOVA on likeness ratings
 * paired contrasts
-* bootstrapped effect sizes (calculate **Pearson's _r_** instead of **Hegdes's _g_**)
+* bootstrapped effect sizes (calculate **Pearson's _r_** instead of Hegdes's _g_)
 * summary table of paired contrasts
 
 ```{r exercise_3_1_rmANOVA, message = FALSE}
@@ -885,7 +887,7 @@ Run a 2 (**gender**) x 2 (**drink**) x 2 (**imagery**) mixed ANOVA on likeness r
     - wine_neutral
     - water_negative
     - water_neutral
-* bootstrapped effect sizes (**Cohen's _d_** ) of the paired comparisons of interest
+* bootstrapped effect sizes (**Cohen's _d_**) of the paired comparisons of interest
 * summary table of paired contrasts
 
 ```{r exercise_3_2_mixedANOVA, message = FALSE}
@@ -960,20 +962,19 @@ summary.ex32.att.bootES
 
 # Conclusion
 
-With these exercises, I tried to give you a glimpse of the versatility, readability, and user-friendliness of the ```tidyverse```.   
-   
-In the second part of the morning, [Ivan Grahek](https://www.researchgate.net/profile/Ivan_Grahek) 
-   
-In the afternoon, [Ladislas Nalborczyk](http://www.barelysignificant.com/)
-   
+Hopefully, I managed to give you a glimpse of the versatility, readability, and user-friendliness of the ```tidyverse```. Enjoy your tidy new life! 
+
+<br>
 <center>
 <font size="38"> Thanks! </font>
 
 ![](AS.gif)
 
-<!-- set FontAwesome icons -->
+
+<!-- ##### set FontAwesome icons ##### -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
+<!-- contact info -->
 <a href="mailto:antonio.schettino@ugent.be"> <i class="fa fa-paper-plane fa-fw" style="font-size:24px;color:#152bda;"> </i>&nbsp; antonio.schettino@ugent.be</a><br>
 
 <a href="https://asch3tti.netlify.com/"><i class="fa fa-link fa-fw" style="font-size:24px;color:black;"></i>&nbsp; asch3tti.netlify.com</a><br>
@@ -981,6 +982,8 @@ In the afternoon, [Ladislas Nalborczyk](http://www.barelysignificant.com/)
 <a href="https://twitter.com/asch3tti"><i class="fa fa-twitter fa-fw" style="font-size:24px;color:#00aced;"></i>&nbsp; @asch3tti</a><br>
 
 </center>
+<!-- ################################# -->
+</br>
 
 ***
 ***
