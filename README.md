@@ -15,9 +15,9 @@ Click on the following links to see the slides online
 
 [The model comparison approach to data analysis]()
 
-[Model comparison and information criteria]()
+[Model comparison and information criteria](http://www.barelysignificant.com/slides/IBSM2018_aic)
 
-[Introduction to Bayesian inference]()
+[Introduction to Bayesian inference](http://www.barelysignificant.com/slides/IBSM2018_bayes)
 
 ## Acknowledgements
 
