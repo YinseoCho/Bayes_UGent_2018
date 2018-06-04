@@ -492,7 +492,7 @@ type: lineheight
 Beer vs. water & positive vs. negative dataset
 
 ```{r, message = FALSE} 
-d = read.csv(file = "C:/Users/igrahek/Documents/Conferences/Bayes specialist course, Gent, 2018/Model comparison lecture/data_attitude.csv")
+d = read.csv(file = "./day_1_model comparison_ANOVA/data_attitude.csv")
 head (d)
 ```
 
