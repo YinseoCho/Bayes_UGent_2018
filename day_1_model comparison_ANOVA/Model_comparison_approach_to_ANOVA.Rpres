@@ -1,0 +1,597 @@
+Model comparison approach to ANOVA
+========================================================
+author: Ivan Grahek
+date: Ghent University (Belgium)
+autosize: true
+transition: none
+width: 1600
+height: 1000
+css: css-file.css
+
+Contents
+========================================================
+incremental: true
+type: lineheight
+
+- Model comparison approach to data analysis
+- Regression 101 (2 continuous variables)
+- Regression with categorical variables
+- Model comparison approach to ANOVA
+
+```{r setup, include = FALSE}
+library(tidyverse)
+set.seed(9992)
+```
+
+The standard way: IF-THEN cookbook
+========================================================
+incremental: true
+type: lineheight
+
+<div align = "center" style="float: bottom;">
+<img src = "cookbook.jpg" width=924 height=742,5 >
+</div>
+
+The model comparison approach: Regressions all the way down
+========================================================
+incremental: true
+type: lineheight
+
+<div align = "center" style="float: bottom;">
+<img src = "elephants.jpg" width=800 height=800>
+</div>
+
+The model comparison approach
+========================================================
+incremental: true
+type: lineheight
+
+- Most of the analyses can be viewed as linear regressions
+- t-test: two-level categorical variable as the predictor
+- ANOVA: three-or-more-level categorical variable as the predictor
+- Good introductions: 
+    - Judd, McClelland, & Ryan (1989; 2017 - 3rd edition)
+    - McElreath (2015)
+
+What is a model?
+========================================================
+incremental: true
+type: lineheight
+
+<div align = "center" style="float: bottom;">
+<img src = "pasta.jpg" width = 600 height = 600>
+</div>
+
+Compact description of data
+
+Each of the cookbook procedures contains off-the-shelf models hidden inside
+
+Here we will try to open these pasta machines 
+
+Simple regression
+========================================================
+incremental: true
+type: lineheight
+
+What is a linear model?
+
+$$
+\begin{align}
+\text{DATA} = \text{MODEL} + \text{ERROR} \\ 
+\end{align}
+$$
+
+We will write this down as:
+
+$$
+\begin{align}
+
+\mathcal y_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
+\mu_{i} &= \alpha + \beta_{1}x_{i} \\
+
+\end{align}
+$$
+
+A lot of ways to write the same equation:
+
+$$
+\begin{align}
+
+\mu_{i} &= \alpha + \beta_{1}x_{i} + \epsilon_{1} \\
+\mathcal \epsilon_{i} &\sim \mathrm{Normal}(0,\sigma) \\
+
+\end{align}
+$$
+
+Simple regression
+========================================================
+incremental: true
+type: lineheight
+
+How do we write this in R?
+
+$$
+\begin{align}
+
+\mathcal y_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
+\mu_{i} &= \alpha + \beta_{1}x_{i} \\
+
+\end{align}
+$$
+
+
+```{r, message = FALSE, eval=FALSE} 
+model <- lm(y ~ 1 + x, data = d)
+```
+
+Simple regression
+========================================================
+incremental: true
+type: lineheight
+
+$$
+\begin{align}
+\mathcal y_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
+\mu_{i} &= \alpha + \beta_{1}x_{i} \\
+\end{align}
+$$
+
+Our goal is always to estimate these parameters:
+
+$$
+\begin{align}
+
+\alpha\\
+\beta_{1}\\
+
+\end{align}
+$$
+
+How do we do this and what does it mean?
+
+Let's get some data
+========================================================
+incremental: true
+type: lineheight
+
+Here is some fascinating data on properties of cars
+
+```{r, message = FALSE} 
+head (mtcars)
+```
+
+Let's plot the data
+========================================================
+incremental: true
+type: lineheight
+
+A simple scatterplot
+
+```{r eval = TRUE, echo = TRUE, fig.align = "center", fig.width = 9, fig.height = 9}  
+# Basic scatter plot
+ggplot(mtcars, aes(x=wt, y=mpg)) + 
+  geom_point() + # Data points
+  theme_bw(base_size = 20) # Theme
+```
+
+Fitting the simplest line 
+========================================================
+incremental: true
+type: lineheight
+
+$$
+\begin{align}
+\mathcal y_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
+\mu_{i} &= \alpha \\
+\end{align}
+$$
+
+```{r eval = TRUE, echo = TRUE, fig.align = "center", fig.width = 9, fig.height = 9}  
+# Basic scatter plot
+ggplot(mtcars, aes(x=wt, y=mpg)) + 
+  geom_point() + # Data points
+  labs(x="Car Weight", y = "Miles Per Gallon") + # Name the axes
+  theme_bw(base_size = 20) + # Theme for the plot
+  geom_smooth(method = lm, se=FALSE, formula = y ~ 1)  # Regression line
+```
+
+How bad is the line? 
+========================================================
+incremental: true
+type: lineheight
+
+```{r eval = TRUE, echo = TRUE, fig.align = "center", fig.width = 9, fig.height = 9}  
+model <- lm(mpg ~ 1, data = mtcars)
+# Quick look at the actual, predicted, and residual values
+library(tidyverse)
+d = mtcars %>% 
+    mutate(
+      predicted = predict(model),   # Save the predicted values
+      residuals = residuals(model) # Save the residual values  
+ )%>%
+  select(mpg, wt, predicted, residuals) 
+
+sample_n(d, 10)
+```
+How bad is the line? 
+========================================================
+incremental: true
+type: lineheight
+
+Plot the residuals
+
+```{r eval = TRUE, echo = TRUE, fig.align = "center", fig.width = 9, fig.height = 9}  
+ggplot(d, aes(x = wt, y = mpg)) +
+  geom_smooth(method = lm, se = FALSE, formula = y ~ 1, color = "black") +  # Regression line
+  geom_segment(aes(xend = wt, yend = predicted), alpha = .2) +  # Connect predicted and actual values
+  geom_point() + # Data points
+  geom_point(aes(y = predicted), shape = 1) + #Points for values predicted by the model
+  xlab("Car Weight") + # X-axis
+  ylab("Miles Per Gallon") + # Y-axis
+  theme_bw(base_size = 20)  # Theme for the plot
+```
+
+What does our model think? 
+========================================================
+incremental: true
+type: lineheight
+
+
+```{r, message = FALSE} 
+model = lm(mpg ~ 1, data = mtcars)
+summary(model)
+```
+
+Fitting the second simplest line
+========================================================
+incremental: true
+type: lineheight
+
+$$
+\begin{align}
+\mathcal y_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
+\mu_{i} &= \alpha + \beta_{1}x_{i} \\
+\end{align}
+$$
+
+```{r eval = TRUE, echo = TRUE, fig.align = "center", fig.width = 9, fig.height = 9}  
+# Basic scatter plot
+ggplot(mtcars, aes(x=wt, y=mpg)) + 
+  geom_point() + # Data points
+   # Regression line
+  labs(x="Car Weight", y = "Miles Per Gallon") + # Name the axes
+  theme_bw(base_size = 20) + # Theme for the plot
+  geom_smooth(method = lm, se=FALSE, color = "black", formula = y ~ 1 + x) # Regression line
+```
+
+How bad is the line? 
+========================================================
+incremental: true
+type: lineheight
+
+```{r eval = TRUE, echo = TRUE, fig.align = "center", fig.width = 9, fig.height = 9}  
+model <- lm(mpg ~ 1 + wt, data = mtcars)
+# Quick look at the actual, predicted, and residual values
+library(tidyverse)
+d = mtcars %>% 
+    mutate(
+      predicted = predict(model),   # Save the predicted values
+      residuals = residuals(model) # Save the residual values  
+ )%>%
+  select(mpg, wt, predicted, residuals) 
+
+sample_n(d, 10)
+```
+How bad is the line? 
+========================================================
+incremental: true
+type: lineheight
+
+Plot the residuals
+
+```{r eval = TRUE, echo = TRUE, fig.align = "center", fig.width = 9, fig.height = 9}  
+ggplot(d, aes(x = wt, y = mpg)) +
+  geom_smooth(method = lm, se = FALSE, color = "black", formula = y ~ 1 + x) +  # Regression line
+  geom_segment(aes(xend = wt, yend = predicted), alpha = .2) +  # Connect predicted and actual values
+  geom_point() + # Data points
+  geom_point(aes(y = predicted), shape = 1) + #Points for values predicted by the model
+  xlab("Car Weight") + # X-axis
+  ylab("Miles Per Gallon") + # Y-axis
+  theme_bw()  # Theme for the plot
+```
+
+What does our model think? 
+========================================================
+incremental: true
+type: lineheight
+
+```{r, message = FALSE} 
+model = lm(mpg ~ 1 + wt, data = mtcars)
+  
+summary(model)
+```
+
+How do we estimate the intercept and the slope? 
+========================================================
+incremental: true
+type: lineheight
+
+The goal is to find a set of parameters that minimize the residuals
+
+Moving the line until we find the model with minimal errors
+
+```{r eval = TRUE, echo = FALSE, fig.align = "center", fig.width = 9, fig.height = 9}  
+# Basic scatter plot
+ggplot(mtcars, aes(x=wt, y=mpg)) + 
+  geom_point() + # Data points
+   # Regression line
+  labs(x="Car Weight", y = "Miles Per Gallon") + # Name the axes
+  theme_bw(base_size = 20) + # Theme for the plot
+  geom_smooth(method = lm, se=FALSE, color = "black", formula = y ~ 1 + x) # Regression line
+```
+
+
+How do we estimate the intercept and the slope? 
+========================================================
+incremental: true
+type: lineheight
+
+We can quiantify these errors as the Sum of Squared Errors (SSE) 
+
+```{r, message = FALSE}
+model <- lm(mpg ~ 1 + wt, data = mtcars)
+# Quick look at the actual, predicted, and residual values
+library(tidyverse)
+d = mtcars %>% 
+    mutate(
+      predicted = predict(model),   # Save the predicted values
+      residuals = residuals(model) # Save the residual values  
+ )
+
+sample_n(d,10)
+
+SSE = sum(d$residuals^2) # Sum of squared errors
+SSE
+```
+
+Assumptions that need to be met
+========================================================
+incremental: true
+type: lineheight
+
+Normality of residuals
+  - Errors are normally distributed
+
+Homogenity of variances
+  - Across groups
+
+Independence of the residuals
+  - We shouldn't be able to predict residuals of an observation from other residuals 
+  
+Model comparison
+========================================================
+incremental: true
+type: lineheight
+
+Compact and augmented model
+
+```{r eval = TRUE, echo = FALSE, fig.align = "center", fig.width = 18, fig.height = 9,fig.show='hold'}  
+library(gridExtra)
+# Basic scatter plot
+p1 <- ggplot(mtcars, aes(x=wt, y=mpg)) + 
+  geom_point() + # Data points
+   # Regression line
+  labs(x="Car Weight", y = "Miles Per Gallon") + # Name the axes
+  theme_bw(base_size = 20) + # Theme for the plot
+  geom_smooth(method = lm, se=FALSE, color = "black", formula = y ~ 1) +  # Regression line
+  ggtitle("Compact")
+
+# Basic scatter plot
+p2 <- ggplot(mtcars, aes(x=wt, y=mpg)) + 
+  geom_point() + # Data points
+   # Regression line
+  labs(x="Car Weight", y = "Miles Per Gallon") + # Name the axes
+  theme_bw(base_size = 20) + # Theme for the plot
+  geom_smooth(method = lm, se=FALSE, color = "black", formula = y ~ 1 + x) + # Regression line
+  ggtitle("Augmented")
+
+grid.arrange(p1,p2, ncol=2)
+  
+```
+
+Model comparison
+========================================================
+incremental: true
+type: lineheight
+
+Let's calculate the SSEs of these two models
+
+```{r, message = FALSE}
+Compact_model <- lm(mpg ~ 1, data = mtcars)
+# Quick look at the actual, predicted, and residual values
+library(tidyverse)
+d_C = mtcars %>% 
+    mutate(
+      predicted = predict(Compact_model),   # Save the predicted values
+      residuals = residuals(Compact_model) # Save the residual values  
+ )
+
+SSE_Compact = sum(d_C$residuals^2) # Sum of squared errors
+SSE_Compact
+```
+
+```{r, message = FALSE}
+Augmented_model <- lm(mpg ~ 1 + wt, data = mtcars)
+# Quick look at the actual, predicted, and residual values
+library(tidyverse)
+d_A = mtcars %>% 
+    mutate(
+      predicted = predict(Augmented_model),   # Save the predicted values
+      residuals = residuals(Augmented_model) # Save the residual values  
+ )
+
+SSE_Augmented = sum(d_A$residuals^2) # Sum of squared errors
+SSE_Augmented
+```
+
+Model comparison
+========================================================
+incremental: true
+type: lineheight
+
+Proportional reduction in error 
+
+How much (proportion) does the error reduce when we introduce an additional predictor?
+
+$$
+\begin{align}
+\text{PRE} = (\text{SSE_C} - \text{SSE_A}) / \text{SSE_C} \\ 
+\end{align}
+$$
+
+```{r, message = FALSE, echo = TRUE}
+PRE = (SSE_Compact - SSE_Augmented)/SSE_Compact
+PRE
+```
+
+Model comparison
+========================================================
+incremental: true
+type: lineheight
+
+F statistic
+
+$$
+\begin{align}
+\text{F} = \frac{\text{PRE}/(\text{PA} - \text{PC})}{(1-\text{PRE}/(\text{n}-\text{PA})} \\ 
+\end{align}
+$$
+
+```{r, message = FALSE, echo = TRUE}
+F_stat = (PRE/(2-1))/((1-PRE)/(32-2))
+F_stat
+
+Compact_model <- lm(mpg ~ 1, data = mtcars)
+Augmented_model <- lm(mpg ~ 1 + wt, data = mtcars)
+anova(Compact_model,Augmented_model)
+```
+
+Models with categorical predictors THIS PART IS STILL UNDER CONSTRUCTION
+========================================================
+incremental: true
+type: lineheight
+
+- Buliding a regression with a categorical predictor
+- This is the case of a t-test
+
+- Let's get take the data from the first lecture
+========================================================
+incremental: true
+type: lineheight
+
+Beer vs. water & positive vs. negative dataset
+
+```{r, message = FALSE} 
+d = read.csv(file = "C:/Users/igrahek/Documents/Conferences/Bayes specialist course, Gent, 2018/Model comparison lecture/data_attitude.csv")
+head (d)
+```
+
+Let's plot the data
+========================================================
+incremental: true
+type: lineheight
+
+A simple scatterplot
+
+```{r, message = FALSE, fig.width = 8, fig.heigth = 4, fig.align = "center"}  
+library(tidyverse)
+ggplot(d, aes(x = drink, y = ratings, color = imagery)) +
+    geom_point()  #+
+    #geom_line(aes(group = imagery)) #+
+    #geom_smooth(method=lm, se=FALSE) 
+
+d %>%
+    ggplot(aes(x = drink, y = ratings) ) +
+    # adding individual data points
+    geom_dotplot(binaxis = "y", stackdir = "center", alpha = 0.5, dotsize = 0.5) +
+    # adding model predictions
+    
+    theme_bw(base_size = 20)
+
+```
+
+Contrast and dummy coding
+========================================================
+incremental: true
+type: lineheight
+
+Intercept is the average of one group vs. Intercept is the average of both groups
+
+Fitting our model
+========================================================
+incremental: true
+type: lineheight
+
+
+
+```{r, message = FALSE, fig.width = 8, fig.heigth = 4, fig.align = "center"}  
+model = lm(ratings ~ 1 + drink, data = d)
+
+d %>%
+    # predictions of model 1
+    mutate(
+        p = predict(model, interval = "confidence", level = 0.90)[, 1],
+        lwr = predict(model, interval = "confidence", level = 0.90)[, 2],
+        upr = predict(model, interval = "confidence", level = 0.90)[, 3]
+        ) %>%
+    ggplot(aes(x = drink, y = ratings) ) +
+    # adding individual data points
+    geom_dotplot(binaxis = "y", stackdir = "center", alpha = 0.5, dotsize = 0.5) +
+    # adding model predictions
+    geom_point(aes(y = p), shape = 18, size = 10, show.legend = FALSE) +
+    geom_errorbar(aes(ymin = lwr, ymax = upr), width = 0, size = 2, show.legend = FALSE) +
+    geom_line(aes(y = p, group = imagery), size = 2, show.legend = FALSE) +
+   theme_bw(base_size = 20)
+```
+
+How bad is the line? 
+========================================================
+incremental: true
+type: lineheight
+
+
+
+
+What does our model think?
+========================================================
+incremental: true
+type: lineheight
+
+
+
+
+How much does our model miss?
+========================================================
+incremental: true
+type: lineheight
+
+Exercise 
+========================================================
+incremental: true
+type: lineheight
+
+Take the wine and beer data and construct all the ANOVA models
+
+Calculate PRE and F statistic comparing the interaction and the intercept-only model
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+
+for(i=0;i<$("section").length;i++) {
+if(i==0) continue
+$("section").eq(i).append("<p style='font-size:xx-large;position:fixed;right:30px;bottom:30px;'>" + i + "</p>")
+}
+
+</script>
