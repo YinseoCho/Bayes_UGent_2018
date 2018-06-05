@@ -596,7 +596,7 @@ Model 2: mpg ~ 1 + wt
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
-Models with categorical predictors THIS PART IS STILL UNDER CONSTRUCTION
+Models with categorical predictors 
 ========================================================
 incremental: true
 type: lineheight
@@ -604,7 +604,7 @@ type: lineheight
 - Buliding a regression with a categorical predictor
 - This is the case of a t-test
 
-- Let's get take the data from the first lecture
+Let's get the data from the first lecture
 ========================================================
 incremental: true
 type: lineheight
@@ -613,7 +613,8 @@ Beer vs. water & positive vs. negative dataset
 
 
 ```r
-d = read.csv(file = "data_attitude.csv") # Get the data file
+d = read.csv(file = "data_attitude.csv") # Get the data file if you are in the model_comparison_ANOVA WD
+#d = read.csv(file = "day_1_model_comparison_ANOVA/data_attitude.csv") # Get the data file if you are in the Bayes_UGent_2018 WD
 head (d)
 ```
 
@@ -637,93 +638,202 @@ A simple scatterplot
 
 ```r
 library(tidyverse)
-ggplot(d, aes(x = drink, y = ratings, color = imagery)) +
-    geom_point()  #+
+ggplot(d, aes(x = drink, y = ratings)) +
+    geom_point() + 
+    theme_bw(base_size = 20)
 ```
 
 <img src="Model_comparison_approach_to_ANOVA-figure/unnamed-chunk-20-1.png" title="plot of chunk unnamed-chunk-20" alt="plot of chunk unnamed-chunk-20" style="display: block; margin: auto;" />
 
-```r
-    #geom_line(aes(group = imagery)) #+
-    #geom_smooth(method=lm, se=FALSE) 
+Dummy coding
+========================================================
+incremental: true
+type: lineheight
 
-d %>%
-    ggplot(aes(x = drink, y = ratings) ) +
-    # adding individual data points
-    geom_dotplot(binaxis = "y", stackdir = "center", alpha = 0.5, dotsize = 0.5) +
-    # adding model predictions
+Our predictor is a categorical variable, how do we enter this is a regression?
+
+We have to somehow turn them into numbers
+
+Dummy coding: We have two categories, let beer be zero!
+
+For beer:
+$$
+\begin{align}
+\mathcal y_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
+\mu_{i} &= \alpha + \beta_{1}beer \\ &= \alpha + 0 \\ &= \alpha
+\end{align}
+$$
+
+For water:
+$$
+\begin{align}
+\mathcal y_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
+\mu_{i} &= \alpha + \beta_{1}water \\  &= \alpha + \beta_{1}
+\end{align}
+$$
+
+Dummy coding
+========================================================
+incremental: true
+type: lineheight
+
+How do we interpret the results?
+
+Intercept will be the estimate of beer, slope will be the difference between beer and water
+
+
+```r
+model_dummy = lm(ratings ~ drink, data = d)
+summary(model_dummy)
+```
+
+```
+
+Call:
+lm(formula = ratings ~ drink, data = d)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-26.225  -8.825   0.775   7.938  22.775 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)    7.225      1.887   3.828 0.000259 ***
+drinkwater   -10.650      2.669  -3.990 0.000148 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 11.94 on 78 degrees of freedom
+Multiple R-squared:  0.1695,	Adjusted R-squared:  0.1589 
+F-statistic: 15.92 on 1 and 78 DF,  p-value: 0.000148
+```
+
+Contrast coding
+========================================================
+incremental: true
+type: lineheight
+
+The values of contrast variables across the two categories sum to zero
+
+<img src="Model_comparison_approach_to_ANOVA-figure/unnamed-chunk-22-1.png" title="plot of chunk unnamed-chunk-22" alt="plot of chunk unnamed-chunk-22" style="display: block; margin: auto;" />
     
-    theme_bw(base_size = 20)
-```
-
-<img src="Model_comparison_approach_to_ANOVA-figure/unnamed-chunk-20-2.png" title="plot of chunk unnamed-chunk-20" alt="plot of chunk unnamed-chunk-20" style="display: block; margin: auto;" />
-
-Contrast and dummy coding
+Contrast coding
 ========================================================
 incremental: true
 type: lineheight
 
-Intercept is the average of one group vs. Intercept is the average of both groups
+How do the equations look like?
 
-Fitting our model
+For beer:
+
+$$
+\begin{align}
+\mathcal y_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
+\mu_{beer} &= \alpha + \beta_{1}-0.5 \\ &= \alpha - \beta_{1}/2
+\end{align}
+$$
+
+For water:
+
+$$
+\begin{align}
+\mathcal y_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
+\mu_{water} &= \alpha + \beta_{1}0.5 \\ &= \alpha + \beta_{1}/2
+\end{align}
+$$
+
+Contrast coding
 ========================================================
 incremental: true
 type: lineheight
 
+How do we interpret the results?
 
+Intercept is the average of the two group means
+
+Slope is the difference between the two means (different if codes are -1 and 1, but same F statistic)
 
 
 ```r
-model = lm(ratings ~ 1 + drink, data = d)
-
-d %>%
-    # predictions of model 1
-    mutate(
-        p = predict(model, interval = "confidence", level = 0.90)[, 1],
-        lwr = predict(model, interval = "confidence", level = 0.90)[, 2],
-        upr = predict(model, interval = "confidence", level = 0.90)[, 3]
-        ) %>%
-    ggplot(aes(x = drink, y = ratings) ) +
-    # adding individual data points
-    geom_dotplot(binaxis = "y", stackdir = "center", alpha = 0.5, dotsize = 0.5) +
-    # adding model predictions
-    geom_point(aes(y = p), shape = 18, size = 10, show.legend = FALSE) +
-    geom_errorbar(aes(ymin = lwr, ymax = upr), width = 0, size = 2, show.legend = FALSE) +
-    geom_line(aes(y = p, group = imagery), size = 2, show.legend = FALSE) +
-   theme_bw(base_size = 20)
+model_contrast = lm(ratings ~ drink, data = d_contrast)
+summary(model_contrast)
 ```
 
-<img src="Model_comparison_approach_to_ANOVA-figure/unnamed-chunk-21-1.png" title="plot of chunk unnamed-chunk-21" alt="plot of chunk unnamed-chunk-21" style="display: block; margin: auto;" />
+```
 
-How bad is the line? 
+Call:
+lm(formula = ratings ~ drink, data = d_contrast)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-26.225  -8.825   0.775   7.938  22.775 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)    1.900      1.334   1.424 0.158506    
+drink        -10.650      2.669  -3.990 0.000148 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 11.94 on 78 degrees of freedom
+Multiple R-squared:  0.1695,	Adjusted R-squared:  0.1589 
+F-statistic: 15.92 on 1 and 78 DF,  p-value: 0.000148
+```
+
+Full ANOVA 
 ========================================================
 incremental: true
 type: lineheight
 
+Which models are contained in the 2X2 ANOVA?
 
+$$
+\begin{align}
 
+\mathcal{Null} : \text{ratings}_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
+\mu_{i} &= \alpha \\
+\\
+\mathcal{Drink} : \text{ratings}_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
+\mu_{i} &= \alpha + \beta_{1} \text{drink}_{i} \\
+\\
+\mathcal{Imagery} : \text{ratings}_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
+\mu_{i} &= \alpha + \beta_{1} \text{imagery}_{i} \\
+\\
+\mathcal{Main effects} : \text{ratings}_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
+\mu_{i} &= \alpha + \beta_{1} \text{drink}_{i} + \beta_{2} \text{imagery}_{i}  \\
+\\
+\mathcal{Interactions} : \text{ratings}_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
+\mu_{i} &= \alpha + \beta_{1} \text{drink}_{i} + \beta_{2} \text{imagery}_{i} + \beta_{3} \text{drink}_{i} \times \text{imagery}_{i} \\
 
-What does our model think?
+\end{align}
+$$
+
+Full ANOVA in lm
 ========================================================
 incremental: true
 type: lineheight
 
+How do we write this in R?
 
 
-
-How much does our model miss?
-========================================================
-incremental: true
-type: lineheight
+```r
+model_null = lm(ratings ~ 1, data = d)
+model_drink = lm(ratings ~ drink, data = d)
+model_imagery = lm(ratings ~ imagery, data = d)
+model_maineffects = lm(ratings ~ drink + imagery, data = d)
+model_interaction = lm(ratings ~ drink * imagery, data = d)
+```
 
 Exercise 
 ========================================================
 incremental: true
 type: lineheight
 
-Take the wine and beer data and construct all the ANOVA models
+Take the water and beer data and construct all the ANOVA models
 
 Calculate PRE and F statistic comparing the interaction and the intercept-only model
+
+
 
 
 
