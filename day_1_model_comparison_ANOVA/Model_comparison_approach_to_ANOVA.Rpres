@@ -492,7 +492,6 @@ type: lineheight
 Beer vs. water & positive vs. negative dataset
 
 ```{r, message = FALSE} 
-setwd("./day_1_model_comparison_ANOVA") # set the working directory to our subfolder
 d = read.csv(file = "data_attitude.csv")
 head (d)
 ```
