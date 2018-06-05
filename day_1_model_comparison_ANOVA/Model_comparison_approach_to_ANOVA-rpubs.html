@@ -1224,7 +1224,7 @@ sample_n(d, 10)
 <section data-state="lineheight" data-transition="none" data-transition-speed="default">
 <h3>What does our model think? </h3>
 <div class="slideContent" >
-<pre class="fragment"><code class="r">model = lm(mpg ~ 1, data = mtcars)
+<pre class="fragment"><code class="r">model &lt;- lm(mpg ~ 1, data = mtcars)
 summary(model)
 </code></pre>
 
@@ -1278,7 +1278,7 @@ ggplot(mtcars, aes(x=wt, y=mpg)) +
 <pre class="fragment"><code class="r">model &lt;- lm(mpg ~ 1 + wt, data = mtcars)
 # Quick look at the actual, predicted, and residual values
 library(tidyverse)
-d = mtcars %&gt;% 
+d &lt;- mtcars %&gt;% 
     mutate(
       predicted = predict(model),   # Save the predicted values
       residuals = residuals(model) # Save the residual values  
@@ -1327,7 +1327,7 @@ sample_n(d, 10)
 <section data-state="lineheight" data-transition="none" data-transition-speed="default">
 <h3>What does our model think? </h3>
 <div class="slideContent" >
-<pre class="fragment"><code class="r">model = lm(mpg ~ 1 + wt, data = mtcars)
+<pre class="fragment"><code class="r">model &lt;- lm(mpg ~ 1 + wt, data = mtcars)
 
 summary(model)
 </code></pre>
@@ -1375,7 +1375,7 @@ F-statistic: 91.38 on 1 and 30 DF,  p-value: 1.294e-10
 <pre class="fragment"><code class="r">model &lt;- lm(mpg ~ 1 + wt, data = mtcars)
 # Quick look at the actual, predicted, and residual values
 library(tidyverse)
-d = mtcars %&gt;% 
+d &lt;- mtcars %&gt;% 
     mutate(
       predicted = predict(model),   # Save the predicted values
       residuals = residuals(model) # Save the residual values  
@@ -1397,7 +1397,7 @@ sample_n(d,10)
 21 21.5   4 120.1  97 3.70 2.465 20.01  1  0    3    1  24.11100 -2.611004
 </code></pre>
 
-<pre class="fragment"><code class="r">SSE = sum(d$residuals^2) # Sum of squared errors
+<pre class="fragment"><code class="r">SSE &lt;- sum(d$residuals^2) # Sum of squared errors
 SSE
 </code></pre>
 
@@ -1449,13 +1449,13 @@ SSE
 <pre class="fragment"><code class="r">Compact_model &lt;- lm(mpg ~ 1, data = mtcars)
 # Quick look at the actual, predicted, and residual values
 library(tidyverse)
-d_C = mtcars %&gt;% 
+d_C &lt;- mtcars %&gt;% 
     mutate(
       predicted = predict(Compact_model),   # Save the predicted values
       residuals = residuals(Compact_model) # Save the residual values  
  )
 
-SSE_Compact = sum(d_C$residuals^2) # Sum of squared errors
+SSE_Compact &lt;- sum(d_C$residuals^2) # Sum of squared errors
 SSE_Compact
 </code></pre>
 
@@ -1471,7 +1471,7 @@ d_A = mtcars %&gt;%
       residuals = residuals(Augmented_model) # Save the residual values  
  )
 
-SSE_Augmented = sum(d_A$residuals^2) # Sum of squared errors
+SSE_Augmented &lt;- sum(d_A$residuals^2) # Sum of squared errors
 SSE_Augmented
 </code></pre>
 
@@ -1494,7 +1494,7 @@ SSE_Augmented
 \end{align}
  \]</p>
 
-<pre class="fragment"><code class="r">PRE = (SSE_Compact - SSE_Augmented)/SSE_Compact
+<pre class="fragment"><code class="r">PRE &lt;- (SSE_Compact - SSE_Augmented)/SSE_Compact
 PRE
 </code></pre>
 
@@ -1515,7 +1515,7 @@ PRE
 \end{align}
  \]</p>
 
-<pre class="fragment"><code class="r">F_stat = (PRE/(2-1))/((1-PRE)/(32-2))
+<pre class="fragment"><code class="r">F_stat &lt;- (PRE/(2-1))/((1-PRE)/(32-2))
 F_stat
 </code></pre>
 
@@ -1557,8 +1557,8 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 <div class="slideContent" >
 <p>Beer vs. water &amp; positive vs. negative dataset</p>
 
-<pre class="fragment"><code class="r">d = read.csv(file = &quot;data_attitude.csv&quot;) # Get the data file if you are in the model_comparison_ANOVA WD
-#d = read.csv(file = &quot;day_1_model_comparison_ANOVA/data_attitude.csv&quot;) # Get the data file if you are in the Bayes_UGent_2018 WD
+<pre class="fragment"><code class="r">d &lt;- read.csv(file = &quot;data_attitude.csv&quot;) # Get the data file if you are in the model_comparison_ANOVA WD
+#d &lt;- read.csv(file = &quot;day_1_model_comparison_ANOVA/data_attitude.csv&quot;) # Get the data file if you are in the Bayes_UGent_2018 WD
 head (d)
 </code></pre>
 
@@ -1625,7 +1625,7 @@ ggplot(d, aes(x = drink, y = ratings)) +
 
 <p class="fragment">Intercept will be the estimate of beer, slope will be the difference between beer and water</p>
 
-<pre class="fragment"><code class="r">model_dummy = lm(ratings ~ drink, data = d)
+<pre class="fragment"><code class="r">model_dummy &lt;- lm(ratings ~ drink, data = d)
 summary(model_dummy)
 </code></pre>
 
@@ -1697,7 +1697,7 @@ F-statistic: 15.92 on 1 and 78 DF,  p-value: 0.000148
 
 <p class="fragment">Slope is the difference between the two means (different if codes are -1 and 1, but same F statistic)</p>
 
-<pre class="fragment"><code class="r">model_contrast = lm(ratings ~ drink, data = d_contrast)
+<pre class="fragment"><code class="r">model_contrast &lt;- lm(ratings ~ drink, data = d_contrast)
 summary(model_contrast)
 </code></pre>
 
@@ -1758,11 +1758,11 @@ F-statistic: 15.92 on 1 and 78 DF,  p-value: 0.000148
 <div class="slideContent" >
 <p>How do we write this in R?</p>
 
-<pre class="fragment"><code class="r">model_null = lm(ratings ~ 1, data = d)
-model_drink = lm(ratings ~ drink, data = d)
-model_imagery = lm(ratings ~ imagery, data = d)
-model_maineffects = lm(ratings ~ drink + imagery, data = d)
-model_interaction = lm(ratings ~ drink * imagery, data = d)
+<pre class="fragment"><code class="r">model_null &lt;- lm(ratings ~ 1, data = d)
+model_drink &lt;- lm(ratings ~ drink, data = d)
+model_imagery &lt;- lm(ratings ~ imagery, data = d)
+model_maineffects &lt;- lm(ratings ~ drink + imagery, data = d)
+model_interaction &lt;- lm(ratings ~ drink * imagery, data = d)
 </code></pre>
 
 </div>
@@ -1771,9 +1771,147 @@ model_interaction = lm(ratings ~ drink * imagery, data = d)
 <section data-state="lineheight" data-transition="none" data-transition-speed="default">
 <h3>Exercise </h3>
 <div class="slideContent" >
-<p>Take the water and beer data and construct all the ANOVA models</p>
+<p>Take the exercise data (2X2 water and imagery)</p>
 
-<p class="fragment">Calculate PRE and F statistic comparing the interaction and the intercept-only model</p>
+<p class="fragment">Fit all of the ANOVA models and check which one has the loewst R squared 
+    - Contrast code both drink and imagery!</p>
+
+<p class="fragment">Calculate PRE and F statistic comparing the interaction and the two main effects model</p>
+
+</div>
+
+</section>
+<section data-state="lineheight" data-transition="none" data-transition-speed="default">
+<h3>Solutions </h3>
+<div class="slideContent" >
+<p>Contrast coding</p>
+
+<pre class="fragment"><code class="r">library(tidyverse)
+d_contrast &lt;- d %&gt;% 
+    mutate(
+      drink = ifelse(d$drink == &quot;beer&quot;, -0.5, 0.5),   # Contrast coding
+      imagery = ifelse(d$imagery == &quot;neutral&quot;, -0.5, 0.5),   # Contrast coding
+            ) 
+</code></pre>
+
+<p class="fragment">All the ANOVA models</p>
+
+<pre class="fragment"><code class="r">model_null &lt;- lm(ratings ~ 1, data = d_contrast)
+model_drink &lt;- lm(ratings ~ drink, data = d_contrast)
+model_imagery &lt;- lm(ratings ~ imagery, data = d_contrast)
+model_maineffects &lt;- lm(ratings ~ drink + imagery, data = d_contrast)
+model_interaction &lt;- lm(ratings ~ drink * imagery, data = d_contrast)
+</code></pre>
+
+<p class="fragment">Compare the models with ANOVA</p>
+
+<pre class="fragment"><code class="r">anova(model_maineffects, model_interaction)
+</code></pre>
+
+<pre class="fragment"><code>Analysis of Variance Table
+
+Model 1: ratings ~ drink + imagery
+Model 2: ratings ~ drink * imagery
+  Res.Df    RSS Df Sum of Sq      F Pr(&gt;F)
+1     77 9650.7                           
+2     76 9470.7  1       180 1.4445 0.2332
+</code></pre>
+
+</div>
+
+</section>
+<section data-state="lineheight" data-transition="none" data-transition-speed="default">
+<h3>Model comparison</h3>
+<div class="slideContent" >
+<p>Let&#39;s calculate the SSEs of these two models</p>
+
+<pre class="fragment"><code class="r">model_maineffects &lt;- lm(ratings ~ drink + imagery, data = d_contrast)
+# Quick look at the actual, predicted, and residual values
+library(tidyverse)
+d_main = d_contrast %&gt;% 
+    mutate(
+      predicted = predict(model_maineffects),   # Save the predicted values
+      residuals = residuals(model_maineffects) # Save the residual values  
+ )
+
+SSE_Main &lt;- sum(d_main$residuals^2) # Sum of squared errors
+SSE_Main
+</code></pre>
+
+<pre class="fragment"><code>[1] 9650.7
+</code></pre>
+
+<pre class="fragment"><code class="r">model_interaction &lt;- lm(ratings ~ drink * imagery, data = d_contrast)
+# Quick look at the actual, predicted, and residual values
+library(tidyverse)
+d_interaction &lt;- d_contrast %&gt;% 
+    mutate(
+      predicted = predict(model_interaction),   # Save the predicted values
+      residuals = residuals(model_interaction) # Save the residual values  
+ )
+
+SSE_Interaction &lt;- sum(d_interaction$residuals^2) # Sum of squared errors
+SSE_Interaction
+</code></pre>
+
+<pre class="fragment"><code>[1] 9470.7
+</code></pre>
+
+</div>
+
+</section>
+<section data-state="lineheight" data-transition="none" data-transition-speed="default">
+<h3>Model comparison</h3>
+<div class="slideContent" >
+<p>Proportional reduction in error </p>
+
+<p class="fragment">How much (proportion) does the error reduce when we introduce an additional predictor?</p>
+
+<p class="fragment">\[ 
+\begin{align}
+\text{PRE} = (\text{SSE_C} - \text{SSE_A}) / \text{SSE_C} \\ 
+\end{align}
+ \]</p>
+
+<pre class="fragment"><code class="r">PRE &lt;- (SSE_Main - SSE_Interaction)/SSE_Main
+PRE
+</code></pre>
+
+<pre class="fragment"><code>[1] 0.0186515
+</code></pre>
+
+</div>
+
+</section>
+<section data-state="lineheight" data-transition="none" data-transition-speed="default">
+<h3>Model comparison</h3>
+<div class="slideContent" >
+<p>F statistic</p>
+
+<p class="fragment">\[ 
+\begin{align}
+\text{F} = \frac{\text{PRE}/(\text{PA} - \text{PC})}{(1-\text{PRE}/(\text{n}-\text{PA})} \\ 
+\end{align}
+ \]</p>
+
+<pre class="fragment"><code class="r">F_stat &lt;- (PRE/(4-3))/((1-PRE)/(80-4))
+F_stat
+</code></pre>
+
+<pre class="fragment"><code>[1] 1.444455
+</code></pre>
+
+<pre class="fragment"><code class="r">anova(model_maineffects,model_interaction)
+</code></pre>
+
+<pre class="fragment"><code>Analysis of Variance Table
+
+Model 1: ratings ~ drink + imagery
+Model 2: ratings ~ drink * imagery
+  Res.Df    RSS Df Sum of Sq      F Pr(&gt;F)
+1     77 9650.7                           
+2     76 9470.7  1       180 1.4445 0.2332
+</code></pre>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 

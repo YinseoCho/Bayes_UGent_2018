@@ -272,7 +272,7 @@ type: lineheight
 
 
 ```r
-model = lm(mpg ~ 1, data = mtcars)
+model <- lm(mpg ~ 1, data = mtcars)
 summary(model)
 ```
 
@@ -329,7 +329,7 @@ type: lineheight
 model <- lm(mpg ~ 1 + wt, data = mtcars)
 # Quick look at the actual, predicted, and residual values
 library(tidyverse)
-d = mtcars %>% 
+d <- mtcars %>% 
     mutate(
       predicted = predict(model),   # Save the predicted values
       residuals = residuals(model) # Save the residual values  
@@ -380,7 +380,7 @@ type: lineheight
 
 
 ```r
-model = lm(mpg ~ 1 + wt, data = mtcars)
+model <- lm(mpg ~ 1 + wt, data = mtcars)
   
 summary(model)
 ```
@@ -430,7 +430,7 @@ We can quantify these errors as the Sum of Squared Errors (SSE)
 model <- lm(mpg ~ 1 + wt, data = mtcars)
 # Quick look at the actual, predicted, and residual values
 library(tidyverse)
-d = mtcars %>% 
+d <- mtcars %>% 
     mutate(
       predicted = predict(model),   # Save the predicted values
       residuals = residuals(model) # Save the residual values  
@@ -454,7 +454,7 @@ sample_n(d,10)
 ```
 
 ```r
-SSE = sum(d$residuals^2) # Sum of squared errors
+SSE <- sum(d$residuals^2) # Sum of squared errors
 SSE
 ```
 
@@ -497,13 +497,13 @@ Let's calculate the SSEs of these two models
 Compact_model <- lm(mpg ~ 1, data = mtcars)
 # Quick look at the actual, predicted, and residual values
 library(tidyverse)
-d_C = mtcars %>% 
+d_C <- mtcars %>% 
     mutate(
       predicted = predict(Compact_model),   # Save the predicted values
       residuals = residuals(Compact_model) # Save the residual values  
  )
 
-SSE_Compact = sum(d_C$residuals^2) # Sum of squared errors
+SSE_Compact <- sum(d_C$residuals^2) # Sum of squared errors
 SSE_Compact
 ```
 
@@ -522,7 +522,7 @@ d_A = mtcars %>%
       residuals = residuals(Augmented_model) # Save the residual values  
  )
 
-SSE_Augmented = sum(d_A$residuals^2) # Sum of squared errors
+SSE_Augmented <- sum(d_A$residuals^2) # Sum of squared errors
 SSE_Augmented
 ```
 
@@ -547,7 +547,7 @@ $$
 
 
 ```r
-PRE = (SSE_Compact - SSE_Augmented)/SSE_Compact
+PRE <- (SSE_Compact - SSE_Augmented)/SSE_Compact
 PRE
 ```
 
@@ -570,7 +570,7 @@ $$
 
 
 ```r
-F_stat = (PRE/(2-1))/((1-PRE)/(32-2))
+F_stat <- (PRE/(2-1))/((1-PRE)/(32-2))
 F_stat
 ```
 
@@ -613,8 +613,8 @@ Beer vs. water & positive vs. negative dataset
 
 
 ```r
-d = read.csv(file = "data_attitude.csv") # Get the data file if you are in the model_comparison_ANOVA WD
-#d = read.csv(file = "day_1_model_comparison_ANOVA/data_attitude.csv") # Get the data file if you are in the Bayes_UGent_2018 WD
+d <- read.csv(file = "data_attitude.csv") # Get the data file if you are in the model_comparison_ANOVA WD
+#d <- read.csv(file = "day_1_model_comparison_ANOVA/data_attitude.csv") # Get the data file if you are in the Bayes_UGent_2018 WD
 head (d)
 ```
 
@@ -683,7 +683,7 @@ Intercept will be the estimate of beer, slope will be the difference between bee
 
 
 ```r
-model_dummy = lm(ratings ~ drink, data = d)
+model_dummy <- lm(ratings ~ drink, data = d)
 summary(model_dummy)
 ```
 
@@ -755,7 +755,7 @@ Slope is the difference between the two means (different if codes are -1 and 1, 
 
 
 ```r
-model_contrast = lm(ratings ~ drink, data = d_contrast)
+model_contrast <- lm(ratings ~ drink, data = d_contrast)
 summary(model_contrast)
 ```
 
@@ -817,11 +817,11 @@ How do we write this in R?
 
 
 ```r
-model_null = lm(ratings ~ 1, data = d)
-model_drink = lm(ratings ~ drink, data = d)
-model_imagery = lm(ratings ~ imagery, data = d)
-model_maineffects = lm(ratings ~ drink + imagery, data = d)
-model_interaction = lm(ratings ~ drink * imagery, data = d)
+model_null <- lm(ratings ~ 1, data = d)
+model_drink <- lm(ratings ~ drink, data = d)
+model_imagery <- lm(ratings ~ imagery, data = d)
+model_maineffects <- lm(ratings ~ drink + imagery, data = d)
+model_interaction <- lm(ratings ~ drink * imagery, data = d)
 ```
 
 Exercise 
@@ -829,10 +829,164 @@ Exercise
 incremental: true
 type: lineheight
 
-Take the water and beer data and construct all the ANOVA models
+Take the exercise data (2X2 water and imagery)
 
-Calculate PRE and F statistic comparing the interaction and the intercept-only model
+Fit all of the ANOVA models and check which one has the loewst R squared 
+    - Contrast code both drink and imagery!
 
+Calculate PRE and F statistic comparing the interaction and the two main effects model
+
+Solutions 
+========================================================
+incremental: true
+type: lineheight
+
+Contrast coding
+
+
+```r
+library(tidyverse)
+d_contrast <- d %>% 
+    mutate(
+      drink = ifelse(d$drink == "beer", -0.5, 0.5),   # Contrast coding
+      imagery = ifelse(d$imagery == "neutral", -0.5, 0.5),   # Contrast coding
+            ) 
+```
+
+All the ANOVA models
+
+
+```r
+model_null <- lm(ratings ~ 1, data = d_contrast)
+model_drink <- lm(ratings ~ drink, data = d_contrast)
+model_imagery <- lm(ratings ~ imagery, data = d_contrast)
+model_maineffects <- lm(ratings ~ drink + imagery, data = d_contrast)
+model_interaction <- lm(ratings ~ drink * imagery, data = d_contrast)
+```
+
+Compare the models with ANOVA
+
+
+```r
+anova(model_maineffects, model_interaction)
+```
+
+```
+Analysis of Variance Table
+
+Model 1: ratings ~ drink + imagery
+Model 2: ratings ~ drink * imagery
+  Res.Df    RSS Df Sum of Sq      F Pr(>F)
+1     77 9650.7                           
+2     76 9470.7  1       180 1.4445 0.2332
+```
+
+Model comparison
+========================================================
+incremental: true
+type: lineheight
+
+Let's calculate the SSEs of these two models
+
+
+```r
+model_maineffects <- lm(ratings ~ drink + imagery, data = d_contrast)
+# Quick look at the actual, predicted, and residual values
+library(tidyverse)
+d_main = d_contrast %>% 
+    mutate(
+      predicted = predict(model_maineffects),   # Save the predicted values
+      residuals = residuals(model_maineffects) # Save the residual values  
+ )
+
+SSE_Main <- sum(d_main$residuals^2) # Sum of squared errors
+SSE_Main
+```
+
+```
+[1] 9650.7
+```
+
+
+```r
+model_interaction <- lm(ratings ~ drink * imagery, data = d_contrast)
+# Quick look at the actual, predicted, and residual values
+library(tidyverse)
+d_interaction <- d_contrast %>% 
+    mutate(
+      predicted = predict(model_interaction),   # Save the predicted values
+      residuals = residuals(model_interaction) # Save the residual values  
+ )
+
+SSE_Interaction <- sum(d_interaction$residuals^2) # Sum of squared errors
+SSE_Interaction
+```
+
+```
+[1] 9470.7
+```
+
+Model comparison
+========================================================
+incremental: true
+type: lineheight
+
+Proportional reduction in error 
+
+How much (proportion) does the error reduce when we introduce an additional predictor?
+
+$$
+\begin{align}
+\text{PRE} = (\text{SSE_C} - \text{SSE_A}) / \text{SSE_C} \\ 
+\end{align}
+$$
+
+
+```r
+PRE <- (SSE_Main - SSE_Interaction)/SSE_Main
+PRE
+```
+
+```
+[1] 0.0186515
+```
+
+Model comparison
+========================================================
+incremental: true
+type: lineheight
+
+F statistic
+
+$$
+\begin{align}
+\text{F} = \frac{\text{PRE}/(\text{PA} - \text{PC})}{(1-\text{PRE}/(\text{n}-\text{PA})} \\ 
+\end{align}
+$$
+
+
+```r
+F_stat <- (PRE/(4-3))/((1-PRE)/(80-4))
+F_stat
+```
+
+```
+[1] 1.444455
+```
+
+```r
+anova(model_maineffects,model_interaction)
+```
+
+```
+Analysis of Variance Table
+
+Model 1: ratings ~ drink + imagery
+Model 2: ratings ~ drink * imagery
+  Res.Df    RSS Df Sum of Sq      F Pr(>F)
+1     77 9650.7                           
+2     76 9470.7  1       180 1.4445 0.2332
+```
 
 
 
