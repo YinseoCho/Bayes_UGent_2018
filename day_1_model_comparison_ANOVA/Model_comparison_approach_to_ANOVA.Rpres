@@ -336,7 +336,7 @@ How do we estimate the intercept and the slope?
 incremental: true
 type: lineheight
 
-We can quiantify these errors as the Sum of Squared Errors (SSE) 
+We can quantify these errors as the Sum of Squared Errors (SSE) 
 
 ```{r, message = FALSE}
 model <- lm(mpg ~ 1 + wt, data = mtcars)
@@ -492,7 +492,8 @@ type: lineheight
 Beer vs. water & positive vs. negative dataset
 
 ```{r, message = FALSE} 
-d = read.csv(file = "./day_1_model_comparison_ANOVA/data_attitude.csv")
+setwd("./day_1_model_comparison_ANOVA") # set the working directory to our subfolder
+d = read.csv(file = "data_attitude.csv")
 head (d)
 ```
 

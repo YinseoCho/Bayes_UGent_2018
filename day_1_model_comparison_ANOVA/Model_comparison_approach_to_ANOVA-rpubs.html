@@ -1370,7 +1370,7 @@ F-statistic: 91.38 on 1 and 30 DF,  p-value: 1.294e-10
 <section data-state="lineheight" data-transition="none" data-transition-speed="default">
 <h3>How do we estimate the intercept and the slope? </h3>
 <div class="slideContent" >
-<p>We can quiantify these errors as the Sum of Squared Errors (SSE) </p>
+<p>We can quantify these errors as the Sum of Squared Errors (SSE) </p>
 
 <pre class="fragment"><code class="r">model &lt;- lm(mpg ~ 1 + wt, data = mtcars)
 # Quick look at the actual, predicted, and residual values
@@ -1557,7 +1557,8 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 <div class="slideContent" >
 <p>Beer vs. water &amp; positive vs. negative dataset</p>
 
-<pre class="fragment"><code>Error in file(file, &quot;rt&quot;) : cannot open the connection
+<pre class="fragment"><code>Error in setwd(&quot;./day_1_model_comparison_ANOVA&quot;) : 
+  cannot change working directory
 </code></pre>
 
 </div>

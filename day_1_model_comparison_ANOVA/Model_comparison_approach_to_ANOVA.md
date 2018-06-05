@@ -423,7 +423,7 @@ How do we estimate the intercept and the slope?
 incremental: true
 type: lineheight
 
-We can quiantify these errors as the Sum of Squared Errors (SSE) 
+We can quantify these errors as the Sum of Squared Errors (SSE) 
 
 
 ```r
@@ -619,5 +619,6 @@ Beer vs. water & positive vs. negative dataset
 
 
 ```
-Error in file(file, "rt") : cannot open the connection
+Error in setwd("./day_1_model_comparison_ANOVA") : 
+  cannot change working directory
 ```
