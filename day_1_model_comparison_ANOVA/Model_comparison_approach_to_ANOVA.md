@@ -613,7 +613,7 @@ Beer vs. water & positive vs. negative dataset
 
 
 ```r
-d = read.csv(file = "data_attitude.csv")
+d = read.csv(file = "data_attitude.csv") # Get the data file
 head (d)
 ```
 

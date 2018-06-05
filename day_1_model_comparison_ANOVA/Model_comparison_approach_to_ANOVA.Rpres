@@ -492,7 +492,7 @@ type: lineheight
 Beer vs. water & positive vs. negative dataset
 
 ```{r, message = FALSE} 
-d = read.csv(file = "data_attitude.csv")
+d = read.csv(file = "data_attitude.csv") # Get the data file
 head (d)
 ```
 
