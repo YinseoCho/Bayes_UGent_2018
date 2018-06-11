@@ -11,7 +11,7 @@
 
 Click on the following links to see the slides online
 
-[Hands-on data science with ```tidyverse```](https://osf.io/q47uf/)
+[Hands-on data science with ```tidyverse```](https://asch3tti.netlify.com/slides/2018.06.13_intro_r_tidyverse/intro_r_tidyverse.nb)
 
 [The model comparison approach to data analysis]()
 
