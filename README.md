@@ -13,7 +13,7 @@ Click on the following links to see the slides online
 
 [Hands-on data science with ```tidyverse```](https://asch3tti.netlify.com/slides/intro_tidyverse/intro_tidyverse.nb)
 
-[The model comparison approach to data analysis]()
+[The model comparison approach](http://www.barelysignificant.com/slides/IBSM2018_model_comparison)
 
 [Model comparison and information criteria](http://www.barelysignificant.com/slides/IBSM2018_aic)
 
