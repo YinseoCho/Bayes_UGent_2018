@@ -32,7 +32,7 @@ type: lineheight
 <img src = "cookbook.jpg" width=924 height=742,5 >
 </div>
 
-The model comparison approach: Regressions all the way down
+The model comparison approach: Linear models all the way down
 ========================================================
 incremental: true
 type: lineheight
@@ -46,7 +46,7 @@ The model comparison approach
 incremental: true
 type: lineheight
 
-- Most of the analyses can be viewed as linear regressions
+- Most of the analyses can be viewed as comparisons between different linear models
 - t-test: two-level categorical variable as the predictor
 - ANOVA: three-or-more-level categorical variable as the predictor
 - Good introductions: 
@@ -147,7 +147,7 @@ $$
 \end{align}
 $$
 
-How do we do this and what does it mean?
+This is what we call "fitting a model to the data"
 
 Let's get some data
 ========================================================
@@ -174,7 +174,7 @@ ggplot(mtcars, aes(x=wt, y=mpg)) +
   theme_bw(base_size = 20) # Theme
 ```
 
-Fitting the simplest line 
+Fitting the simplest model 
 ========================================================
 incremental: true
 type: lineheight
@@ -195,7 +195,7 @@ ggplot(mtcars, aes(x=wt, y=mpg)) +
   geom_smooth(method = lm, se=FALSE, formula = y ~ 1)  # Regression line
 ```
 
-How bad is the line? 
+How bad is the model? 
 ========================================================
 incremental: true
 type: lineheight
@@ -209,11 +209,11 @@ d = mtcars %>%
       predicted = predict(model),   # Save the predicted values
       residuals = residuals(model) # Save the residual values  
  )%>%
-  select(mpg, wt, predicted, residuals) 
+  select(wt, mpg, predicted, residuals) 
 
 sample_n(d, 10)
 ```
-How bad is the line? 
+How bad is the model? 
 ========================================================
 incremental: true
 type: lineheight
@@ -242,7 +242,7 @@ model <- lm(mpg ~ 1, data = mtcars)
 summary(model)
 ```
 
-Fitting the second simplest line
+Fitting the second simplest model
 ========================================================
 incremental: true
 type: lineheight
@@ -264,7 +264,7 @@ ggplot(mtcars, aes(x=wt, y=mpg)) +
   geom_smooth(method = lm, se=FALSE, color = "black", formula = y ~ 1 + x) # Regression line
 ```
 
-How bad is the line? 
+How bad is the model? 
 ========================================================
 incremental: true
 type: lineheight
@@ -278,11 +278,11 @@ d <- mtcars %>%
       predicted = predict(model),   # Save the predicted values
       residuals = residuals(model) # Save the residual values  
  )%>%
-  select(mpg, wt, predicted, residuals) 
+  select(wt, mpg, predicted, residuals) 
 
 sample_n(d, 10)
 ```
-How bad is the line? 
+How bad is the model? 
 ========================================================
 incremental: true
 type: lineheight
@@ -346,7 +346,8 @@ d <- mtcars %>%
     mutate(
       predicted = predict(model),   # Save the predicted values
       residuals = residuals(model) # Save the residual values  
- )
+ )%>%
+  select(wt, mpg, predicted, residuals)
 
 sample_n(d,10)
 
