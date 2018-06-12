@@ -46,7 +46,7 @@ The model comparison approach
 incremental: true
 type: lineheight
 
-- Most of the analyses can be viewed as comparisons between different linear models
+- Most of the analyses can be viewed as comparisons of linear models
 - t-test: two-level categorical variable as the predictor
 - ANOVA: three-or-more-level categorical variable as the predictor
 - Good introductions: 
@@ -59,7 +59,7 @@ incremental: true
 type: lineheight
 
 <div align = "center" style="float: bottom;">
-<img src = "pasta.jpg" width = 600 height = 600>
+<img src = "pasta.jpg" width = 400 height = 400>
 </div>
 
 Compact description of data
@@ -97,7 +97,7 @@ A lot of ways to write the same equation:
 $$
 \begin{align}
 
-\mu_{i} &= \alpha + \beta_{1}x_{i} + \epsilon_{1} \\
+\mu_{i} &= \alpha + \beta_{1}x_{i} + \epsilon_{i} \\
 \mathcal \epsilon_{i} &\sim \mathrm{Normal}(0,\sigma) \\
 
 \end{align}
@@ -136,13 +136,14 @@ $$
 \end{align}
 $$
 
-Our goal is always to estimate these parameters:
+Our goal is always to estimate parameters:
 
 $$
 \begin{align}
 
 \alpha\\
 \beta_{1}\\
+\sigma\\
 
 \end{align}
 $$
@@ -186,19 +187,21 @@ $$
 \end{align}
 $$
 
-```{r eval = TRUE, echo = TRUE, fig.align = "center", fig.width = 9, fig.height = 9}  
+```{r eval = TRUE, echo = TRUE, fig.align = "center", fig.width = 8, fig.height = 8}  
 # Basic scatter plot
 ggplot(mtcars, aes(x=wt, y=mpg)) + 
   geom_point() + # Data points
   labs(x="Car Weight", y = "Miles Per Gallon") + # Name the axes
   theme_bw(base_size = 20) + # Theme for the plot
-  geom_smooth(method = lm, se=FALSE, formula = y ~ 1)  # Regression line
+  geom_smooth(method = lm, se=FALSE, formula = y ~ 1, color = "black")  # Regression line
 ```
 
 How bad is the model? 
 ========================================================
 incremental: true
 type: lineheight
+
+These are our errors (sigma)
 
 ```{r eval = TRUE, echo = TRUE, fig.align = "center", fig.width = 9, fig.height = 9}  
 model <- lm(mpg ~ 1, data = mtcars)
@@ -220,15 +223,15 @@ type: lineheight
 
 Plot the residuals
 
-```{r eval = TRUE, echo = TRUE, fig.align = "center", fig.width = 9, fig.height = 9}  
+```{r eval = TRUE, echo = FALSE, fig.align = "center", fig.width = 8, fig.height = 8}  
 ggplot(d, aes(x = wt, y = mpg)) +
-  geom_smooth(method = lm, se = FALSE, formula = y ~ 1, color = "black") +  # Regression line
   geom_segment(aes(xend = wt, yend = predicted), alpha = .2) +  # Connect predicted and actual values
   geom_point() + # Data points
   geom_point(aes(y = predicted), shape = 1) + #Points for values predicted by the model
   xlab("Car Weight") + # X-axis
   ylab("Miles Per Gallon") + # Y-axis
-  theme_bw(base_size = 20)  # Theme for the plot
+  theme_bw(base_size = 20) + # Theme for the plot
+  geom_smooth(method = lm, se = FALSE, formula = y ~ 1, color = "black")  # Regression line
 ```
 
 What does our model think? 
@@ -254,11 +257,10 @@ $$
 \end{align}
 $$
 
-```{r eval = TRUE, echo = TRUE, fig.align = "center", fig.width = 9, fig.height = 9}  
+```{r eval = TRUE, echo = TRUE, fig.align = "center", fig.width = 8, fig.height = 8}  
 # Basic scatter plot
 ggplot(mtcars, aes(x=wt, y=mpg)) + 
   geom_point() + # Data points
-   # Regression line
   labs(x="Car Weight", y = "Miles Per Gallon") + # Name the axes
   theme_bw(base_size = 20) + # Theme for the plot
   geom_smooth(method = lm, se=FALSE, color = "black", formula = y ~ 1 + x) # Regression line
@@ -289,7 +291,7 @@ type: lineheight
 
 Plot the residuals
 
-```{r eval = TRUE, echo = TRUE, fig.align = "center", fig.width = 9, fig.height = 9}  
+```{r eval = TRUE, echo = FALSE, fig.align = "center", fig.width = 8, fig.height = 8}  
 ggplot(d, aes(x = wt, y = mpg)) +
   geom_smooth(method = lm, se = FALSE, color = "black", formula = y ~ 1 + x) +  # Regression line
   geom_segment(aes(xend = wt, yend = predicted), alpha = .2) +  # Connect predicted and actual values
@@ -320,7 +322,7 @@ The goal is to find a set of parameters that minimize the residuals
 
 Moving the line until we find the model with minimal errors
 
-```{r eval = TRUE, echo = FALSE, fig.align = "center", fig.width = 9, fig.height = 9}  
+```{r eval = TRUE, echo = FALSE, fig.align = "center", fig.width = 8, fig.height = 8}  
 # Basic scatter plot
 ggplot(mtcars, aes(x=wt, y=mpg)) + 
   geom_point() + # Data points
@@ -330,13 +332,12 @@ ggplot(mtcars, aes(x=wt, y=mpg)) +
   geom_smooth(method = lm, se=FALSE, color = "black", formula = y ~ 1 + x) # Regression line
 ```
 
-
 How do we estimate the intercept and the slope? 
 ========================================================
 incremental: true
 type: lineheight
 
-We can quantify these errors as the Sum of Squared Errors (SSE) 
+We can quantify these errors as the Sum of Squared Errors (SSE) and pick the model with minimal SSE 
 
 ```{r, message = FALSE}
 model <- lm(mpg ~ 1 + wt, data = mtcars)
@@ -347,7 +348,7 @@ d <- mtcars %>%
       predicted = predict(model),   # Save the predicted values
       residuals = residuals(model) # Save the residual values  
  )%>%
-  select(wt, mpg, predicted, residuals)
+  select(wt, mpg, predicted, residuals) 
 
 sample_n(d,10)
 
@@ -355,28 +356,59 @@ SSE <- sum(d$residuals^2) # Sum of squared errors
 SSE
 ```
 
-Assumptions that need to be met
+Assumptions 
 ========================================================
 incremental: true
 type: lineheight
 
-Normality of residuals
-  - Errors are normally distributed
+We create assumptions by our modelling choices!
 
-Homogenity of variances
-  - Across groups
+$$
+\begin{align}
+\mathcal y_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
+\mu_{i} &= \alpha + \beta_{1}x_{i} \\
+\end{align}
+$$
 
-Independence of the residuals
+Which assumptions do we make in this model?
+
+- Normality of residuals
+
+- Homogenity of variances
+
+- Independence of the residuals
   - We shouldn't be able to predict residuals of an observation from other residuals 
-  
+
+Model fitting - summary 
+========================================================
+incremental: true
+type: lineheight
+
+$$
+\begin{align}
+\mathcal y_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
+\mu_{i} &= \alpha + \beta_{1}x_{i} \\
+\end{align}
+$$
+
+1. We write down our model
+2. We check that assumptions of our model are met
+3. We estimate parameters so that errors are minimal
+
+We usually fit multiple models and want to compare them
+
+This is hypothesis testing (Model vs. Null)
+
 Model comparison
 ========================================================
 incremental: true
 type: lineheight
 
+How do we compare models?
+
 Compact and augmented model
 
-```{r eval = TRUE, echo = FALSE, fig.align = "center", fig.width = 18, fig.height = 9,fig.show='hold'}  
+```{r eval = TRUE, echo = FALSE, fig.align = "center", fig.width = 16, fig.height = 8,fig.show='hold'}  
 library(gridExtra)
 # Basic scatter plot
 p1 <- ggplot(mtcars, aes(x=wt, y=mpg)) + 
@@ -446,7 +478,7 @@ How much (proportion) does the error reduce when we introduce an additional pred
 
 $$
 \begin{align}
-\text{PRE} = (\text{SSE_C} - \text{SSE_A}) / \text{SSE_C} \\ 
+\text{PRE} = \frac{\text{SSE_C} - \text{SSE_A}} {\text{SSE_C}} \\ 
 \end{align}
 $$
 
@@ -464,7 +496,7 @@ F statistic
 
 $$
 \begin{align}
-\text{F} = \frac{\text{PRE}/(\text{PA} - \text{PC})}{(1-\text{PRE}/(\text{n}-\text{PA})} \\ 
+\text{F} = \frac{\text{PRE}/(\text{PA} - \text{PC})}{(1-\text{PRE})/(\text{n}-\text{PA})} \\ 
 \end{align}
 $$
 
@@ -490,7 +522,7 @@ Let's get the data from the first lecture
 incremental: true
 type: lineheight
 
-Beer vs. water & positive vs. negative dataset
+Sex, drinks, and imagery
 
 ```{r, message = FALSE} 
 d <- read.csv(file = "data_attitude.csv") # Get the data file if you are in the model_comparison_ANOVA WD
@@ -505,9 +537,9 @@ type: lineheight
 
 A simple scatterplot
 
-```{r, message = FALSE, fig.width = 9, fig.heigth = 9, fig.align = "center"}  
+```{r, message = FALSE, fig.width = 8, fig.heigth = 8, fig.align = "center"}  
 library(tidyverse)
-ggplot(d, aes(x = drink, y = ratings)) +
+ggplot(d, aes(x = sex, y = ratings)) +
     geom_point() + 
     theme_bw(base_size = 20)
 ```
@@ -521,21 +553,21 @@ Our predictor is a categorical variable, how do we enter this is a regression?
 
 We have to somehow turn them into numbers
 
-Dummy coding: We have two categories, let beer be zero!
+Dummy coding: We have two categories, let males be zero!
 
-For beer:
+For males:
 $$
 \begin{align}
 \mathcal y_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
-\mu_{i} &= \alpha + \beta_{1}beer \\ &= \alpha + 0 \\ &= \alpha
+\mu_{i} &= \alpha + \beta_{1}male \\ &= \alpha + 0 \\ &= \alpha
 \end{align}
 $$
 
-For water:
+For females:
 $$
 \begin{align}
 \mathcal y_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
-\mu_{i} &= \alpha + \beta_{1}water \\  &= \alpha + \beta_{1}
+\mu_{i} &= \alpha + \beta_{1}female \\  &= \alpha + \beta_{1}
 \end{align}
 $$
 
@@ -546,7 +578,7 @@ type: lineheight
 
 How do we interpret the results?
 
-Intercept will be the estimate of beer, slope will be the difference between beer and water
+Intercept will be the estimate of males, slope will be the difference between males and females
 
 ```{r eval = TRUE, echo = TRUE} 
 model_dummy <- lm(ratings ~ drink, data = d)
@@ -560,16 +592,16 @@ type: lineheight
 
 The values of contrast variables across the two categories sum to zero
 
-```{r eval = TRUE, echo = FALSE, fig.align = "center", fig.width = 9, fig.height = 9} 
+```{r eval = TRUE, echo = FALSE, fig.align = "center", fig.width = 8, fig.height = 8} 
 d_contrast <- d %>% 
     mutate(
-      drink = ifelse(d$drink == "beer", -0.5, 0.5),   # Contrast coding
+      sex = ifelse(d$sex == "male", -0.5, 0.5),   # Contrast coding
       ) 
 
-ggplot(d_contrast, aes(x = drink, y = ratings)) +
+ggplot(d_contrast, aes(x = sex, y = ratings)) +
     geom_point() + 
-    geom_smooth(method = lm, se=FALSE, color = "black", formula = y ~ 1 + x)+#+
-    theme_bw(base_size = 20)
+    theme_bw(base_size = 20) + 
+    geom_smooth(method = lm, se=FALSE, color = "black", formula = y ~ 1 + x)
 ```
     
 Contrast coding
@@ -579,21 +611,21 @@ type: lineheight
 
 How do the equations look like?
 
-For beer:
+For males:
 
 $$
 \begin{align}
 \mathcal y_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
-\mu_{beer} &= \alpha + \beta_{1}-0.5 \\ &= \alpha - \beta_{1}/2
+\mu_{male} &= \alpha + \beta_{1} \times (-0.5) \\ &= \alpha - \beta_{1}/2
 \end{align}
 $$
 
-For water:
+For females:
 
 $$
 \begin{align}
 \mathcal y_{i} &\sim \mathrm{Normal}(\mu_{i},\sigma) \\
-\mu_{water} &= \alpha + \beta_{1}0.5 \\ &= \alpha + \beta_{1}/2
+\mu_{female} &= \alpha + \beta_{1} \times (+0.5) \\ &= \alpha + \beta_{1}/2
 \end{align}
 $$
 
@@ -609,7 +641,7 @@ Intercept is the average of the two group means
 Slope is the difference between the two means (different if codes are -1 and 1, but same F statistic)
 
 ```{r eval = TRUE, echo = TRUE} 
-model_contrast <- lm(ratings ~ drink, data = d_contrast)
+model_contrast <- lm(ratings ~ sex, data = d_contrast)
 summary(model_contrast)
 ```
 
@@ -618,7 +650,7 @@ Full ANOVA
 incremental: true
 type: lineheight
 
-Which models are contained in the 2X2 ANOVA?
+Which models are contained in a 2X2 ANOVA?
 
 $$
 \begin{align}
@@ -662,25 +694,27 @@ incremental: true
 type: lineheight
 
 Take the exercise data (2X2 water and imagery)
+    - Change the data set so that every row is a new participant
 
-Fit all of the ANOVA models and check which one has the loewst R squared 
+Fit all of the ANOVA models and check which one has the lowest R squared 
     - Contrast code both drink and imagery!
 
 Calculate PRE and F statistic comparing the interaction and the two main effects model
 
-Solutions 
+Solution 
 ========================================================
 incremental: true
 type: lineheight
 
 Contrast coding
 
-```{r eval = TRUE, echo = TRUE, fig.align = "center", fig.width = 9, fig.height = 9} 
+```{r eval = TRUE, echo = TRUE} 
 library(tidyverse)
 d_contrast <- d %>% 
     mutate(
       drink = ifelse(d$drink == "beer", -0.5, 0.5),   # Contrast coding
       imagery = ifelse(d$imagery == "neutral", -0.5, 0.5),   # Contrast coding
+      participant = c(1:length(d$participant))  # Change the participant number
             ) 
 ```
 
@@ -694,13 +728,18 @@ model_maineffects <- lm(ratings ~ drink + imagery, data = d_contrast)
 model_interaction <- lm(ratings ~ drink * imagery, data = d_contrast)
 ```
 
+Solution - Model comparison
+========================================================
+incremental: true
+type: lineheight
+
 Compare the models with ANOVA
 
 ```{r eval = TRUE, echo = TRUE} 
-anova(model_maineffects, model_interaction)
+anova(model_null, model_interaction)
 ```
 
-Model comparison
+Solution - Model comparison
 ========================================================
 incremental: true
 type: lineheight
@@ -735,7 +774,7 @@ SSE_Interaction <- sum(d_interaction$residuals^2) # Sum of squared errors
 SSE_Interaction
 ```
 
-Model comparison
+Solution - Model comparison
 ========================================================
 incremental: true
 type: lineheight
@@ -746,7 +785,7 @@ How much (proportion) does the error reduce when we introduce an additional pred
 
 $$
 \begin{align}
-\text{PRE} = (\text{SSE_C} - \text{SSE_A}) / \text{SSE_C} \\ 
+\text{PRE} = \frac{\text{SSE_C} - \text{SSE_A}} {\text{SSE_C}} \\ 
 \end{align}
 $$
 
@@ -755,7 +794,7 @@ PRE <- (SSE_Main - SSE_Interaction)/SSE_Main
 PRE
 ```
 
-Model comparison
+Solution - Model comparison
 ========================================================
 incremental: true
 type: lineheight
@@ -764,19 +803,80 @@ F statistic
 
 $$
 \begin{align}
-\text{F} = \frac{\text{PRE}/(\text{PA} - \text{PC})}{(1-\text{PRE}/(\text{n}-\text{PA})} \\ 
+\text{F} = \frac{\text{PRE}/(\text{PA} - \text{PC})}{(1-\text{PRE})/(\text{n}-\text{PA})} \\ 
 \end{align}
 $$
 
 ```{r, message = FALSE, echo = TRUE}
 F_stat <- (PRE/(4-3))/((1-PRE)/(80-4))
 F_stat
-
-anova(model_maineffects,model_interaction)
-
 ```
 
+Solution - Model comparison
+========================================================
+incremental: true
+type: lineheight
 
+Is this the same as what we got earlier?
+
+```{r, message = FALSE, echo = TRUE}
+anova(model_maineffects,model_interaction)
+
+library(afex)
+library(multcomp) # we didn't explicitly install this package, but it's part of the dependencies of 'afex'
+rmANOVA.att <- aov_ez("participant",                     # variable with subject identifier
+                      "ratings",                         # dependent variable
+                      d_contrast, # data frame
+                      between = c("drink", "imagery"),    # between-subject variables
+                      type = 3)                          # type-III sums of squares (default in SPSS)
+rmANOVA.att
+```
+
+RM ANOVA
+========================================================
+incremental: true
+type: lineheight
+
+Remember one of the assumptions: Independence of the residuals
+
+We have to eliminate the within-subject variance
+
+Make a composite score - one for each subject
+
+```{r, message = FALSE, echo = TRUE}
+library(tidyverse)
+library(reshape2)
+
+data.diff = d %>% dcast(participant ~ drink + imagery,
+                  value.var = "ratings")
+
+data.diff$diff = (data.diff$beer_negative - data.diff$beer_neutral) - (data.diff$water_negative - data.diff$water_neutral)
+
+model_null_RM <- lm(diff ~ 0, data = data.diff)
+model_interaction_RM <- lm(diff ~ 1, data = data.diff)
+
+anova(model_null_RM,model_interaction_RM)
+```
+
+Summary
+========================================================
+incremental: true
+type: lineheight
+
+1. When testing hypotheses we are always comparing models
+
+2. All of the usual tests can be thought of as linear models
+
+3. We need to be aware of what is in our pasta machines
+
+The End
+========================================================
+incremental: false
+type: lineheight
+
+Thank you for your attention!
+
+e-mail: ivan.grahek@ugent.be
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>

@@ -78,7 +78,7 @@ h1, h2, h3 {
   display: block;
   padding: 0.5em;
   font-family: "Source Code pro", monospace;
-  font-size: 100%;
+  font-size: 120%;
   line-height: 1.1em;
   background-color: white; /* bg color or code result */
   overflow: visible;
