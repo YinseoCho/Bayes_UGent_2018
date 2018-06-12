@@ -695,13 +695,15 @@ Exercise
 incremental: true
 type: lineheight
 
-Take the exercise data (2X2 water and imagery)
-    - Change the data set so that every row is a new participant
+1. Import the exercise data (2X2 water and imagery)
 
-Fit all of the ANOVA models and check which one has the lowest R squared 
-    - Contrast code both drink and imagery!
+2. Change the data set so that every row is a new participant
 
-Calculate PRE and F statistic comparing the interaction and the two main effects model
+3. Contrast code both drink and imagery
+
+4. Fit all of the ANOVA models and check which one has the lowest R squared 
+
+5. Calculate PRE and F statistic comparing the interaction and the two main effects model
 
 Solution 
 ========================================================
@@ -867,9 +869,11 @@ type: lineheight
 
 1. When testing hypotheses we are always comparing models
 
-2. All of the usual tests can be thought of as linear models
+2. We first fit the models and then we compare them
 
-3. We need to be aware of what is in our pasta machines
+3. All of the usual tests can be thought of as linear models
+
+4. We need to be aware of what is in our pasta machines
 
 The End
 ========================================================
