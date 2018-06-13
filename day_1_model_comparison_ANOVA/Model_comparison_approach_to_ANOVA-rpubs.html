@@ -1636,28 +1636,28 @@ ggplot(d, aes(x = sex, y = ratings)) +
 
 <p class="fragment">Intercept will be the estimate of males, slope will be the difference between males and females</p>
 
-<pre class="fragment"><code class="r">model_dummy &lt;- lm(ratings ~ drink, data = d)
+<pre class="fragment"><code class="r">model_dummy &lt;- lm(ratings ~ sex, data = d)
 summary(model_dummy)
 </code></pre>
 
 <pre class="fragment"><code>
 Call:
-lm(formula = ratings ~ drink, data = d)
+lm(formula = ratings ~ sex, data = d)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--26.225  -8.825   0.775   7.938  22.775 
+-26.275  -8.525  -0.775   9.725  23.725 
 
 Coefficients:
-            Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)    7.225      1.887   3.828 0.000259 ***
-drinkwater   -10.650      2.669  -3.990 0.000148 ***
+            Estimate Std. Error t value Pr(&gt;|t|)   
+(Intercept)    6.275      1.949   3.220  0.00187 **
+sexmale       -8.750      2.756  -3.175  0.00215 **
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
-Residual standard error: 11.94 on 78 degrees of freedom
-Multiple R-squared:  0.1695,    Adjusted R-squared:  0.1589 
-F-statistic: 15.92 on 1 and 78 DF,  p-value: 0.000148
+Residual standard error: 12.33 on 78 degrees of freedom
+Multiple R-squared:  0.1144,    Adjusted R-squared:  0.1031 
+F-statistic: 10.08 on 1 and 78 DF,  p-value: 0.002147
 </code></pre>
 
 </div>

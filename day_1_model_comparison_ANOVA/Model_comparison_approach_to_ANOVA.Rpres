@@ -581,7 +581,7 @@ How do we interpret the results?
 Intercept will be the estimate of males, slope will be the difference between males and females
 
 ```{r eval = TRUE, echo = TRUE} 
-model_dummy <- lm(ratings ~ drink, data = d)
+model_dummy <- lm(ratings ~ sex, data = d)
 summary(model_dummy)
 ```
 
